@@ -32,10 +32,6 @@ mongoose
 // application routes
 app.use("/get_auth", authRouter);
 
-// error handlings
-app.use(notFoundHandler);
-app.use(errorHandler);
-
 // for production
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
@@ -45,6 +41,10 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(fullPath);
   });
 }
+
+// error handlings
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 // starting the server
 app.listen(process.env.PORT, () => console.log(`Listening to port ${process.env.PORT}`));
