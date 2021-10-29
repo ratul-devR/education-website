@@ -7,8 +7,10 @@ const dataSchema = new mongoose.Schema({
   lastName: { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true, trim: true },
+  role: { type: String, enum: ["user", "admin", "organization"], default: "user" },
 });
 
+// for hashing the password
 dataSchema.pre("save", function (next) {
   const user = this;
   if (!user.isModified("password")) return next();
@@ -19,6 +21,7 @@ dataSchema.pre("save", function (next) {
   });
 });
 
+// for generating jwt
 dataSchema.methods.generateToken = function () {
   try {
     const user = this;

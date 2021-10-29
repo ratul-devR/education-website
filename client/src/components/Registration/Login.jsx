@@ -1,19 +1,16 @@
 import { useEffect, useState } from "react";
-import { Link as RouterLink, useHistory } from "react-router-dom";
+import { Link as RouterLink, useHistory, useRouteMatch } from "react-router-dom";
 import { Flex, Input, Heading, Button, Text, Link } from "@chakra-ui/react";
 import validator from "validator";
 import { useDispatch } from "react-redux";
 
-import config from "../config";
+import config from "../../config";
 
 // hooks
-import useToast from "../hooks/useToast";
-
-// components
-import Layout from "../components/global/Layout";
+import useToast from "../../hooks/useToast";
 
 // actions
-import { LOGIN } from "../redux/actions/authActions";
+import { LOGIN } from "../../redux/actions/authActions";
 
 const InputField = (props) => {
   return <Input {...props} mb={3} />;
@@ -21,6 +18,7 @@ const InputField = (props) => {
 
 const Login = () => {
   const [{ email, password }, setInput] = useState({ email: "", password: "" });
+  const { path } = useRouteMatch();
   const toast = useToast();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -80,39 +78,37 @@ const Login = () => {
   }, []);
 
   return (
-    <Layout>
-      <Flex h="full" justify="center" align="center">
-        <Flex maxW="95%" w="400px" direction="column" p={10} bg="white" boxShadow="lg">
-          <Heading textAlign="center" color="teal" fontWeight="normal" mb={5}>
-            Sign in
-          </Heading>
-          <InputField
-            onChange={HandleInputChange}
-            autoFocus
-            placeholder="Enter your email"
-            name="email"
-            type="email"
-            value={email}
-          />
-          <InputField
-            onChange={HandleInputChange}
-            placeholder="Enter your password"
-            name="password"
-            type="password"
-            value={password}
-          />
-          <Button onClick={ValidateInputInfo} colorScheme="teal" mb={3}>
-            Sign in
-          </Button>
-          <Text fontSize="md" textAlign="center">
-            Don't have an account?{" "}
-            <Link color="teal" as={RouterLink} to="/register">
-              Register
-            </Link>
-          </Text>
-        </Flex>
+    <Flex h="full" justify="center" align="center">
+      <Flex maxW="95%" w="400px" direction="column" p={10} bg="white" boxShadow="lg">
+        <Heading textAlign="center" color="teal" fontWeight="normal" mb={5}>
+          Sign in
+        </Heading>
+        <InputField
+          onChange={HandleInputChange}
+          autoFocus
+          placeholder="Enter your email"
+          name="email"
+          type="email"
+          value={email}
+        />
+        <InputField
+          onChange={HandleInputChange}
+          placeholder="Enter your password"
+          name="password"
+          type="password"
+          value={password}
+        />
+        <Button onClick={ValidateInputInfo} colorScheme="teal" mb={3}>
+          Sign in
+        </Button>
+        <Text fontSize="md" textAlign="center">
+          Don't have an account?{" "}
+          <Link color="teal" as={RouterLink} to={`${path}/register`}>
+            Register
+          </Link>
+        </Text>
       </Flex>
-    </Layout>
+    </Flex>
   );
 };
 

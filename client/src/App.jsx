@@ -11,11 +11,12 @@ import { LOGIN, LOGOUT } from "./redux/actions/authActions";
 
 // components
 import ProtectedRoute from "./components/global/ProtectedRoute";
+import AdminRoute from "./components/global/AdminRoute";
 
 // pages
-import Register from "./pages/Register";
-import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Admin from "./pages/Admin";
+import Registration from "./pages/Registration";
 
 const App = () => {
   const [pending, setPending] = useState(true);
@@ -61,18 +62,18 @@ const App = () => {
         <Spinner colorScheme="teal" />
       </Flex>
     );
+  } else {
+    return (
+      <BrowserRouter>
+        <Switch>
+          <ProtectedRoute exact path="/dashboard" component={Dashboard} />
+          <AdminRoute path="/admin" component={Admin} />
+          <Route path="/auth" component={Registration} />
+          <Redirect path="*" to="/auth" />
+        </Switch>
+      </BrowserRouter>
+    );
   }
-
-  return (
-    <BrowserRouter>
-      <Switch>
-        <ProtectedRoute path="/dashboard" component={Dashboard} />
-        <Route path="/login" component={Login} />
-        <Route path="/register" component={Register} />
-        <Redirect path="*" to="/login" />
-      </Switch>
-    </BrowserRouter>
-  );
 };
 
 export default App;
