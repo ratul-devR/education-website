@@ -20,7 +20,7 @@ module.exports = {
             signed: true,
           });
 
-          res.status(201).json({ msg: `Welcome back ${user.firstName}`, user });
+          res.status(201).json({ msg: `Welcome back ${user.lastName}`, user });
         } else {
           res.status(400).json({ msg: "Invalid credentials" });
         }
@@ -52,5 +52,9 @@ module.exports = {
     } catch (err) {
       next(err);
     }
+  },
+
+  sendResponseIfLoggedIn: function (req, res) {
+    res.status(201).send(req.user);
   },
 };

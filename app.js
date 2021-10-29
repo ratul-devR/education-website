@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
 
 // internal dependencies
 // routers / routes
@@ -34,6 +35,16 @@ app.use("/get_auth", authRouter);
 // error handlings
 app.use(notFoundHandler);
 app.use(errorHandler);
+
+// for production
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+
+  app.get("*", function (req, res) {
+    const fullPath = path.join(__dirname, "client", "dist", "index.html");
+    res.sendFile(fullPath);
+  });
+}
 
 // starting the server
 app.listen(process.env.PORT, () => console.log(`Listening to port ${process.env.PORT}`));
