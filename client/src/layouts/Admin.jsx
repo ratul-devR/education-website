@@ -20,7 +20,7 @@ const Admin = ({ children }) => {
         maxW={16}
         py={5}
       >
-        <Tooltip title="Categories" placement="right" hasArrow>
+        <Tooltip label="Categories" placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"
@@ -31,7 +31,7 @@ const Admin = ({ children }) => {
             icon={<FaChartPie />}
           />
         </Tooltip>
-        <Tooltip title="Categories" placement="right" hasArrow>
+        <Tooltip label="Users" placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"

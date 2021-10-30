@@ -9,6 +9,7 @@ import config from "../config";
 // pages
 import Categories from "../components/Admin/Categories";
 import Users from "../components/Admin/Users";
+import AddQuestion from "../components/Admin/AddQuestion";
 
 const Admin = () => {
   const { path } = useRouteMatch();
@@ -23,6 +24,7 @@ const Admin = () => {
         <Switch>
           <Route path={path} exact component={Categories} />
           <Route path={`${path}/users`} component={Users} />
+          <Route path={`${path}/addQuestion/:categoryId/:categoryName`} component={AddQuestion} />
         </Switch>
       </Flex>
     </Layout>

@@ -15,6 +15,7 @@ import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Input } from "@chakra-ui/input";
 import { MdDeleteOutline } from "react-icons/md";
 import { GrAdd } from "react-icons/gr";
+import { useHistory, useRouteMatch } from "react-router-dom";
 
 import config from "../../config";
 
@@ -28,6 +29,10 @@ const Categories = () => {
   const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const history = useHistory();
+  const { url } = useRouteMatch();
+
+  console.log(categories);
 
   // for fetching the categories
   async function fetchCategories() {
@@ -139,6 +144,7 @@ const Categories = () => {
           rounded={5}
         >
           <div>
+            {/* the modal button to open up the create category modal */}
             <Button mb={10} onClick={onOpen} colorScheme="blue">
               Add new Category
             </Button>
@@ -177,6 +183,7 @@ const Categories = () => {
                 <Th>Actions</Th>
               </Thead>
               <Tbody>
+                {/* showing up all the categories */}
                 {categories.map((category) => {
                   return (
                     <Tr key={category._id}>
@@ -189,7 +196,15 @@ const Categories = () => {
                           onClick={() => deleteCategory(category._id)}
                           icon={<MdDeleteOutline />}
                         />
-                        <IconButton color="#fff" colorScheme="blue" icon={<GrAdd />} />
+                        {/* after clicking on the button the user should be redirected to the /admin/addQuestion/:categoryId page */}
+                        <IconButton
+                          onClick={() =>
+                            history.push(`${url}/addQuestion/${category._id}/${category.name}`)
+                          }
+                          color="#fff"
+                          colorScheme="blue"
+                          icon={<GrAdd />}
+                        />
                       </Td>
                     </Tr>
                   );
@@ -197,6 +212,7 @@ const Categories = () => {
               </Tbody>
             </Table>
           ) : (
+            // if there is no category on the DB this image and text should shown instead of the categories
             <Flex w="100%" justify="center" direction="column" align="center" py={20}>
               <img
                 style={{ width: "100%", maxWidth: "300px", marginBottom: 20 }}

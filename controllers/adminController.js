@@ -1,9 +1,10 @@
 const Category = require("../models/category");
+const Question = require("../models/question");
 
 module.exports = {
   getCategories: async function (req, res, next) {
     try {
-      const categories = (await Category.find({})) || [];
+      const categories = (await Category.find({}).populate("questions")) || [];
 
       res.status(201).json({ categories });
     } catch (err) {
@@ -39,11 +40,30 @@ module.exports = {
 
       const deletedDoc = await Category.findByIdAndDelete({ _id: id });
 
+      await Question.deleteMany({ category: id });
+
       const updatedDocs = await Category.find({});
 
       res
         .status(201)
         .json({ msg: `"${deletedDoc.name}" has been deleted`, categories: updatedDocs });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  addQuestion: async function (req, res, next) {
+    try {
+      const { categoryId } = req.params;
+      const { question, options, answer } = req.body;
+
+      const newQuestion = new Question({ question, options, answer, category: categoryId });
+
+      await newQuestion.save();
+
+      await Category.updateOne({ _id: categoryId }, { $push: { questions: newQuestion } });
+
+      res.status(201).json({ msg: "Question has been added to the category" });
     } catch (err) {
       next(err);
     }
