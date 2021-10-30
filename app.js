@@ -9,9 +9,11 @@ const path = require("path");
 // internal dependencies
 // routers / routes
 const authRouter = require("./routes/authRouter");
+const adminRouter = require("./routes/adminRouter");
 
 // middleware's
 const { notFoundHandler, errorHandler } = require("./middlewares/common/errorHandler");
+const authorizeAmin = require("./middlewares/auth/authorizeAdmin");
 
 const app = express();
 
@@ -31,6 +33,8 @@ mongoose
 
 // application routes
 app.use("/get_auth", authRouter);
+// only the admin can access it!
+app.use("/get_admin", authorizeAmin, adminRouter);
 
 // for production
 if (process.env.NODE_ENV === "production") {

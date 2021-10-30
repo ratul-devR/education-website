@@ -1,15 +1,31 @@
+import { Flex } from "@chakra-ui/layout";
 import { useEffect } from "react";
+import { Switch, Route, useRouteMatch } from "react-router-dom";
+
+import Layout from "../layouts/Admin";
+
 import config from "../config";
 
-const Admin = ({ user }) => {
+// pages
+import Categories from "../components/Admin/Categories";
+import Users from "../components/Admin/Users";
+
+const Admin = () => {
+  const { path } = useRouteMatch();
+
   useEffect(() => {
     document.title = `${config.appName} - Admin dashboard`;
   }, []);
 
   return (
-    <div>
-      <h1>Hey there admin: {user.lastName}</h1>
-    </div>
+    <Layout>
+      <Flex bg="gray.100" direction="column" flex={1} w="full" overflowX="hidden">
+        <Switch>
+          <Route path={path} exact component={Categories} />
+          <Route path={`${path}/users`} component={Users} />
+        </Switch>
+      </Flex>
+    </Layout>
   );
 };
 

@@ -11,9 +11,7 @@ module.exports = {
         console.log(err.message || err);
       }
 
-      res
-        .status(err.status || 500)
-        .json({ status: err.status || 500, message: err.message || err });
+      res.status(err.status || 500).json({ status: err.status || 500, msg: err.message || err });
     }
   },
 };
