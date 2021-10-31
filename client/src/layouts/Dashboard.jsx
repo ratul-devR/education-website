@@ -1,12 +1,13 @@
 import { Button, IconButton } from "@chakra-ui/button";
 import { Flex, Heading, HStack, VStack } from "@chakra-ui/layout";
 import { Tooltip } from "@chakra-ui/tooltip";
-import { FaChartPie, FaUserFriends } from "react-icons/fa";
+import { MdQuiz } from "react-icons/md";
+import { BsGrid1X2Fill } from "react-icons/bs";
 import { NavLink, useRouteMatch } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
 
 // this is the layout of the admin page
-const Admin = ({ children }) => {
+const Dashboard = ({ children }) => {
   const { url } = useRouteMatch();
 
   const logout = useLogout();
@@ -24,7 +25,7 @@ const Admin = ({ children }) => {
         maxW={16}
         py={5}
       >
-        <Tooltip label="Categories" placement="right" hasArrow>
+        <Tooltip label="Quiz / Learn" placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"
@@ -32,17 +33,18 @@ const Admin = ({ children }) => {
             exact
             to={url}
             activeStyle={{ background: "#319795", color: "#fff" }}
-            icon={<FaChartPie />}
+            icon={<MdQuiz />}
           />
         </Tooltip>
-        <Tooltip label="Users" placement="right" hasArrow>
+        <Tooltip label="Courses" placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"
             as={NavLink}
-            to={`${url}/users`}
+            exact
+            to={`${url}/courses`}
             activeStyle={{ background: "#319795", color: "#fff" }}
-            icon={<FaUserFriends />}
+            icon={<BsGrid1X2Fill />}
           />
         </Tooltip>
       </Flex>
@@ -92,4 +94,4 @@ const Admin = ({ children }) => {
   );
 };
 
-export default Admin;
+export default Dashboard;

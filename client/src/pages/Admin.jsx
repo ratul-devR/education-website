@@ -1,4 +1,3 @@
-import { Flex } from "@chakra-ui/layout";
 import { useEffect } from "react";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 
@@ -10,6 +9,7 @@ import config from "../config";
 import Categories from "../components/Admin/Categories";
 import Users from "../components/Admin/Users";
 import AddQuestion from "../components/Admin/AddQuestion";
+import Questions from "../components/Admin/Questions";
 
 const Admin = () => {
   const { path } = useRouteMatch();
@@ -20,13 +20,12 @@ const Admin = () => {
 
   return (
     <Layout>
-      <Flex bg="gray.100" direction="column" flex={1} w="full" overflowX="hidden">
-        <Switch>
-          <Route path={path} exact component={Categories} />
-          <Route path={`${path}/users`} component={Users} />
-          <Route path={`${path}/addQuestion/:categoryId/:categoryName`} component={AddQuestion} />
-        </Switch>
-      </Flex>
+      <Switch>
+        <Route path={path} exact component={Categories} />
+        <Route path={`${path}/users`} component={Users} />
+        <Route path={`${path}/addQuestion/:categoryId/:categoryName`} component={AddQuestion} />
+        <Route path={`${path}/:categoryId/questions`} component={Questions} />
+      </Switch>
     </Layout>
   );
 };

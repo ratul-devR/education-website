@@ -66,7 +66,7 @@ const App = () => {
     return (
       <BrowserRouter>
         <Switch>
-          <ProtectedRoute exact path="/dashboard" component={Dashboard} />
+          <ProtectedRoute path="/dashboard" component={Dashboard} />
           <AdminRoute path="/admin" component={Admin} />
           <Route path="/auth" component={Registration} />
           <Redirect path="*" to="/auth" />

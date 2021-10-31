@@ -60,6 +60,6 @@ module.exports = {
 
   logout: function (req, res) {
     res.clearCookie(process.env.COOKIE_NAME);
-    res.status(201).json({ message: "Logged out!" });
+    res.status(201).json({ msg: "Logged out!" });
   },
 };

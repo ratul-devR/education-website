@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const Category = require("../models/category");
 const Question = require("../models/question");
 
@@ -64,6 +66,45 @@ module.exports = {
       await Category.updateOne({ _id: categoryId }, { $push: { questions: newQuestion } });
 
       res.status(201).json({ msg: "Question has been added to the category" });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getQuestions: async function (req, res, next) {
+    try {
+      const { categoryId } = req.params;
+
+      if (mongoose.isValidObjectId(categoryId)) {
+        const category =
+          (await Category.findOne({ _id: categoryId }).populate("questions")) || null;
+
+        if (category) {
+          res.status(200).json({ questions: category.questions, category });
+        } else {
+          res.status(404).json({ msg: "No category found" });
+        }
+      } else {
+        res.status(404).json({ msg: "Invalid Category" });
+      }
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  deleteQuestion: async function (req, res, next) {
+    try {
+      const { questionId, categoryId } = req.params;
+
+      const deletedQuestion = await Question.findByIdAndDelete({ _id: questionId });
+
+      const updatedQuestions = (await Category.findOne({ _id: categoryId }).populate("questions"))
+        .questions;
+
+      res.status(201).json({
+        msg: `"${deletedQuestion.question}" has been removed`,
+        questions: updatedQuestions,
+      });
     } catch (err) {
       next(err);
     }
