@@ -5,6 +5,8 @@ import { FaChartPie, FaUserFriends } from "react-icons/fa";
 import { NavLink, useRouteMatch } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
 
+import Logo from "../assets/logo.png";
+
 // this is the layout of the admin page
 const Admin = ({ children }) => {
   const { url } = useRouteMatch();
@@ -30,7 +32,7 @@ const Admin = ({ children }) => {
             as={NavLink}
             exact
             to={url}
-            activeStyle={{ background: "#319795", color: "#fff" }}
+            activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<FaChartPie />}
           />
         </Tooltip>
@@ -40,7 +42,7 @@ const Admin = ({ children }) => {
             bg="white"
             as={NavLink}
             to={`${url}/users`}
-            activeStyle={{ background: "#319795", color: "#fff" }}
+            activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<FaUserFriends />}
           />
         </Tooltip>
@@ -55,10 +57,8 @@ const Admin = ({ children }) => {
           height="60px"
           background="white"
         >
-          <Heading fontSize="3xl" fontWeight="normal">
-            Edu
-          </Heading>
-          <Button onClick={logout} colorScheme="teal">
+          <img src={Logo} style={{ width: "150px", display: "block" }} alt="Logo" />
+          <Button onClick={logout} colorScheme="blue">
             Log out
           </Button>
         </Flex>

@@ -44,12 +44,13 @@ const Categories = () => {
   }
 
   // for fetching the categories
-  async function fetchCategories() {
+  async function fetchCategories(abortController) {
     try {
       const res = await fetch(`${config.serverURL}/get_admin/categories`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
+        signal: abortController.signal,
       });
       const body = await res.json();
 
@@ -174,7 +175,7 @@ const Categories = () => {
               </Button>
               <Button
                 onClick={CreateCategory}
-                colorScheme="teal"
+                colorScheme="purple"
                 disabled={!title || !description || !price}
               >
                 Save

@@ -8,7 +8,6 @@ import Layout from "../layouts/Dashboard";
 // pages
 import UserCourses from "../components/Dashboard/UserCourses";
 import Courses from "../components/Dashboard/Courses";
-import CreateOrg from "../components/Dashboard/CreateOrg";
 
 const Dashboard = () => {
   const { path } = useRouteMatch();
@@ -22,7 +21,6 @@ const Dashboard = () => {
       <Switch>
         <Route path={path} exact component={UserCourses} />
         <Route path={`${path}/courses`} component={Courses} />
-        <Route path={`${path}/createOrg`} component={CreateOrg} />
       </Switch>
     </Layout>
   );

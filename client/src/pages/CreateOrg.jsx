@@ -4,10 +4,10 @@ import { Input } from "@chakra-ui/input";
 import { Select } from "@chakra-ui/select";
 import { useState } from "react";
 import { Button } from "@chakra-ui/button";
-import config from "../../config";
+import config from "../config";
 // import { useHistory } from "react-router-dom";
 // import { useDispatch } from "react-redux";
-import useToast from "../../hooks/useToast";
+import useToast from "../hooks/useToast";
 
 const InputField = (props) => {
   return <Input {...props} mb={3} bg="#fff" />;
@@ -56,8 +56,11 @@ const CreateOrg = () => {
       const body = await res.json();
 
       if (res.ok) {
-        window.location.href = "/dashboard";
-        toast({ status: "success", description: body.msg });
+        toast({
+          status: "info",
+          description: `Here is your affiliate link > ${body.affiliateLink}`,
+          duration: 99999999999999,
+        });
       } else {
         toast({ status: "error", description: body.msg || "Unexpected Error occurred" });
       }
@@ -67,7 +70,7 @@ const CreateOrg = () => {
   }
 
   return (
-    <Flex w="full" justify="center">
+    <Flex w="full" justify="center" py={20}>
       <Flex boxShadow="md" w="450px" bg="gray.50" p={10} direction="column" rounded={5}>
         <Heading color="teal" fontSize="2xl" fontWeight="normal" textAlign="center" mb={3}>
           Create Organization
@@ -105,11 +108,11 @@ const CreateOrg = () => {
             !province ||
             !phone ||
             !type ||
-            !yourPhone ||
+            !yourName ||
             !yourPosition
           }
           onClick={registerOrg}
-          colorScheme="teal"
+          colorScheme="blue"
         >
           Register Organization
         </Button>

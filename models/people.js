@@ -9,19 +9,8 @@ const dataSchema = new mongoose.Schema({
   password: { type: String, required: true, trim: true },
   role: { type: String, enum: ["user", "admin", "organization"], default: "user" },
 
-  // for organization role
-  affiliateLink: String,
-
-  orgName: String,
-  streetAddress: String,
-  postalCode: String,
-  province: String,
-  phone: String,
-  type: String,
-  orgEmployeeName: String,
-  orgEmployeePosition: String,
-
-  referCount: { type: Number, default: 0 },
+  // if any org has referred him
+  referer: { type: mongoose.Schema.Types.ObjectId, ref: "Org" },
 
   // courses he has purchased
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],

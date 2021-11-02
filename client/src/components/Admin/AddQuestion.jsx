@@ -134,7 +134,7 @@ const AddQuestion = () => {
       </Select>
 
       <Button
-        colorScheme="teal"
+        colorScheme="green"
         disabled={!options || options.length == 0 || !answer || !question}
         onClick={addQuestionToCategory}
       >

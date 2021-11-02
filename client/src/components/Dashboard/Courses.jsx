@@ -92,7 +92,7 @@ const Courses = () => {
                   <Heading fontWeight="normal" fontSize="xl">
                     {course.name}
                   </Heading>
-                  <Button /* onClick={() => AddCourse(course._id)} */ colorScheme="orange">
+                  <Button /* onClick={() => AddCourse(course._id)} */ colorScheme="blue">
                     Get
                   </Button>
                 </Flex>

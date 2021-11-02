@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link as RouterLink, useHistory, useRouteMatch, useLocation } from "react-router-dom";
+import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
 import { Flex, Heading, Button, Input, Text, Link } from "@chakra-ui/react";
 import validator from "validator";
 import { useDispatch } from "react-redux";
@@ -28,7 +28,6 @@ const Register = () => {
     password: "",
     conPass: "",
   });
-  const { path } = useRouteMatch();
   const dispatch = useDispatch();
   const toast = useToast();
   const history = useHistory();
@@ -72,7 +71,13 @@ const Register = () => {
       const res = await fetch(`${config.serverURL}/get_auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName: fName, lastName: lName, email, password }),
+        body: JSON.stringify({
+          firstName: fName,
+          lastName: lName,
+          email,
+          password,
+          referer: refererId,
+        }),
         credentials: "include",
       });
       const body = await res.json();
@@ -89,24 +94,8 @@ const Register = () => {
     }
   }
 
-  async function doAffiliate(abortController) {
-    try {
-      await fetch(`${config.serverURL}/get_auth/affiliate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refererId }),
-        signal: abortController.signal,
-      });
-    } catch (err) {
-      toast({ status: "error", description: err.message || "There was an unexpected error" });
-    }
-  }
-
   useEffect(() => {
-    const abortController = new AbortController();
     document.title = `${config.appName} - Register Account`;
-    doAffiliate(abortController);
-    return () => abortController.abort();
   }, []);
 
   return (
@@ -151,7 +140,7 @@ const Register = () => {
           type="password"
           value={conPass}
         />
-        <Button onClick={ValidateInputInfo} colorScheme="teal" mb={3}>
+        <Button onClick={ValidateInputInfo} colorScheme="blue" mb={3}>
           Sign in
         </Button>
         <Text fontSize="md" textAlign="center">

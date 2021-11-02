@@ -8,6 +8,7 @@ const {
   addQuestion,
   getQuestions,
   deleteQuestion,
+  getUsers,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -17,6 +18,8 @@ const router = express.Router();
 // * all the category related routes
 // for getting all the categories
 router.get("/categories", getCategories);
+// for getting all the user information's
+router.get("/users", getUsers);
 // for adding a new category
 router.post("/post_category", postCategory);
 // for deleting a category

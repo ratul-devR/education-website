@@ -5,12 +5,11 @@ import { MdQuiz } from "react-icons/md";
 import { BsGrid1X2Fill } from "react-icons/bs";
 import { NavLink, useRouteMatch } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
-import { GrOrganization } from "react-icons/gr";
-import { useSelector } from "react-redux";
+
+import Logo from "../assets/logo.png";
 
 // this is the layout of the admin page
 const Dashboard = ({ children }) => {
-  const { user } = useSelector((state) => state.authReducer);
   const { url } = useRouteMatch();
 
   const logout = useLogout();
@@ -34,7 +33,7 @@ const Dashboard = ({ children }) => {
             as={NavLink}
             exact
             to={url}
-            activeStyle={{ background: "#319795", color: "#fff" }}
+            activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<MdQuiz />}
           />
         </Tooltip>
@@ -45,23 +44,10 @@ const Dashboard = ({ children }) => {
             as={NavLink}
             exact
             to={`${url}/courses`}
-            activeStyle={{ background: "#319795", color: "#fff" }}
+            activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<BsGrid1X2Fill />}
           />
         </Tooltip>
-        {user.role !== "organization" && (
-          <Tooltip label="Create Organization" placement="right" hasArrow>
-            <IconButton
-              rounded={0}
-              bg="white"
-              as={NavLink}
-              exact
-              to={`${url}/createOrg`}
-              activeStyle={{ background: "#319795", color: "#fff" }}
-              icon={<GrOrganization />}
-            />
-          </Tooltip>
-        )}
       </Flex>
       <VStack spacing={0} flex={1} overflow="hidden" h="full" w="full">
         <Flex
@@ -73,10 +59,8 @@ const Dashboard = ({ children }) => {
           height="60px"
           background="white"
         >
-          <Heading fontSize="3xl" fontWeight="normal">
-            Edu
-          </Heading>
-          <Button onClick={logout} colorScheme="teal">
+          <img src={Logo} style={{ width: "150px", display: "block" }} alt="Logo" />
+          <Button onClick={logout} colorScheme="blue">
             Log out
           </Button>
         </Flex>

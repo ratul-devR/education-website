@@ -63,7 +63,7 @@ const Login = () => {
 
       if (res.ok && body.user) {
         dispatch(LOGIN(body.user));
-        history.push("/dashboard");
+        history.push(body.user.role === "admin" ? "/admin" : "dashboard");
         toast({ status: "success", description: body.msg });
       } else if (res.status === 400) {
         toast({ status: "error", description: body.msg || "We have an error" });
@@ -98,7 +98,7 @@ const Login = () => {
           type="password"
           value={password}
         />
-        <Button onClick={ValidateInputInfo} colorScheme="teal" mb={3}>
+        <Button onClick={ValidateInputInfo} colorScheme="blue" mb={3}>
           Sign in
         </Button>
         <Text fontSize="md" textAlign="center">

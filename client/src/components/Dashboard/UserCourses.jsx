@@ -1,17 +1,17 @@
-import { Box, Flex, Grid, Heading } from "@chakra-ui/layout";
-import { Link } from "react-router-dom";
-import { Link as ChakraLink, Text, Progress } from "@chakra-ui/react";
-import { Button } from "@chakra-ui/button";
-import { Spinner } from "@chakra-ui/spinner";
-import { useEffect, useState } from "react";
+// import { Box, Flex, Grid, Heading } from "@chakra-ui/layout";
+// import { Link } from "react-router-dom";
+// import { Link as ChakraLink, Text, Progress } from "@chakra-ui/react";
+// import { Button } from "@chakra-ui/button";
+// import { Spinner } from "@chakra-ui/spinner";
+// import { useEffect, useState } from "react";
 
-import LearnImage from "../../assets/learn.svg";
-import useToast from "../../hooks/useToast";
-import config from "../../config";
-import { useSelector } from "react-redux";
+// import LearnImage from "../../assets/learn.svg";
+// import useToast from "../../hooks/useToast";
+// import config from "../../config";
+// import { useSelector } from "react-redux";
 
 const UserCourses = () => {
-  const { user } = useSelector((state) => state.authReducer);
+  // const { user } = useSelector((state) => state.authReducer);
 
   // if (courses && courses.length > 0) {
   //   return <Flex direction="column"></Flex>;
@@ -35,18 +35,8 @@ const UserCourses = () => {
   return (
     <div>
       <h1>all of your courses will be here</h1>
-      {user.role == "organization" && (
-        <p>
-          Organization affiliate link:{" "}
-          <a href={user.affiliateLink} target="_blank" rel="noopener noreferrer">
-            {user.affiliateLink}
-          </a>
-          <br />
-          <br />
-          <br />
-          total redirects: {user.referCount}
-        </p>
-      )}
+      <br />
+      <p>This functionality is under construction. Coming soon.....</p>
     </div>
   );
 };

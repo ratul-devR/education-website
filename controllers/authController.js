@@ -1,4 +1,5 @@
 const User = require("../models/people");
+const Org = require("../models/org");
 
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
@@ -36,9 +37,20 @@ module.exports = {
 
   register: async function (req, res, next) {
     try {
-      const { firstName, lastName, email, password } = req.body;
+      const { firstName, lastName, email, password, referer } = req.body;
 
-      const newUser = new User({ firstName, lastName, email, password });
+      let newUser;
+
+      // if the user is referred
+      if (referer && mongoose.isValidObjectId(referer)) {
+        newUser = new User({ firstName, lastName, email, password, referer });
+      } else {
+        newUser = new User({ firstName, lastName, email, password });
+      }
+
+      // updating the referer
+      mongoose.isValidObjectId(referer) &&
+        (await Org.updateOne({ _id: referer }, { $push: { refers: newUser._id } }));
 
       await newUser.save();
 
@@ -69,27 +81,26 @@ module.exports = {
         orgEmployeePosition,
       } = req.body;
 
-      const affiliateLink = `${process.env.APP_URL}/auth/register?refererId=${req.user._id}`;
+      const newOrg = new Org({
+        name: orgName,
+        streetAddress,
+        postalCode,
+        province,
+        phone,
+        type,
+        employeeName: orgEmployeeName,
+        employeePosition: orgEmployeePosition,
+      });
 
-      const updatedUser = await User.updateOne(
-        { _id: req.user._id },
-        {
-          orgName,
-          streetAddress,
-          postalCode,
-          province,
-          phone,
-          type,
-          orgEmployeeName,
-          orgEmployeePosition,
-          role: "organization",
-          affiliateLink,
-        }
-      );
+      const affiliateLink = `${process.env.APP_URL}/auth/register?refererId=${newOrg._id}`;
+
+      await newOrg.save();
+
+      await Org.updateOne({ _id: newOrg._id }, { affiliateLink });
 
       res.status(201).json({
         msg: "You are a organization now. Go to your dashboard to get your aff link",
-        user: updatedUser,
+        affiliateLink,
       });
     } catch (err) {
       next(err);
