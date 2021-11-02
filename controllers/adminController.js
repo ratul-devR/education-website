@@ -16,14 +16,14 @@ module.exports = {
 
   postCategory: async function (req, res, next) {
     try {
-      const { categoryName } = req.body;
+      const { title, description, price } = req.body;
 
-      const categoryExist = (await Category.findOne({ name: categoryName })) || null;
+      const categoryExist = (await Category.findOne({ name: title })) || null;
 
       if (categoryExist) {
         res.status(400).json({ msg: "This category already exists" });
       } else {
-        const newCategory = new Category({ name: categoryName });
+        const newCategory = new Category({ name: title, description, price });
         await newCategory.save();
 
         const updatedCategories = await Category.find({});

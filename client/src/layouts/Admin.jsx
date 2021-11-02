@@ -19,7 +19,6 @@ const Admin = ({ children }) => {
         borderRight="1px solid"
         borderColor="gray.200"
         background="white"
-        gridRowGap={5}
         w="full"
         maxW={16}
         py={5}

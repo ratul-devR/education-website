@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link as RouterLink, useHistory, useRouteMatch } from "react-router-dom";
+import { Link as RouterLink, useHistory, useRouteMatch, useLocation } from "react-router-dom";
 import { Flex, Heading, Button, Input, Text, Link } from "@chakra-ui/react";
 import validator from "validator";
 import { useDispatch } from "react-redux";
@@ -16,6 +16,10 @@ const InputField = (props) => {
   return <Input {...props} mb={3} />;
 };
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
 const Register = () => {
   const [{ fName, lName, email, password, conPass }, setInput] = useState({
     fName: "",
@@ -28,6 +32,10 @@ const Register = () => {
   const dispatch = useDispatch();
   const toast = useToast();
   const history = useHistory();
+
+  const query = useQuery();
+
+  const refererId = query.get("refererId");
 
   // for handling input change
   function HandleInputChange(event) {
@@ -81,8 +89,24 @@ const Register = () => {
     }
   }
 
+  async function doAffiliate(abortController) {
+    try {
+      await fetch(`${config.serverURL}/get_auth/affiliate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refererId }),
+        signal: abortController.signal,
+      });
+    } catch (err) {
+      toast({ status: "error", description: err.message || "There was an unexpected error" });
+    }
+  }
+
   useEffect(() => {
+    const abortController = new AbortController();
     document.title = `${config.appName} - Register Account`;
+    doAffiliate(abortController);
+    return () => abortController.abort();
   }, []);
 
   return (

@@ -16,6 +16,7 @@ import { Input } from "@chakra-ui/input";
 import { MdDeleteOutline } from "react-icons/md";
 import { GrAdd } from "react-icons/gr";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { Textarea } from "@chakra-ui/textarea";
 
 import config from "../../config";
 
@@ -24,13 +25,23 @@ import useToast from "../../hooks/useToast";
 import No from "../../assets/no.svg";
 
 const Categories = () => {
-  const [input, setInput] = useState("");
+  const [{ title, description, price }, setInput] = useState({
+    title: "",
+    description: "",
+    price: "",
+  });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const history = useHistory();
   const { url } = useRouteMatch();
+
+  // for handling input change in the modal
+  function HandleInputChange(event) {
+    const { name, value } = event.target;
+    setInput((pre) => ({ ...pre, [name]: value }));
+  }
 
   // for fetching the categories
   async function fetchCategories() {
@@ -59,7 +70,7 @@ const Categories = () => {
       const res = await fetch(`${config.serverURL}/get_admin/post_category`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ categoryName: input }),
+        body: JSON.stringify({ title, description, price }),
         credentials: "include",
       });
       const body = await res.json();
@@ -69,10 +80,8 @@ const Categories = () => {
         setInput("");
         onClose();
         toast({ status: "success", description: body.msg });
-      } else if (res.status === 400) {
-        toast({ status: "error", description: body.msg });
-      } else if (res.status === 401) {
-        toast({ status: "error", description: body.msg });
+      } else {
+        toast({ status: "warning", description: body.msg });
       }
     } catch (err) {
       toast({ status: "error", description: err.message || "We are having unexpected errors" });
@@ -138,18 +147,36 @@ const Categories = () => {
             <ModalCloseButton />
             <ModalBody>
               <Input
-                value={input}
-                onChange={(event) => {
-                  setInput(event.target.value);
-                }}
+                value={title}
+                onChange={HandleInputChange}
+                name="title"
                 placeholder="Enter the category name"
+                mb={3}
+              />
+              <Textarea
+                name="description"
+                onChange={HandleInputChange}
+                value={description}
+                placeholder="description"
+                mb={3}
+              />
+              <Input
+                placeholder="Price"
+                onChange={HandleInputChange}
+                type="number"
+                name="price"
+                value={price}
               />
             </ModalBody>
             <ModalFooter>
               <Button mr={3} onClick={onClose} colorScheme="blue">
                 Cancel
               </Button>
-              <Button onClick={CreateCategory} colorScheme="teal" disabled={!input}>
+              <Button
+                onClick={CreateCategory}
+                colorScheme="teal"
+                disabled={!title || !description || !price}
+              >
                 Save
               </Button>
             </ModalFooter>

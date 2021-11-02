@@ -8,7 +8,7 @@ module.exports = async function (req, res, next) {
     if (cookies) {
       const token = cookies[process.env.COOKIE_NAME];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = (await User.findOne({ _id: decoded._id })) || null;
+      const user = await User.findOne({ _id: decoded._id });
 
       if (!user) {
         res.status(401).json({ msg: "You are not logged in" });

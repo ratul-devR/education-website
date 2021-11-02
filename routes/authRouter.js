@@ -6,6 +6,8 @@ const {
   register,
   sendResponseIfLoggedIn,
   logout,
+  registerOrg,
+  handleAffiliate,
 } = require("../controllers/authController");
 
 const checkEmailExistence = require("../middlewares/auth/checkEmailExistence");
@@ -18,6 +20,12 @@ router.post("/register", checkEmailExistence, register);
 
 // for logging in a user
 router.post("/login", login);
+
+// for doing affiliate stuffs
+router.post("/affiliate", handleAffiliate);
+
+// for registering an org
+router.post("/registerOrg", checkLogin, registerOrg);
 
 // for checking if the user is authenticated or not
 router.get("/checkLogin", checkLogin, sendResponseIfLoggedIn);

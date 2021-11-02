@@ -8,6 +8,25 @@ const dataSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true, trim: true },
   role: { type: String, enum: ["user", "admin", "organization"], default: "user" },
+
+  // for organization role
+  affiliateLink: String,
+
+  orgName: String,
+  streetAddress: String,
+  postalCode: String,
+  province: String,
+  phone: String,
+  type: String,
+  orgEmployeeName: String,
+  orgEmployeePosition: String,
+
+  referCount: { type: Number, default: 0 },
+
+  // courses he has purchased
+  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
+  // questions he has got
+  question: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
 });
 
 // for hashing the password

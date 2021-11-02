@@ -5,9 +5,12 @@ import { MdQuiz } from "react-icons/md";
 import { BsGrid1X2Fill } from "react-icons/bs";
 import { NavLink, useRouteMatch } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
+import { GrOrganization } from "react-icons/gr";
+import { useSelector } from "react-redux";
 
 // this is the layout of the admin page
 const Dashboard = ({ children }) => {
+  const { user } = useSelector((state) => state.authReducer);
   const { url } = useRouteMatch();
 
   const logout = useLogout();
@@ -20,7 +23,6 @@ const Dashboard = ({ children }) => {
         borderRight="1px solid"
         borderColor="gray.200"
         background="white"
-        gridRowGap={5}
         w="full"
         maxW={16}
         py={5}
@@ -47,6 +49,19 @@ const Dashboard = ({ children }) => {
             icon={<BsGrid1X2Fill />}
           />
         </Tooltip>
+        {user.role !== "organization" && (
+          <Tooltip label="Create Organization" placement="right" hasArrow>
+            <IconButton
+              rounded={0}
+              bg="white"
+              as={NavLink}
+              exact
+              to={`${url}/createOrg`}
+              activeStyle={{ background: "#319795", color: "#fff" }}
+              icon={<GrOrganization />}
+            />
+          </Tooltip>
+        )}
       </Flex>
       <VStack spacing={0} flex={1} overflow="hidden" h="full" w="full">
         <Flex
