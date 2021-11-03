@@ -72,7 +72,7 @@ const CreateOrg = () => {
   return (
     <Flex w="full" justify="center" py={20}>
       <Flex boxShadow="md" w="450px" bg="gray.50" p={10} direction="column" rounded={5}>
-        <Heading color="teal" fontSize="2xl" fontWeight="normal" textAlign="center" mb={3}>
+        <Heading color="primary" fontSize="2xl" fontWeight="normal" textAlign="center" mb={3}>
           Create Organization
         </Heading>
         <InputField placeholder="Name of your org" name="name" onChange={handleInputChange} />
@@ -112,7 +112,7 @@ const CreateOrg = () => {
             !yourPosition
           }
           onClick={registerOrg}
-          colorScheme="blue"
+          colorScheme="secondary"
         >
           Register Organization
         </Button>

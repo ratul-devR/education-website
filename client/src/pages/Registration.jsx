@@ -23,7 +23,7 @@ const Registration = () => {
         <UnorderedList display="flex" gridColumnGap={5} alignItems="center">
           <ListItem listStyleType="none">
             New organization?{" "}
-            <Link as={NavLink} color="teal" exact to={`${path}/createOrg`}>
+            <Link as={NavLink} color="primary" exact to={`${path}/createOrg`}>
               Sign up
             </Link>{" "}
             to get started

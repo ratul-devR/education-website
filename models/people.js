@@ -12,10 +12,10 @@ const dataSchema = new mongoose.Schema({
   // if any org has referred him
   referer: { type: mongoose.Schema.Types.ObjectId, ref: "Org" },
 
-  // courses he has purchased
+  // courses he has added
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   // questions he has got
-  question: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
+  questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
 });
 
 // for hashing the password

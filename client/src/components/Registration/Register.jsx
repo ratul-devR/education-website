@@ -101,7 +101,7 @@ const Register = () => {
   return (
     <Flex h="full" justify="center" align="center">
       <Flex maxW="95%" w="400px" direction="column" p={10} bg="white" boxShadow="lg">
-        <Heading textAlign="center" color="teal" fontWeight="normal" mb={5}>
+        <Heading textAlign="center" color="primary" fontWeight="normal" mb={5}>
           Sign up
         </Heading>
         <InputField
@@ -140,12 +140,12 @@ const Register = () => {
           type="password"
           value={conPass}
         />
-        <Button onClick={ValidateInputInfo} colorScheme="blue" mb={3}>
+        <Button onClick={ValidateInputInfo} colorScheme="secondary" mb={3}>
           Sign in
         </Button>
         <Text fontSize="md" textAlign="center">
           Already have an account?{" "}
-          <Link color="teal" as={RouterLink} to="/auth">
+          <Link color="primary" as={RouterLink} to="/auth">
             Login
           </Link>
         </Text>

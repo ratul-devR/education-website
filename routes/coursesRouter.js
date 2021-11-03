@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { getCourses, addQuestion, getAuthUserCourses } = require("../controllers/courseController");
+const { getCourses, getAuthUserCourses, addCourse } = require("../controllers/courseController");
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ router.get("/", getCourses);
 // for getting all the courses of the auth user
 router.get("/getAuthUserCourses", getAuthUserCourses);
 
-// for adding a question
-router.post("/addCourse", addQuestion);
+// for adding a course
+router.post("/addCourse", addCourse);
 
 module.exports = router;

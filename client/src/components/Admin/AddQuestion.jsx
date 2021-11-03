@@ -65,7 +65,7 @@ const AddQuestion = () => {
 
   return (
     <Flex direction="column" w="100%" maxW="400px" margin="auto">
-      <Heading textAlign="center" color="blue.400" mb={5} fontWeight="normal" fontSize="2xl">
+      <Heading textAlign="center" color="primary" mb={5} fontWeight="normal" fontSize="2xl">
         Add Question to "{categoryName}"
       </Heading>
       <Input
@@ -134,7 +134,7 @@ const AddQuestion = () => {
       </Select>
 
       <Button
-        colorScheme="green"
+        colorScheme="secondary"
         disabled={!options || options.length == 0 || !answer || !question}
         onClick={addQuestionToCategory}
       >

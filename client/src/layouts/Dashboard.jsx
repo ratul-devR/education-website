@@ -1,5 +1,5 @@
 import { Button, IconButton } from "@chakra-ui/button";
-import { Flex, Heading, HStack, VStack } from "@chakra-ui/layout";
+import { Flex, HStack, VStack } from "@chakra-ui/layout";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { MdQuiz } from "react-icons/md";
 import { BsGrid1X2Fill } from "react-icons/bs";
@@ -75,7 +75,7 @@ const Dashboard = ({ children }) => {
             align="center"
           >
             <Flex
-              p={10}
+              p={[5, 10, 10, 10]}
               w="95%"
               overflowX="hidden"
               flexDirection="column"

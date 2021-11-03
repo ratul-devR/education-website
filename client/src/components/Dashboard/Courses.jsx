@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Spinner } from "@chakra-ui/spinner";
-import { Flex, Grid, Box } from "@chakra-ui/layout";
+import { Flex, SimpleGrid, Box } from "@chakra-ui/layout";
 import { Heading, Text } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
 import { useHistory } from "react-router-dom";
@@ -38,27 +38,35 @@ const Courses = () => {
   }
 
   // for adding a course
-  async function AddCourse(courseId) {
+  async function addCourse(courseId) {
     try {
       const res = await fetch(`${config.serverURL}/get_courses/addCourse`, {
         method: "POST",
-        body: JSON.stringify({ courseId }),
         headers: { "Content-Type": "application/json" },
         credentials: "include",
+        body: JSON.stringify({ courseId }),
       });
       const body = await res.json();
 
       if (res.ok) {
         history.push("/dashboard");
-        toast({ status: "success", description: body.msg });
+        toast({ status: "success", description: body.msg, duration: 60000 });
+      } else if (res.status === 404) {
+        toast({ status: "info", description: body.msg });
+      } else if (res.status === 401) {
+        toast({ status: "warning", description: body.msg, title: "Attention" });
       } else {
-        toast({ status: "error", description: body.msg || "Cannot load courses" });
+        toast({
+          status: "error",
+          description: body.msg || "We are having unexpected server side errors",
+        });
       }
     } catch (err) {
-      toast({ status: "error", description: err.message });
+      toast({ status: "error", description: err.message || "We are having unexpected issues" });
     }
   }
 
+  // for adding a course
   useEffect(() => {
     const abortController = new AbortController();
 
@@ -77,11 +85,11 @@ const Courses = () => {
 
   return (
     <Flex direction="column">
-      <Heading mb={5} fontSize="2xl" fontWeight="normal" color="blue.600">
+      <Heading mb={5} fontSize="2xl" fontWeight="normal" color="primary">
         Courses
       </Heading>
 
-      <Grid gridTemplateColumns="repeat(auto-fit, minmax(300px, 1fr))" gridGap={3}>
+      <SimpleGrid columns={{ lg: 2, sm: 1, xl: 3, md: 2 }} spacing={3}>
         {courses &&
           courses.length > 0 &&
           courses.map((course) => {
@@ -92,7 +100,7 @@ const Courses = () => {
                   <Heading fontWeight="normal" fontSize="xl">
                     {course.name}
                   </Heading>
-                  <Button /* onClick={() => AddCourse(course._id)} */ colorScheme="blue">
+                  <Button onClick={() => addCourse(course._id)} colorScheme="secondary">
                     Get
                   </Button>
                 </Flex>
@@ -101,13 +109,13 @@ const Courses = () => {
                   {course.description}
                 </Text>
                 {/* box footer containing some course details like question count etc */}
-                <Heading fontSize="md" fontWeight="normal" color="teal" mt={3}>
+                <Heading fontSize="md" fontWeight="normal" color="primary" mt={3}>
                   {course.questions.length} Questions
                 </Heading>
               </Box>
             );
           })}
-      </Grid>
+      </SimpleGrid>
     </Flex>
   );
 };

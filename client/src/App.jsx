@@ -59,7 +59,7 @@ const App = () => {
   if (pending) {
     return (
       <Flex h="100vh" justify="center" align="center">
-        <Spinner colorScheme="teal" />
+        <Spinner colorScheme="primary" />
       </Flex>
     );
   } else {

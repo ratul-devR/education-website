@@ -136,7 +136,7 @@ const Categories = () => {
     return (
       <div>
         {/* the modal button to open up the create category modal */}
-        <Button mb={10} onClick={onOpen} colorScheme="blue">
+        <Button mb={10} onClick={onOpen} colorScheme="secondary">
           Add new Category
         </Button>
 
@@ -175,7 +175,7 @@ const Categories = () => {
               </Button>
               <Button
                 onClick={CreateCategory}
-                colorScheme="purple"
+                colorScheme="secondary"
                 disabled={!title || !description || !price}
               >
                 Save
@@ -185,7 +185,7 @@ const Categories = () => {
         </Modal>
 
         {categories && categories.length > 0 ? (
-          <Table size="md" colorScheme="gray">
+          <Table size="md" colorScheme="gray" minW="400px">
             <Thead>
               <Th>Category name</Th>
               <Th>Actions</Th>
@@ -213,7 +213,6 @@ const Categories = () => {
                         onClick={() =>
                           history.push(`${url}/addQuestion/${category._id}/${category.name}`)
                         }
-                        color="#fff"
                         colorScheme="blue"
                         icon={<GrAdd />}
                       />

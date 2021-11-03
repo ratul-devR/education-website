@@ -80,7 +80,7 @@ const Login = () => {
   return (
     <Flex h="full" justify="center" align="center">
       <Flex maxW="95%" w="400px" direction="column" p={10} bg="white" boxShadow="lg">
-        <Heading textAlign="center" color="teal" fontWeight="normal" mb={5}>
+        <Heading textAlign="center" color="primary" fontWeight="normal" mb={5}>
           Sign in
         </Heading>
         <InputField
@@ -98,12 +98,12 @@ const Login = () => {
           type="password"
           value={password}
         />
-        <Button onClick={ValidateInputInfo} colorScheme="blue" mb={3}>
+        <Button onClick={ValidateInputInfo} colorScheme="secondary" mb={3}>
           Sign in
         </Button>
         <Text fontSize="md" textAlign="center">
           Don't have an account?{" "}
-          <Link color="teal" as={RouterLink} to={`${path}/register`}>
+          <Link color="primary" as={RouterLink} to={`${path}/register`}>
             Register
           </Link>
         </Text>

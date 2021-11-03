@@ -73,14 +73,14 @@ const Admin = ({ children }) => {
             align="center"
           >
             <Flex
-              p={10}
+              p={[5, 10, 10, 10]}
               w="95%"
-              overflowX="hidden"
               flexDirection="column"
               h="95%"
               bg="white"
               boxShadow="md"
               rounded={5}
+              overflow="auto"
             >
               {children}
             </Flex>

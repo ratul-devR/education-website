@@ -84,7 +84,7 @@ const Questions = () => {
   } else {
     return (
       <div>
-        <Heading fontWeight="normal" fontSize="2xl" color="blue.600" mb={5}>
+        <Heading fontWeight="normal" fontSize="2xl" color="primary" mb={5}>
           Questions in: "{category.name}"
         </Heading>
         <Flex direction="column">

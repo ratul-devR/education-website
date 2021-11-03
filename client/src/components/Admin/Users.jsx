@@ -9,6 +9,7 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const toast = useToast();
 
+  // for fetching all the users
   async function fetchUsers(abortController) {
     try {
       const res = await fetch(`${config.serverURL}/get_admin/users`, {
@@ -48,12 +49,12 @@ const Users = () => {
 
   return (
     <Flex w="full" h="full" direction="column">
-      <Heading fontWeight="normal" fontSize="2xl" mb={5} color="teal">
+      <Heading fontWeight="normal" fontSize="2xl" mb={5} color="primary">
         Users List
       </Heading>
 
       {users && users.length ? (
-        <Table size="md" colorScheme="gray">
+        <Table minW="700px" size="md" colorScheme="gray">
           <Thead>
             <Th>Name</Th>
             <Th>email</Th>

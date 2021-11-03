@@ -4,14 +4,13 @@ import App from "./App";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
-import { createBreakpoints } from "@chakra-ui/theme-tools";
 
-const breakPoints = createBreakpoints({ sm: "414px", md: "768px", lg: "1024px", xl: "1440px" });
 const theme = extendTheme({
-  breakPoints,
   colors: {
-    teal: "#FF218D",
-    orange: "#FFD800",
+    primary: "#FF218D",
+    secondary: {
+      500: "#FFD800",
+    },
   },
 });
 
