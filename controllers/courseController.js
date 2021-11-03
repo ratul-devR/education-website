@@ -32,14 +32,12 @@ module.exports = {
 
       // check if the course already exists for the user
       // if it does, the user has to pay for it otherwise we will provide 10 free questions from the category
-      let courseExists;
+      let courseExists = false;
 
       for (let i = 0; i < user.courses.length; i++) {
         const course = user.courses[i];
         if (course == courseId) {
           courseExists = true;
-        } else {
-          courseExists = false;
         }
       }
 
