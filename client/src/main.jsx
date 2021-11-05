@@ -6,6 +6,9 @@ import store from "./redux/store";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 const theme = extendTheme({
+  initialColorMode: "light",
+  useSystemColorMode: false,
+  
   colors: {
     primary: "#FF218D",
     secondary: {
