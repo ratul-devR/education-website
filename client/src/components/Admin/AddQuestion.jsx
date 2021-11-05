@@ -10,6 +10,7 @@ import { Select } from "@chakra-ui/select";
 import useToast from "../../hooks/useToast";
 import { useHistory } from "react-router-dom";
 import config from "../../config";
+import { Textarea } from "@chakra-ui/textarea";
 
 const AddQuestion = () => {
   const [{ question, answer }, setInput] = useState({ question: "", answer: "" });
@@ -68,7 +69,7 @@ const AddQuestion = () => {
       <Heading textAlign="center" color="primary" mb={5} fontWeight="normal" fontSize="2xl">
         Add Question to "{categoryName}"
       </Heading>
-      <Input
+      <Textarea
         mb={3}
         placeholder="Enter the question"
         name="question"

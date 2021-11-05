@@ -1,43 +1,46 @@
-// import { Box, Flex, Grid, Heading } from "@chakra-ui/layout";
-// import { Link } from "react-router-dom";
-// import { Link as ChakraLink, Text, Progress } from "@chakra-ui/react";
-// import { Button } from "@chakra-ui/button";
-// import { Spinner } from "@chakra-ui/spinner";
-// import { useEffect, useState } from "react";
-
-// import LearnImage from "../../assets/learn.svg";
-// import useToast from "../../hooks/useToast";
-// import config from "../../config";
-// import { useSelector } from "react-redux";
+import { Box, Flex, Heading, SimpleGrid } from "@chakra-ui/layout";
+import { Link } from "react-router-dom";
+import { Text } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/button";
+import { useSelector } from "react-redux";
 
 const UserCourses = () => {
-  // const { user } = useSelector((state) => state.authReducer);
+  const { user } = useSelector((state) => state.authReducer);
+  const courses = user.courses;
 
-  // if (courses && courses.length > 0) {
-  //   return <Flex direction="column"></Flex>;
-  // } else {
-  //   return (
-  //     <Flex w="full" h="full" justify="center" align="center" direction="column">
-  //       <img
-  //         src={LearnImage}
-  //         alt="Learn Illustration"
-  //         style={{ display: "block", width: "100%", maxWidth: "400px" }}
-  //       />
-  //       <Heading textAlign="center" fontSize="xl" fontWeight="normal" mt={10}>
-  //         You don't have purchased any questions yet. Purchase some{" "}
-  //         <ChakraLink as={Link} to="/dashboard/courses" color="teal">
-  //           Courses
-  //         </ChakraLink>
-  //       </Heading>
-  //     </Flex>
-  //   );
-  // }
   return (
-    <div>
-      <h1>all of your courses will be here</h1>
-      <br />
-      <p>This functionality is under construction. Coming soon.....</p>
-    </div>
+    <Flex direction="column" w="full" h="full">
+      <Heading color="primary" fontWeight="normal" fontSize="2xl" mb={5}>
+        Your courses
+      </Heading>
+
+      <SimpleGrid columns={3} spacing={3}>
+        {courses &&
+          courses.length > 0 &&
+          courses.map((course) => {
+            return (
+              <Box
+                key={course._id}
+                boxShadow="md"
+                p={5}
+                rounded={5}
+                border="1px solid"
+                borderColor="gray.200"
+              >
+                <Flex mb={3} justify="space-between" align="center">
+                  <Heading noOfLines={1} fontSize="xl" fontWeight="normal">
+                    {course.name}
+                  </Heading>
+                  <Button as={Link} to={`/dashboard/quiz/${course._id}`} colorScheme="blue">
+                    Learn
+                  </Button>
+                </Flex>
+                <Text whiteSpace="pre-wrap">{course.description}</Text>
+              </Box>
+            );
+          })}
+      </SimpleGrid>
+    </Flex>
   );
 };
 

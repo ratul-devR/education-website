@@ -25,10 +25,11 @@ import useToast from "../../hooks/useToast";
 import No from "../../assets/no.svg";
 
 const Categories = () => {
-  const [{ title, description, price }, setInput] = useState({
+  const [{ title, description, price, timeLimit }, setInput] = useState({
     title: "",
     description: "",
     price: "",
+    timeLimit: "",
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,7 +72,7 @@ const Categories = () => {
       const res = await fetch(`${config.serverURL}/get_admin/post_category`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, price }),
+        body: JSON.stringify({ title, description, price, timeLimit }),
         credentials: "include",
       });
       const body = await res.json();
@@ -159,6 +160,14 @@ const Categories = () => {
                 onChange={HandleInputChange}
                 value={description}
                 placeholder="description"
+                mb={3}
+              />
+              <Input
+                placeholder="Time Limit for per question (seconds)"
+                onChange={HandleInputChange}
+                type="number"
+                name="timeLimit"
+                value={timeLimit}
                 mb={3}
               />
               <Input

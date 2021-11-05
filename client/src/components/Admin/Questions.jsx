@@ -1,5 +1,6 @@
 import { IconButton } from "@chakra-ui/button";
-import { Flex, Heading } from "@chakra-ui/layout";
+import { Flex, Heading, Stack } from "@chakra-ui/layout";
+import { Badge } from "@chakra-ui/react";
 import { Spinner } from "@chakra-ui/spinner";
 import { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
@@ -92,13 +93,25 @@ const Questions = () => {
             <Table size="md">
               <Thead>
                 <Th>Question</Th>
+                <Th>Options</Th>
+                <Th>Answer</Th>
                 <Th>Actions</Th>
               </Thead>
               <Tbody>
-                {questions.map(({ question, _id }, index) => {
+                {questions.map(({ question, answer, options, _id }, index) => {
                   return (
                     <Tr key={index}>
                       <Td>{question}</Td>
+                      <Td>
+                        <Stack direction="row">
+                          {options.map((option) => (
+                            <Badge textTransform="none" colorScheme="purple" variant="subtle">
+                              {option}
+                            </Badge>
+                          ))}
+                        </Stack>
+                      </Td>
+                      <Td>{answer}</Td>
                       <Td>
                         <IconButton
                           onClick={() => deleteQuestion(_id)}

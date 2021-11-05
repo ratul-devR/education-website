@@ -1,5 +1,6 @@
 const User = require("../models/people");
 const Org = require("../models/org");
+const Category = require("../models/category");
 
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
@@ -9,7 +10,7 @@ module.exports = {
     try {
       const { email, password } = req.body;
 
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).populate("courses");
 
       if (user) {
         const passwordMatched = await bcrypt.compare(password, user.password);
@@ -48,11 +49,25 @@ module.exports = {
         newUser = new User({ firstName, lastName, email, password });
       }
 
+      // give the user 10 free questions
+      const course = (await Category.find({}))[0];
+      const questions = course.questions;
+
+      const freeQuestions = [];
+
+      for (let i = 0; i < 10; i++) {
+        freeQuestions.push(questions[i]);
+      }
+
       // updating the referer
       mongoose.isValidObjectId(referer) &&
         (await Org.updateOne({ _id: referer }, { $push: { refers: newUser._id } }));
 
       await newUser.save();
+
+      // now updating the user with the questions and courses
+      await User.updateOne({ _id: newUser._id }, { $push: { questions: freeQuestions } });
+      await User.updateOne({ _id: newUser._id }, { $push: { courses: course } });
 
       const authToken = await newUser.generateToken();
 
@@ -62,7 +77,9 @@ module.exports = {
         signed: true,
       });
 
-      res.status(201).json({ msg: "Your account has been created", user: newUser });
+      const userCreated = await User.findOne({ _id: newUser._id }).populate("courses");
+
+      res.status(201).json({ msg: "Your account has been created", user: userCreated });
     } catch (err) {
       next(err);
     }

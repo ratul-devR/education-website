@@ -3,7 +3,10 @@ import { Spinner } from "@chakra-ui/spinner";
 import { Flex, SimpleGrid, Box } from "@chakra-ui/layout";
 import { Heading, Text } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import { LOGIN } from "../../redux/actions/authActions";
 
 import useToast from "../../hooks/useToast";
 
@@ -14,6 +17,7 @@ const Courses = () => {
   const [loading, setLoading] = useState(true);
   const history = useHistory();
   const toast = useToast();
+  const dispatch = useDispatch();
 
   // for getting all the courses
   async function getCourses(abortController) {
@@ -37,10 +41,10 @@ const Courses = () => {
     }
   }
 
-  // for adding a course
-  async function addCourse(courseId) {
+  // for purchasing a course
+  async function purchaseCourse(courseId) {
     try {
-      const res = await fetch(`${config.serverURL}/get_courses/addCourse`, {
+      const res = await fetch(`${config.serverURL}/get_courses/purchaseCourse`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -49,12 +53,9 @@ const Courses = () => {
       const body = await res.json();
 
       if (res.ok) {
+        dispatch(LOGIN(body.user));
         history.push("/dashboard");
         toast({ status: "success", description: body.msg, duration: 60000 });
-      } else if (res.status === 404) {
-        toast({ status: "info", description: body.msg });
-      } else if (res.status === 401) {
-        toast({ status: "warning", description: body.msg, title: "Attention" });
       } else {
         toast({
           status: "error",
@@ -100,7 +101,13 @@ const Courses = () => {
                   <Heading fontWeight="normal" fontSize="xl">
                     {course.name}
                   </Heading>
-                  <Button onClick={() => addCourse(course._id)} colorScheme="secondary">
+                  <Button
+                    as={Link}
+                    to={`/dashboard/pay/${course._id}`} /* onClick={() =>
+                      purchaseCourse(course._id) 
+                    } */
+                    colorScheme="secondary"
+                  >
                     Get
                   </Button>
                 </Flex>
