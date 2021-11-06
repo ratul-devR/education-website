@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme, CSSReset } from "@chakra-ui/react";
 import { LightMode } from "@chakra-ui/color-mode";
 
 const theme = extendTheme({
@@ -20,6 +20,7 @@ const theme = extendTheme({
 ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
+      <CSSReset />
       <LightMode>
         <Provider store={store}>
           <App />
