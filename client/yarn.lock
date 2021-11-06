@@ -348,6 +348,15 @@
     "@chakra-ui/hooks" "1.6.1"
     "@chakra-ui/utils" "1.8.3"
 
+"@chakra-ui/color-mode@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/color-mode/-/color-mode-1.2.0.tgz#e0d8d9028c9e9580663cc50072a0ba18375e0342"
+  integrity sha512-8oaFYqswjqfAKeMlK15q09tkB4ZDIlWpzUlSdh2jrJs3NCBacsSadH+y9lPexdfKfhCIn7jeHk2SDd8MYBgQHA==
+  dependencies:
+    "@chakra-ui/hooks" "1.6.2"
+    "@chakra-ui/react-env" "1.0.8"
+    "@chakra-ui/utils" "1.8.4"
+
 "@chakra-ui/control-box@1.0.16":
   version "1.0.16"
   resolved "https://registry.yarnpkg.com/@chakra-ui/control-box/-/control-box-1.0.16.tgz#913bd8f125b494228be5c50dea70ecf990f0bc7d"
@@ -409,6 +418,16 @@
   dependencies:
     "@chakra-ui/react-utils" "1.1.2"
     "@chakra-ui/utils" "1.8.3"
+    compute-scroll-into-view "1.0.14"
+    copy-to-clipboard "3.3.1"
+
+"@chakra-ui/hooks@1.6.2":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/hooks/-/hooks-1.6.2.tgz#35ad504710a1befce968eefb5e2d8f976cf4ca41"
+  integrity sha512-B4nAMFnwS7jamugVwl6JnALZJhxf4vxyZmwY1qjVSoe3lY8ZyqssI2TI6yla4WHa7gny2beG0SXS2+gCEGtwmA==
+  dependencies:
+    "@chakra-ui/react-utils" "1.1.2"
+    "@chakra-ui/utils" "1.8.4"
     compute-scroll-into-view "1.0.14"
     copy-to-clipboard "3.3.1"
 
@@ -575,6 +594,13 @@
   integrity sha512-3ANGROM7wZL4lLiY5GCdslLhNv44xa4cykyBed9B/O0B0J4xqIbVCwLMV2aNSCXwwUChFgjmBsDvk0vnMvclmg==
   dependencies:
     "@chakra-ui/utils" "1.8.3"
+
+"@chakra-ui/react-env@1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/react-env/-/react-env-1.0.8.tgz#6e1f0861a89fc4fb4bd23f4a9b6b6ec6b74b5e7c"
+  integrity sha512-iA5D1BgcrXrwf0XIBMdvWced+9nH312KLPeQMYHZx8i0n9YqwyJBxUhcruyaKQB+m+NRO2sjkKLLH4wnCG9dwQ==
+  dependencies:
+    "@chakra-ui/utils" "1.8.4"
 
 "@chakra-ui/react-utils@1.1.2", "@chakra-ui/react-utils@^1.1.2":
   version "1.1.2"
@@ -794,6 +820,16 @@
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/@chakra-ui/utils/-/utils-1.8.3.tgz#4eb6da7d772e483376ca47afeaf54cd453432340"
   integrity sha512-v184c2TYwQYBEcDI/9C1DjN668jZVTJeb/DPtucAjEHNi4T0py3tjGDbUd05LoNoZ64uijtWYanfrr6Abe4m1Q==
+  dependencies:
+    "@types/lodash.mergewith" "4.6.6"
+    css-box-model "1.2.1"
+    framesync "5.3.0"
+    lodash.mergewith "4.6.2"
+
+"@chakra-ui/utils@1.8.4":
+  version "1.8.4"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/utils/-/utils-1.8.4.tgz#0e0c93ce39435d678c49af945ccd7972f8624aa9"
+  integrity sha512-lMk+FD70zgI8Fn6Ee5h6T2FJdJLnYIYaRQI+Au5izjl8e3V2OZ/Tdi72LW9FnHlQyFZ5N24HGefZlNxOEDUjmw==
   dependencies:
     "@types/lodash.mergewith" "4.6.6"
     css-box-model "1.2.1"

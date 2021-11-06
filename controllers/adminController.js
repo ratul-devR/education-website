@@ -108,8 +108,12 @@ module.exports = {
 
       const deletedQuestion = await Question.findByIdAndDelete({ _id: questionId });
 
-      const updatedQuestions = (await Category.findOne({ _id: categoryId }).populate("questions"))
-        .questions;
+      const updatedQuestions = (
+        await Category.findOneAndUpdate(
+          { _id: categoryId },
+          { $pull: { questions: questionId } }
+        ).populate("questions")
+      ).questions;
 
       res.status(201).json({
         msg: `"${deletedQuestion.question}" has been removed`,

@@ -3,12 +3,12 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import { ChakraProvider, extendTheme, ColorModeScript } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { LightMode } from "@chakra-ui/color-mode";
 
 const theme = extendTheme({
   useSystemColorMode: false,
   initialColorMode: "light",
-
   colors: {
     primary: "#FF218D",
     secondary: {
@@ -20,10 +20,11 @@ const theme = extendTheme({
 ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <Provider store={store}>
-        <ColorModeScript initialColorMode="light" />
-        <App />
-      </Provider>
+      <LightMode>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </LightMode>
     </ChakraProvider>
   </React.StrictMode>,
   document.getElementById("root")

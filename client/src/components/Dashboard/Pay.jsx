@@ -9,10 +9,6 @@ import { CardElement } from "@stripe/react-stripe-js";
 import { Button } from "@chakra-ui/button";
 import { Text, Badge } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
-
-const stripePromise = loadStripe(import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY);
 
 const Pay = () => {
   const [course, setCourse] = useState();
@@ -159,11 +155,9 @@ const Pay = () => {
             You will get {course.questions.length} questions
           </Text>
         </Flex>
-        <Elements stripe={stripePromise}>
-          <CardElement
-            onChange={(e) => (e.error ? setCheckoutError(e.error.message) : setCheckoutError())}
-          />
-        </Elements>
+        <CardElement
+          onChange={(e) => (e.error ? setCheckoutError(e.error.message) : setCheckoutError())}
+        />
         <Button
           disabled={!stripe || processing}
           type="submit"
