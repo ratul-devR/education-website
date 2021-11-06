@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { Flex } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
+import { useColorMode } from "@chakra-ui/color-mode";
 
 import config from "./config";
 
@@ -20,6 +21,7 @@ import Registration from "./pages/Registration";
 
 const App = () => {
   const [pending, setPending] = useState(true);
+  const { toggleColorMode, colorMode } = useColorMode();
   const dispatch = useDispatch();
 
   // for checking if the user is authenticated or not
@@ -51,6 +53,8 @@ const App = () => {
     const abortController = new AbortController();
 
     checkAuthStatus(abortController);
+
+    colorMode === "dark" && toggleColorMode();
 
     return () => abortController.abort();
   }, []);
