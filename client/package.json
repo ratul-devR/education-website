@@ -7,13 +7,12 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@chakra-ui/color-mode": "^1.2.0",
-    "@chakra-ui/react": "^1.6.10",
-    "@emotion/react": "^11",
-    "@emotion/styled": "^11",
+    "@chakra-ui/react": "^1.6.7",
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
     "@stripe/react-stripe-js": "^1.6.0",
     "@stripe/stripe-js": "^1.21.1",
-    "framer-motion": "^4",
+    "framer-motion": "^4.1.17",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-icons": "^4.3.1",

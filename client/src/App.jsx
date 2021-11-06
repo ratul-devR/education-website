@@ -52,6 +52,8 @@ const App = () => {
 
     checkAuthStatus(abortController);
 
+    localStorage.setItem("chakra-ui-color-mode", JSON.stringify("light"));
+
     return () => abortController.abort();
   }, []);
 
