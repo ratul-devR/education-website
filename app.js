@@ -1,6 +1,5 @@
-require("dotenv").config();
-
 // external dependencies
+require("dotenv").config();
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
@@ -12,10 +11,12 @@ const path = require("path");
 const authRouter = require("./routes/authRouter");
 const adminRouter = require("./routes/adminRouter");
 const coursesRouter = require("./routes/coursesRouter");
+const quizRouter = require("./routes/quizRouter");
 
 // middleware's
 const { notFoundHandler, errorHandler } = require("./middlewares/common/errorHandler");
 const authorizeAmin = require("./middlewares/auth/authorizeAdmin");
+const checkLogin = require("./middlewares/auth/checkLogin");
 
 const app = express();
 
@@ -37,6 +38,8 @@ app.use("/get_auth", authRouter);
 app.use("/get_admin", authorizeAmin, adminRouter);
 // for handling all the courses stuff on the auth user end
 app.use("/get_courses", coursesRouter);
+// for handling all the quiz stuffs
+app.use("/get_quiz", checkLogin, quizRouter);
 
 // for production
 if (process.env.NODE_ENV === "production") {

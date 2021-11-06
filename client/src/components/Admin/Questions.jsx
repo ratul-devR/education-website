@@ -90,7 +90,7 @@ const Questions = () => {
         </Heading>
         <Flex direction="column">
           {questions && questions.length > 0 ? (
-            <Table size="md">
+            <Table size="md" minW="800px">
               <Thead>
                 <Th>Question</Th>
                 <Th>Options</Th>
@@ -103,7 +103,14 @@ const Questions = () => {
                     <Tr key={index}>
                       <Td>{question}</Td>
                       <Td>
-                        <Stack direction="row">
+                        <Stack
+                          direction="row"
+                          wrap="wrap"
+                          display="flex"
+                          gridGap={2}
+                          justify="flex-start"
+                          align="flex-start"
+                        >
                           {options.map((option) => (
                             <Badge textTransform="none" colorScheme="purple" variant="subtle">
                               {option}

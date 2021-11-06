@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dataSchema = new mongoose.Schema({
   name: { type: String, required: true },
   streetAddress: { type: String, required: true },
+  city: { type: String, required: true },
   postalCode: { type: String, required: true },
   province: { type: String, required: true },
   phone: { type: String, required: true },

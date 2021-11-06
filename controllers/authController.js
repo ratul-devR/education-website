@@ -50,8 +50,9 @@ module.exports = {
       }
 
       // give the user 10 free questions
-      const course = (await Category.find({}))[0];
-      const questions = course.questions;
+      const courses = await Category.find({});
+      const course = courses && courses.length > 0 ? courses[0] : null;
+      const questions = course ? course.questions : [];
 
       const freeQuestions = [];
 
@@ -90,6 +91,7 @@ module.exports = {
       const {
         orgName,
         streetAddress,
+        city,
         postalCode,
         province,
         phone,
@@ -101,6 +103,7 @@ module.exports = {
       const newOrg = new Org({
         name: orgName,
         streetAddress,
+        city,
         postalCode,
         province,
         phone,
@@ -115,10 +118,7 @@ module.exports = {
 
       await Org.updateOne({ _id: newOrg._id }, { affiliateLink });
 
-      res.status(201).json({
-        msg: "You are a organization now. Go to your dashboard to get your aff link",
-        affiliateLink,
-      });
+      res.status(201).json({ affiliateLink });
     } catch (err) {
       next(err);
     }

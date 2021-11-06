@@ -162,8 +162,10 @@ const Pay = () => {
           disabled={!stripe || processing}
           type="submit"
           color="black"
+          whiteSpace="wrap"
           colorScheme="secondary"
           mt={5}
+          p="auto"
         >
           {processing ? "Processing..." : `Purchase by paying (${course.price}$}`}
         </Button>

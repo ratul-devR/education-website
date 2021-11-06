@@ -16,6 +16,9 @@ const dataSchema = new mongoose.Schema({
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   // questions he has got
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
+
+  // questions he knows
+  questionsKnown: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
 });
 
 // for hashing the password

@@ -15,11 +15,12 @@ const InputField = (props) => {
 
 const CreateOrg = () => {
   const [
-    { name, streetAddress, postalCode, province, phone, type, yourName, yourPosition },
+    { name, streetAddress, city, postalCode, province, phone, type, yourName, yourPosition },
     setInput,
   ] = useState({
     name: "",
     streetAddress: "",
+    city: "",
     postalCode: "",
     province: "",
     phone: "",
@@ -45,6 +46,7 @@ const CreateOrg = () => {
         body: JSON.stringify({
           orgName: name,
           streetAddress,
+          city,
           postalCode,
           province,
           phone,
@@ -81,6 +83,7 @@ const CreateOrg = () => {
           name="streetAddress"
           onChange={handleInputChange}
         />
+        <InputField placeholder="City" name="city" onChange={handleInputChange} />
         <InputField placeholder="Postal Code" name="postalCode" onChange={handleInputChange} />
         <InputField placeholder="Province" name="province" onChange={handleInputChange} />
         <InputField placeholder="Phone" name="phone" onChange={handleInputChange} />

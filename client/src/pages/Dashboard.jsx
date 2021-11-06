@@ -10,7 +10,7 @@ import Layout from "../layouts/Dashboard";
 // pages
 import UserCourses from "../components/Dashboard/UserCourses";
 import Courses from "../components/Dashboard/Courses";
-import Quiz from "../components/Dashboard/Quiz";
+import Quiz from "../components/Dashboard/Quiz/";
 import Pay from "../components/Dashboard/Pay";
 
 const stripePromise = loadStripe(import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY);
