@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { Flex, Heading } from "@chakra-ui/layout";
@@ -37,6 +37,7 @@ const Quiz = () => {
     questionsWrong,
   } = useSelector((state) => state.quizReducer);
   const dispatch = useDispatch();
+  const [currentDuration, setCurrentDuration] = useState(0);
 
   // for fetching all the Quiz details
   async function fetchQuiz(abortController) {
@@ -82,6 +83,14 @@ const Quiz = () => {
       abortController.abort();
     };
   }, []);
+
+  // useEffect(() => {
+  //   setInterval(startTimer, 1000);
+  //   return () => {
+  //     setCurrentDuration(0);
+  //     clearInterval(startTimer);
+  //   };
+  // }, [currentIndex]);
 
   // when the question is loading
   if (loading) {
@@ -143,7 +152,7 @@ const Quiz = () => {
           w="100%"
           maxW="300px"
           rounded={5}
-          value={timeLimit / 2}
+          value={currentDuration}
           max={timeLimit}
         />
       </Flex>

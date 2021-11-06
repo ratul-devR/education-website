@@ -137,7 +137,7 @@ const Categories = () => {
     return (
       <div>
         {/* the modal button to open up the create category modal */}
-        <Button mb={10} onClick={onOpen} colorScheme="secondary">
+        <Button mb={10} onClick={onOpen} color="black" colorScheme="secondary">
           Add new Category
         </Button>
 
@@ -185,6 +185,7 @@ const Categories = () => {
               <Button
                 onClick={CreateCategory}
                 colorScheme="secondary"
+                color="black"
                 disabled={!title || !description || !price}
               >
                 Save
@@ -194,9 +195,11 @@ const Categories = () => {
         </Modal>
 
         {categories && categories.length > 0 ? (
-          <Table size="md" colorScheme="gray" minW="400px">
+          <Table size="md" colorScheme="gray" minW="700px">
             <Thead>
               <Th>Category name</Th>
+              <Th>Price</Th>
+              <Th>Total Questions</Th>
               <Th>Actions</Th>
             </Thead>
             <Tbody>
@@ -209,6 +212,8 @@ const Categories = () => {
                         {category.name}
                       </ChakraLink>
                     </Td>
+                    <Td>{category.price}</Td>
+                    <Td>{category.questions.length}</Td>
                     <Td>
                       <IconButton
                         color="#fff"

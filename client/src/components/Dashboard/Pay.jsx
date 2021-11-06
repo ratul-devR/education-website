@@ -164,6 +164,7 @@ const Pay = () => {
           color="black"
           whiteSpace="wrap"
           colorScheme="secondary"
+          color="black"
           mt={5}
           p="auto"
         >

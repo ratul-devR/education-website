@@ -72,7 +72,12 @@ const Courses = () => {
                   <Heading fontWeight="normal" fontSize="xl">
                     {course.name}
                   </Heading>
-                  <Button as={Link} to={`/dashboard/pay/${course._id}`} colorScheme="secondary">
+                  <Button
+                    as={Link}
+                    to={`/dashboard/pay/${course._id}`}
+                    color="black"
+                    colorScheme="secondary"
+                  >
                     Get
                   </Button>
                 </Flex>

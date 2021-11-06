@@ -116,6 +116,7 @@ const CreateOrg = () => {
           }
           onClick={registerOrg}
           colorScheme="secondary"
+          color="black"
         >
           Register Organization
         </Button>

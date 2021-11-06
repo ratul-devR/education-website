@@ -98,7 +98,7 @@ const Login = () => {
           type="password"
           value={password}
         />
-        <Button onClick={ValidateInputInfo} colorScheme="secondary" mb={3}>
+        <Button onClick={ValidateInputInfo} colorScheme="secondary" color="black" mb={3}>
           Sign in
         </Button>
         <Text fontSize="md" textAlign="center">
