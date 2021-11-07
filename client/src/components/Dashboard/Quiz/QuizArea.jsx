@@ -1,5 +1,6 @@
+import "./style.css";
 import { Button } from "@chakra-ui/button";
-import { Box, Flex, Heading } from "@chakra-ui/layout";
+import { Flex, Heading } from "@chakra-ui/layout";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +17,8 @@ import { LOGIN } from "../../../redux/actions/authActions";
 
 const QuizArea = () => {
   const [userKnowsAnswer, setUserKnowsAnswer] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState();
+  const [className, setClassName] = useState("option");
 
   const { currentIndex, questions } = useSelector((state) => state.quizReducer);
   const dispatch = useDispatch();
@@ -38,6 +41,8 @@ const QuizArea = () => {
   function checkAnswer(usersAnswer, questionId) {
     const isCorrectAnswer = questions[currentIndex].answer === usersAnswer;
 
+    setSelectedAnswer(usersAnswer);
+
     if (isCorrectAnswer) {
       toast({ status: "success", description: "Correct Answer" });
       // updating the database
@@ -58,9 +63,11 @@ const QuizArea = () => {
             description: err.message || "We are having unexpected server side errors",
           })
         );
+      setClassName("option correct");
       // changing the score
       dispatch(CHANGE_SCORE());
     } else {
+      setClassName("option wrong");
       dispatch(WRONG_ANSWER());
       toast({ status: "error", description: "Wrong Answer" });
     }
@@ -68,6 +75,9 @@ const QuizArea = () => {
 
   useEffect(() => {
     setUserKnowsAnswer(false);
+    setClassName("option");
+    setSelectedAnswer();
+    return () => null;
   }, [currentIndex]);
 
   return (
@@ -75,8 +85,6 @@ const QuizArea = () => {
       <Heading
         whiteSpace="pre-wrap"
         fontSize="1xl"
-        borderBottom="1px solid"
-        borderColor="GrayText"
         py={3}
         fontWeight="normal"
         color="GrayText"
@@ -108,19 +116,13 @@ const QuizArea = () => {
         <Flex w="full" h="full" justify="center" direction="column" gridRowGap={2}>
           {questions[currentIndex].options.map((option, index) => {
             return (
-              <Box
-                onClick={() => checkAnswer(option, questions[currentIndex]._id)}
-                cursor="pointer"
-                w="full"
-                p={5}
-                _hover={{ background: "gray.200" }}
-                transition=".3s"
+              <div
+                onClick={() => !selectedAnswer && checkAnswer(option, questions[currentIndex]._id)}
                 key={index}
-                bg="gray.50"
-                rounded={5}
+                className={selectedAnswer === option ? className : "option"}
               >
                 {option}
-              </Box>
+              </div>
             );
           })}
         </Flex>

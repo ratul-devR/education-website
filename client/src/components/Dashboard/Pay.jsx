@@ -161,7 +161,6 @@ const Pay = () => {
         <Button
           disabled={!stripe || processing}
           type="submit"
-          color="black"
           whiteSpace="wrap"
           colorScheme="secondary"
           color="black"

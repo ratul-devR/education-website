@@ -25,6 +25,7 @@ import {
 const Quiz = () => {
   const toast = useToast();
   const { courseId } = useParams();
+
   const {
     loading,
     questions,
@@ -37,7 +38,8 @@ const Quiz = () => {
     questionsWrong,
   } = useSelector((state) => state.quizReducer);
   const dispatch = useDispatch();
-  const [currentDuration, setCurrentDuration] = useState(0);
+
+  const [timer, setTimer] = useState(0);
 
   // for fetching all the Quiz details
   async function fetchQuiz(abortController) {
@@ -84,15 +86,24 @@ const Quiz = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   setInterval(startTimer, 1000);
-  //   return () => {
-  //     setCurrentDuration(0);
-  //     clearInterval(startTimer);
-  //   };
-  // }, [currentIndex]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimer((pre) => pre + 1);
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+      setTimer(0);
+    };
+  }, [currentIndex, timeLimit]);
 
-  // when the question is loading
+  useEffect(() => {
+    if (timer !== 0 && timeLimit !== 0 && timer === timeLimit && !done) {
+      setTimer(0);
+      dispatch(NEXT_QUESTION());
+      toast({ status: "error", description: "Time up" });
+    }
+  }, [timer, timeLimit]);
+
   if (loading) {
     return (
       <Flex w="full" h="full" justify="center" align="center">
@@ -124,10 +135,25 @@ const Quiz = () => {
   // when the quiz is done, show up the results
   if (done) {
     return (
-      <Flex>
-        <Heading>
-          Your score was {score}/{questions.length}
+      <Flex w="full" h="full" align="center" py={10} direction="column">
+        <Heading textAlign="center" fontWeight="normal" mb={10}>
+          Quiz results
         </Heading>
+        <Heading color="primary" fontWeight="normal" mb={10}>
+          {score}/{questions.length}
+        </Heading>
+        <Button as={Link} to="/dashboard/quiz" colorScheme="secondary" color="black">
+          Go back to learnings
+        </Button>
+        {score === questions.length ? (
+          <Heading mt={10} color="green">
+            Excellent!!
+          </Heading>
+        ) : (
+          <Heading mt={10} color="blue.500">
+            Nice work!
+          </Heading>
+        )}
       </Flex>
     );
   }
@@ -152,7 +178,7 @@ const Quiz = () => {
           w="100%"
           maxW="300px"
           rounded={5}
-          value={currentDuration}
+          value={timer}
           max={timeLimit}
         />
       </Flex>

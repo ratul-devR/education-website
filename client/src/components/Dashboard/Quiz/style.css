@@ -1,0 +1,20 @@
+.option {
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.correct {
+  background: #38a169;
+  border-color: #38a169;
+  color: #fff;
+}
+
+.wrong {
+  background: #e53e3e;
+  border-color: #e53e3e;
+  color: #fff;
+}
