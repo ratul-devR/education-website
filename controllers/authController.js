@@ -49,7 +49,7 @@ module.exports = {
         newUser = new User({ firstName, lastName, email, password });
       }
 
-      // give the user 10 free questions
+      // give the user 10 free questions from any random category [0] 'firstOne'
       const courses = await Category.find({});
       const course = courses && courses.length > 0 ? courses[0] : null;
       const questions = course ? course.questions : [];
@@ -98,6 +98,7 @@ module.exports = {
         type,
         orgEmployeeName,
         orgEmployeePosition,
+        subscribe,
       } = req.body;
 
       const newOrg = new Org({
@@ -110,6 +111,7 @@ module.exports = {
         type,
         employeeName: orgEmployeeName,
         employeePosition: orgEmployeePosition,
+        subscribed: subscribe,
       });
 
       const affiliateLink = `${process.env.APP_URL}/auth/register?refererId=${newOrg._id}`;

@@ -5,8 +5,7 @@ import { Select } from "@chakra-ui/select";
 import { useState } from "react";
 import { Button } from "@chakra-ui/button";
 import config from "../config";
-// import { useHistory } from "react-router-dom";
-// import { useDispatch } from "react-redux";
+import { Checkbox } from "@chakra-ui/checkbox";
 import useToast from "../hooks/useToast";
 
 const InputField = (props) => {
@@ -15,7 +14,18 @@ const InputField = (props) => {
 
 const CreateOrg = () => {
   const [
-    { name, streetAddress, city, postalCode, province, phone, type, yourName, yourPosition },
+    {
+      name,
+      streetAddress,
+      city,
+      postalCode,
+      province,
+      phone,
+      type,
+      yourName,
+      yourPosition,
+      subscribe,
+    },
     setInput,
   ] = useState({
     name: "",
@@ -27,14 +37,13 @@ const CreateOrg = () => {
     type: "",
     yourName: "",
     yourPosition: "",
+    subscribe: false,
   });
   const toast = useToast();
-  // const history = useHistory();
-  // const dispatch = useDispatch();
 
   function handleInputChange(event) {
     const { name, value } = event.target;
-    setInput((pre) => ({ ...pre, [name]: value }));
+    setInput((pre) => ({ ...pre, [name]: name === "subscribe" ? !subscribe : value }));
   }
 
   async function registerOrg() {
@@ -53,6 +62,7 @@ const CreateOrg = () => {
           type,
           orgEmployeeName: yourName,
           orgEmployeePosition: yourPosition,
+          subscribe,
         }),
       });
       const body = await res.json();
@@ -61,7 +71,7 @@ const CreateOrg = () => {
         toast({
           status: "info",
           description: `Here is your affiliate link > ${body.affiliateLink}`,
-          duration: 99999999999999,
+          duration: 60000,
         });
       } else {
         toast({ status: "error", description: body.msg || "Unexpected Error occurred" });
@@ -103,6 +113,15 @@ const CreateOrg = () => {
         </Select>
         <InputField placeholder="Your name" name="yourName" onChange={handleInputChange} />
         <InputField placeholder="Your Position" name="yourPosition" onChange={handleInputChange} />
+        <Checkbox
+          colorScheme="secondary"
+          mb={3}
+          onChange={handleInputChange}
+          name="subscribe"
+          defaultChecked={subscribe}
+        >
+          Subscribe to Newsletter
+        </Checkbox>
         <Button
           disabled={
             !name ||

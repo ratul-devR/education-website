@@ -100,7 +100,7 @@ const Quiz = () => {
     if (timer !== 0 && timeLimit !== 0 && timer === timeLimit && !done) {
       setTimer(0);
       dispatch(NEXT_QUESTION());
-      toast({ status: "error", description: "Time up" });
+      toast({ status: "warning", description: "Time up" });
     }
   }, [timer, timeLimit]);
 

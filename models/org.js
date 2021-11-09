@@ -11,6 +11,7 @@ const dataSchema = new mongoose.Schema({
   employeeName: { type: String, required: true },
   employeePosition: { type: String, required: true },
   affiliateLink: String,
+  subscribed: { type: Boolean, required: true },
   refers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
 });
 

@@ -24,6 +24,9 @@ import useToast from "../../hooks/useToast";
 
 import No from "../../assets/no.svg";
 
+// components
+import AddQuestionModal from "./components/AddQuestionModal";
+
 const Categories = () => {
   const [{ title, description, price, timeLimit }, setInput] = useState({
     title: "",
@@ -33,7 +36,15 @@ const Categories = () => {
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalValue, setModalValue] = useState({ _id: "", name: "" });
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isAddQuestionModalOpen,
+    onOpen: isAddQuestionModalOnOpen,
+    onClose: isAddQuestionModalOnClose,
+  } = useDisclosure();
+
   const toast = useToast();
   const history = useHistory();
   const { url } = useRouteMatch();
@@ -117,6 +128,12 @@ const Categories = () => {
     }
   }
 
+  // for opening the add question modal
+  function openAddQuestionModal(category) {
+    setModalValue(category);
+    isAddQuestionModalOnOpen();
+  }
+
   useEffect(() => {
     const abortController = new AbortController();
 
@@ -194,6 +211,12 @@ const Categories = () => {
           </ModalContent>
         </Modal>
 
+        <AddQuestionModal
+          isOpen={isAddQuestionModalOpen}
+          onClose={isAddQuestionModalOnClose}
+          modalValue={modalValue}
+        />
+
         {categories && categories.length > 0 ? (
           <Table size="md" colorScheme="gray" minW="700px">
             <Thead>
@@ -224,9 +247,10 @@ const Categories = () => {
                       />
                       {/* after clicking on the button the user should be redirected to the /admin/addQuestion/:categoryId page */}
                       <IconButton
-                        onClick={() =>
-                          history.push(`${url}/addQuestion/${category._id}/${category.name}`)
-                        }
+                        // onClick={() =>
+                        //   // history.push(`${url}/addQuestion/${category._id}/${category.name}`)
+                        // }
+                        onClick={() => openAddQuestionModal(category)}
                         colorScheme="blue"
                         icon={<GrAdd />}
                       />

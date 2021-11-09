@@ -1,6 +1,6 @@
 import "./style.css";
 import { Button } from "@chakra-ui/button";
-import { Flex, Heading } from "@chakra-ui/layout";
+import { Flex, Heading, Box } from "@chakra-ui/layout";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,7 +29,6 @@ const QuizArea = () => {
   function userDoesNotKnowTheAnswer() {
     dispatch(DONT_KNOW());
     dispatch(NEXT_QUESTION());
-    toast({ status: "info", description: "You don't know the answer" });
   }
 
   // if the user knows the answer
@@ -44,7 +43,6 @@ const QuizArea = () => {
     setSelectedAnswer(usersAnswer);
 
     if (isCorrectAnswer) {
-      toast({ status: "success", description: "Correct Answer" });
       // updating the database
       fetch(`${config.serverURL}/get_quiz/correctAnswer`, {
         method: "POST",
@@ -55,7 +53,6 @@ const QuizArea = () => {
         .then((res) => res.json())
         .then((body) => {
           dispatch(LOGIN(body.user));
-          toast({ status: "success", description: body.msg });
         })
         .catch((err) =>
           toast({
@@ -69,7 +66,6 @@ const QuizArea = () => {
     } else {
       setClassName("option wrong");
       dispatch(WRONG_ANSWER());
-      toast({ status: "error", description: "Wrong Answer" });
     }
   }
 
@@ -120,6 +116,11 @@ const QuizArea = () => {
                 onClick={() => !selectedAnswer && checkAnswer(option, questions[currentIndex]._id)}
                 key={index}
                 className={selectedAnswer === option ? className : "option"}
+                style={{
+                  background:
+                    option === questions[currentIndex].answer && selectedAnswer && "#38a169",
+                  color: option === questions[currentIndex].answer && selectedAnswer && "#fff",
+                }}
               >
                 {option}
               </div>
