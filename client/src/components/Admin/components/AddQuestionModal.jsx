@@ -71,7 +71,7 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose }) => {
   }
 
   return (
-    <Modal size="md" onClose={onClose} isOpen={isOpen} scrollBehavior="inside">
+    <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Add Question to: "{modalValue.name}"</ModalHeader>

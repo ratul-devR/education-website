@@ -3,6 +3,7 @@ import config from "../../config";
 import useToast from "../../hooks/useToast";
 import { Heading, Flex } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
+import { Spinner } from "@chakra-ui/spinner";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -40,9 +41,7 @@ const Users = () => {
   if (loading) {
     return (
       <Flex w="full" h="full" direction="column" justify="center" align="center">
-        <Heading fontWeight="normal" fontSize="2xl" color="gray.600">
-          Loading ...
-        </Heading>
+        <Spinner />
       </Flex>
     );
   }

@@ -15,8 +15,9 @@ import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Input } from "@chakra-ui/input";
 import { MdDeleteOutline } from "react-icons/md";
 import { GrAdd } from "react-icons/gr";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import { Textarea } from "@chakra-ui/textarea";
+import { Spinner } from "@chakra-ui/spinner";
 
 import config from "../../config";
 
@@ -46,7 +47,6 @@ const Categories = () => {
   } = useDisclosure();
 
   const toast = useToast();
-  const history = useHistory();
   const { url } = useRouteMatch();
 
   // for handling input change in the modal
@@ -145,9 +145,7 @@ const Categories = () => {
   if (loading) {
     return (
       <Flex w="full" h="full" direction="column" justify="center" align="center">
-        <Heading fontWeight="normal" fontSize="2xl" color="gray.600">
-          Loading ...
-        </Heading>
+        <Spinner />
       </Flex>
     );
   } else {
@@ -218,7 +216,7 @@ const Categories = () => {
         />
 
         {categories && categories.length > 0 ? (
-          <Table size="md" colorScheme="gray" minW="700px">
+          <Table colorScheme="gray" minW="700px">
             <Thead>
               <Th>Category name</Th>
               <Th>Price</Th>

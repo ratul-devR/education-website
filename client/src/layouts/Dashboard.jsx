@@ -4,6 +4,7 @@ import { Tooltip } from "@chakra-ui/tooltip";
 import { MdQuiz } from "react-icons/md";
 import { BsGrid1X2Fill } from "react-icons/bs";
 import { NavLink, useRouteMatch } from "react-router-dom";
+import { FaAssistiveListeningSystems } from "react-icons/fa";
 import useLogout from "../hooks/useLogout";
 
 import Logo from "../assets/logo.png";
@@ -35,6 +36,17 @@ const Dashboard = ({ children }) => {
             to={url}
             activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<MdQuiz />}
+          />
+        </Tooltip>
+        <Tooltip label="Active Learning Concert" placement="right" hasArrow>
+          <IconButton
+            rounded={0}
+            bg="white"
+            as={NavLink}
+            exact
+            to="/dashboard/alc"
+            activeStyle={{ background: "#FF218D", color: "#fff" }}
+            icon={<FaAssistiveListeningSystems />}
           />
         </Tooltip>
         <Tooltip label="Courses" placement="right" hasArrow>

@@ -1,7 +1,7 @@
 import { Button, IconButton } from "@chakra-ui/button";
-import { Flex, Heading, HStack, VStack } from "@chakra-ui/layout";
+import { Flex, HStack, VStack } from "@chakra-ui/layout";
 import { Tooltip } from "@chakra-ui/tooltip";
-import { FaChartPie, FaUserFriends } from "react-icons/fa";
+import { FaChartPie, FaUserFriends, FaAssistiveListeningSystems } from "react-icons/fa";
 import { NavLink, useRouteMatch } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
 
@@ -34,6 +34,16 @@ const Admin = ({ children }) => {
             to={url}
             activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<FaChartPie />}
+          />
+        </Tooltip>
+        <Tooltip label="Active Learning Concert" placement="right" hasArrow>
+          <IconButton
+            rounded={0}
+            bg="white"
+            as={NavLink}
+            to={`${url}/alc`}
+            activeStyle={{ background: "#FF218D", color: "#fff" }}
+            icon={<FaAssistiveListeningSystems />}
           />
         </Tooltip>
         <Tooltip label="Users" placement="right" hasArrow>

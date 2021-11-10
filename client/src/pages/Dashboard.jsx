@@ -13,6 +13,7 @@ import Courses from "../components/Dashboard/Courses";
 import Quiz from "../components/Dashboard/Quiz/";
 import Pay from "../components/Dashboard/Pay";
 import Learn from "../components/Dashboard/Learn";
+import Alc from "../components/Dashboard/Alc";
 
 const stripePromise = loadStripe(import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -30,6 +31,7 @@ const Dashboard = () => {
           <Route path={path} exact component={Learn} />
           <Route path={`${path}/quiz`} exact component={UserCourses} />
           <Route path={`${path}/courses`} component={Courses} />
+          <Route path={`${path}/alc`} component={Alc} />
           <Route path={`${path}/quiz/:courseId`} component={Quiz} />
           <Route path={`${path}/pay/:courseId/`} component={Pay} />
         </Switch>

@@ -17,18 +17,18 @@ const router = express.Router();
 
 // for getting all the categories
 router.get("/categories", getCategories);
-// for getting all the user information's
-router.get("/users", getUsers);
-// for getting all the questions of a category
-router.get("/category/:categoryId/questions", getQuestions);
-
 // for adding a new category
 router.post("/post_category", postCategory);
-// for adding a question to the category
-router.post("/add_question/:categoryId", addQuestion);
-
+// for getting all the questions of a category
+router.get("/category/:categoryId/questions", getQuestions);
 // for deleting a category
 router.delete("/delete_category/:id", deleteCategory);
+
+// for getting all the user information's
+router.get("/users", getUsers);
+
+// for adding a question to the category
+router.post("/add_question/:categoryId", addQuestion);
 // deleting a question
 router.delete("/question/:questionId/:categoryId", deleteQuestion);
 

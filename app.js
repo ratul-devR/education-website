@@ -12,6 +12,7 @@ const authRouter = require("./routes/authRouter");
 const adminRouter = require("./routes/adminRouter");
 const coursesRouter = require("./routes/coursesRouter");
 const quizRouter = require("./routes/quizRouter");
+const alcRouter = require("./routes/alcRouter");
 
 // middleware's
 const { notFoundHandler, errorHandler } = require("./middlewares/common/errorHandler");
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use(cors({ origin: ["http://localhost:3000"], credentials: true }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(express.static(path.join(__dirname, "public")));
 
 // database connection
 mongoose
@@ -40,6 +42,8 @@ app.use("/get_admin", authorizeAmin, adminRouter);
 app.use("/get_courses", coursesRouter);
 // for handling all the quiz stuffs
 app.use("/get_quiz", checkLogin, quizRouter);
+// for handling the active learning concert like uploading getting deleting etc
+app.use("/active_learning_concert", checkLogin, alcRouter);
 
 // for production
 if (process.env.NODE_ENV === "production") {
