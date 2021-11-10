@@ -3,10 +3,9 @@ import { Flex } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 import useToast from "../../hooks/useToast";
 import config from "../../config";
-import AudioPlayer from "react-audio-player";
 
 const Alc = () => {
-  const [item, setItems] = useState();
+  const [item, setItems] = useState({});
   const [loading, setLoading] = useState(true);
 
   const toast = useToast();
@@ -48,7 +47,7 @@ const Alc = () => {
     );
   }
 
-  if (!item) {
+  if (!item || !item.video) {
     return <h1>No Concerts found</h1>;
   }
 
@@ -63,18 +62,15 @@ const Alc = () => {
         rounded={5}
         boxShadow="lg"
       >
-        {/* <video
-          loop
+        <video
           style={{ width: "100%", height: "100%" }}
           src={item.video.url}
           autoPlay
           muted
-          onLoadStart={() => toast({ status: "info", description: "Loading up the video..." })}
-        ></video> */}
-        <h1>Concert will be here</h1>
+        ></video>
       </Flex>
-      {/* <AudioPlayer src={item.audio.url} loop autoPlay volume={1} />
-      <AudioPlayer src={item.background_music.url} loop autoPlay volume={0.1} /> */}
+      <audio src={item.audio.url} autoPlay />
+      <audio src={item.background_music.url} onCanPlay={(e) => (e.target.volume = 0.2)} autoPlay />
     </Flex>
   );
 };
