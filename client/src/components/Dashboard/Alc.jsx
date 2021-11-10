@@ -63,17 +63,18 @@ const Alc = () => {
         rounded={5}
         boxShadow="lg"
       >
-        <video
+        {/* <video
           loop
           style={{ width: "100%", height: "100%" }}
           src={item.video.url}
           autoPlay
           muted
           onLoadStart={() => toast({ status: "info", description: "Loading up the video..." })}
-        ></video>
+        ></video> */}
+        <h1>Concert will be here</h1>
       </Flex>
-      <AudioPlayer src={item.audio.url} loop autoPlay volume={1} />
-      <AudioPlayer src={item.background_music.url} loop autoPlay volume={0.1} />
+      {/* <AudioPlayer src={item.audio.url} loop autoPlay volume={1} />
+      <AudioPlayer src={item.background_music.url} loop autoPlay volume={0.1} /> */}
     </Flex>
   );
 };
