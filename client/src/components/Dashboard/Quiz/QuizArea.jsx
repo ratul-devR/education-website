@@ -120,6 +120,8 @@ const QuizArea = () => {
                   background:
                     option === questions[currentIndex].answer && selectedAnswer && "#38a169",
                   color: option === questions[currentIndex].answer && selectedAnswer && "#fff",
+                  borderColor:
+                    option === questions[currentIndex].answer && selectedAnswer && "#38a169",
                 }}
               >
                 {option}

@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import config from "../../config";
 
+import NoMessage from "../global/NoMessage";
+
 const UserCourses = () => {
   const { user } = useSelector((state) => state.authReducer);
   const courses = user.courses;
@@ -21,8 +23,7 @@ const UserCourses = () => {
       </Heading>
 
       <SimpleGrid columns={[1, 1, 2, 3]} spacing={3}>
-        {courses &&
-          courses.length > 0 &&
+        {courses && courses.length > 0 ? (
           courses.map((course) => {
             return (
               <Box
@@ -44,7 +45,10 @@ const UserCourses = () => {
                 <Text whiteSpace="pre-wrap">{course.description}</Text>
               </Box>
             );
-          })}
+          })
+        ) : (
+          <NoMessage message="You don't own any course" />
+        )}
       </SimpleGrid>
     </Flex>
   );

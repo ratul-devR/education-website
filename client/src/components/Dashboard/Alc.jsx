@@ -4,9 +4,13 @@ import { Spinner } from "@chakra-ui/spinner";
 import useToast from "../../hooks/useToast";
 import config from "../../config";
 
+import NoMessage from "../global/NoMessage";
+
 const Alc = () => {
-  const [item, setItems] = useState({});
+  const [item, setItem] = useState({});
   const [loading, setLoading] = useState(true);
+
+  const [videoEnded, setVideoEnded] = useState(false);
 
   const toast = useToast();
 
@@ -21,7 +25,7 @@ const Alc = () => {
       const body = await res.json();
 
       if (res.ok) {
-        setItems(body.item);
+        setItem(body.item);
         setLoading(false);
       }
     } catch (err) {
@@ -48,29 +52,61 @@ const Alc = () => {
   }
 
   if (!item || !item.video) {
-    return <h1>No Concerts found</h1>;
+    return <NoMessage message="No Concerts Found" />;
   }
 
   return (
     <Flex w="full" h="full" justify="center" align="center" direction="column">
-      <Flex
-        w="full"
-        justify="center"
-        align="center"
-        h="full"
-        bg="gray.100"
-        rounded={5}
-        boxShadow="lg"
-      >
-        <video
-          style={{ width: "100%", height: "100%" }}
-          src={item.video.url}
-          autoPlay
-          muted
-        ></video>
-      </Flex>
-      <audio src={item.audio.url} autoPlay />
-      <audio src={item.background_music.url} onCanPlay={(e) => (e.target.volume = 0.2)} autoPlay />
+      {videoEnded ? (
+        <Flex
+          w="full"
+          justify="center"
+          align="center"
+          h="full"
+          bg="gray.100"
+          rounded={5}
+          boxShadow="lg"
+        >
+          <img
+            src={item.passive_gif.url}
+            alt={item.passive_gif.name}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+          />
+          <audio src={item.audio.url} autoPlay></audio>
+          <audio
+            src={item.passive_background_sound.url}
+            autoPlay
+            onCanPlay={(e) => (e.target.volume = 0.1)}
+          ></audio>
+        </Flex>
+      ) : (
+        <Flex w="full" h="full" direction="column">
+          <Flex
+            w="full"
+            justify="center"
+            align="center"
+            h="full"
+            bg="gray.100"
+            rounded={5}
+            boxShadow="lg"
+          >
+            <video
+              style={{ width: "100%", height: "100%" }}
+              src={item.video.url}
+              autoPlay
+              onEnded={() => setVideoEnded(true)}
+              muted
+            ></video>
+          </Flex>
+          <audio loop src={item.audio.url} autoPlay />
+          <audio
+            loop
+            src={item.background_music.url}
+            onCanPlay={(e) => (e.target.volume = 0.1)}
+            autoPlay
+          />
+        </Flex>
+      )}
     </Flex>
   );
 };

@@ -5,6 +5,8 @@ import { Heading, Flex } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Spinner } from "@chakra-ui/spinner";
 
+import NoMessage from "../global/NoMessage";
+
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -77,9 +79,7 @@ const Users = () => {
           </Tbody>
         </Table>
       ) : (
-        <Heading color="gray" fontSize="sm" fontWeight="normal">
-          No users available yet :(
-        </Heading>
+        <NoMessage message="No Users Found" />
       )}
     </Flex>
   );

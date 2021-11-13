@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Category = require("../models/category");
 const Question = require("../models/question");
 const User = require("../models/people");
+const Org = require("../models/org");
 
 module.exports = {
   getCategories: async function (req, res, next) {
@@ -19,6 +20,16 @@ module.exports = {
     try {
       const users = await User.find({}).populate("referer");
       res.status(200).json({ users });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getOrganizations: async function (req, res, next) {
+    try {
+      const organizations = await Org.find({});
+
+      res.status(200).json({ organizations });
     } catch (err) {
       next(err);
     }

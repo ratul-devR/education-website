@@ -97,7 +97,7 @@ const Quiz = () => {
   }, [currentIndex, timeLimit]);
 
   useEffect(() => {
-    if (timer !== 0 && timeLimit !== 0 && timer === timeLimit && !done) {
+    if (timer !== 0 && timeLimit !== 0 && timer === timeLimit && !done && questions.length > 0) {
       setTimer(0);
       dispatch(NEXT_QUESTION());
       toast({ status: "warning", description: "Time up" });

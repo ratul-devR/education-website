@@ -8,6 +8,7 @@ import config from "../config";
 // pages
 import Categories from "../components/Admin/Categories";
 import Users from "../components/Admin/Users";
+import Organizations from "../components/Admin/Organizations";
 import Questions from "../components/Admin/Questions";
 import Alc from "../components/Admin/Alc";
 
@@ -23,6 +24,7 @@ const Admin = () => {
       <Switch>
         <Route path={path} exact component={Categories} />
         <Route path={`${path}/users`} component={Users} />
+        <Route path={`${path}/organizations`} component={Organizations} />
         <Route path={`${path}/alc`} component={Alc} />
         <Route path={`${path}/:categoryId/questions`} component={Questions} />
       </Switch>

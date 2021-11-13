@@ -1,5 +1,5 @@
 const config = {
-  appName: "Education Website",
+  appName: "Check2Learn",
   serverURL: import.meta.env.MODE === "development" ? "http://localhost:8000" : "",
 };
 

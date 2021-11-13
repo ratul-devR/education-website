@@ -5,6 +5,8 @@ import { Heading, Text } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
 import { Link } from "react-router-dom";
 
+import NoMessage from "../global/NoMessage";
+
 import useToast from "../../hooks/useToast";
 
 import config from "../../config";
@@ -62,8 +64,7 @@ const Courses = () => {
       </Heading>
 
       <SimpleGrid columns={{ lg: 2, sm: 1, xl: 3, md: 2 }} spacing={3}>
-        {courses &&
-          courses.length > 0 &&
+        {courses && courses.length > 0 ? (
           courses.map((course) => {
             return (
               <Box border="1px solid" borderColor="gray.200" rounded={3} p={5} key={course._id}>
@@ -91,7 +92,10 @@ const Courses = () => {
                 </Heading>
               </Box>
             );
-          })}
+          })
+        ) : (
+          <NoMessage message="No Courses Were Found" />
+        )}
       </SimpleGrid>
     </Flex>
   );

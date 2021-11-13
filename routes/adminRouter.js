@@ -9,6 +9,7 @@ const {
   getQuestions,
   deleteQuestion,
   getUsers,
+  getOrganizations,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -26,6 +27,9 @@ router.delete("/delete_category/:id", deleteCategory);
 
 // for getting all the user information's
 router.get("/users", getUsers);
+
+// for getting all the org's
+router.get("/organizations", getOrganizations);
 
 // for adding a question to the category
 router.post("/add_question/:categoryId", addQuestion);

@@ -6,7 +6,7 @@ const Alc = require("../models/alc");
 module.exports = {
   uploadSingleAlc: async function (req, res, next) {
     try {
-      const { audio, video, background_music } = req.files;
+      const { audio, video, background_music, passive_gif, passive_background_sound } = req.files;
 
       const domain = req.protocol + "://" + req.get("host") + "/uploads/alc";
 
@@ -16,6 +16,14 @@ module.exports = {
         background_music: {
           name: background_music[0].filename,
           url: domain + "/" + background_music[0].filename,
+        },
+        passive_gif: {
+          name: passive_gif[0].filename,
+          url: domain + "/" + passive_gif[0].filename,
+        },
+        passive_background_sound: {
+          name: passive_background_sound[0].filename,
+          url: domain + "/" + passive_background_sound[0].filename,
         },
       });
 
@@ -55,6 +63,13 @@ module.exports = {
       );
       unlink(path.join(__dirname, `/../public/uploads/alc/${item.background_music.name}`), (err) =>
         err ? err : null
+      );
+      unlink(path.join(__dirname, `/../public/uploads/alc/${item.passive_gif.name}`), (err) =>
+        err ? err : null
+      );
+      unlink(
+        path.join(__dirname, `/../public/uploads/alc/${item.passive_background_sound.name}`),
+        (err) => (err ? err : null)
       );
 
       // send the updated list

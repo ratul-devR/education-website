@@ -9,7 +9,7 @@ import useLogout from "../hooks/useLogout";
 
 import Logo from "../assets/logo.png";
 
-// this is the layout of the admin page
+// this is the layout of the dashboard page
 const Dashboard = ({ children }) => {
   const { url } = useRouteMatch();
 
@@ -38,7 +38,7 @@ const Dashboard = ({ children }) => {
             icon={<MdQuiz />}
           />
         </Tooltip>
-        <Tooltip label="Active Learning Concert" placement="right" hasArrow>
+        <Tooltip label="Active and Passive Learning Concert" placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"

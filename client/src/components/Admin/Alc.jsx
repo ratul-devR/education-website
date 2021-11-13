@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/button";
-import { Text, Spinner, Heading, Link } from "@chakra-ui/react";
+import { Text, Spinner, Link, Divider } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/hooks";
 import {
   Modal,
@@ -16,16 +16,21 @@ import { MdDeleteOutline } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 
+import NoMessage from "../global/NoMessage";
+
 import useToast from "../../hooks/useToast";
 import config from "../../config";
 
-// active learning concert
+// active learning concert and passive learning concert
 const Alc = () => {
-  const [{ audio, video, background_music }, setFiles] = useState({
-    audio: "",
-    video: "",
-    background_music: "",
-  });
+  const [{ audio, video, background_music, passive_gif, passive_background_sound }, setFiles] =
+    useState({
+      audio: "",
+      video: "",
+      background_music: "",
+      passive_gif: "",
+      passive_background_sound: "",
+    });
   const [processing, setProcessing] = useState(false);
 
   const [items, setItems] = useState([]);
@@ -46,6 +51,8 @@ const Alc = () => {
     formData.append("audio", audio);
     formData.append("video", video);
     formData.append("background_music", background_music);
+    formData.append("passive_gif", passive_gif);
+    formData.append("passive_background_sound", passive_background_sound);
 
     try {
       const res = await fetch(`${config.serverURL}/active_learning_concert`, {
@@ -181,13 +188,54 @@ const Alc = () => {
               <Text mb={2}>Video</Text>
               <input name="video" onChange={handleInputChange} accept="video/mp4" type="file" />
             </Flex>
+
+            <Divider my={10} />
+
+            <Flex
+              border="1px solid"
+              p={3}
+              borderRadius={5}
+              borderColor="gray.100"
+              direction="column"
+              mb={5}
+            >
+              <Text mb={2}>Passive Learning GIF</Text>
+              <input
+                name="passive_gif"
+                onChange={handleInputChange}
+                accept="image/gif"
+                type="file"
+              />
+            </Flex>
+            <Flex
+              border="1px solid"
+              p={3}
+              borderRadius={5}
+              borderColor="gray.100"
+              direction="column"
+            >
+              <Text mb={2}>Passive Learning Background-audio</Text>
+              <input
+                name="passive_background_sound"
+                onChange={handleInputChange}
+                accept="audio/mpeg"
+                type="file"
+              />
+            </Flex>
           </ModalBody>
           <ModalFooter>
             <Button onClick={onClose} colorScheme="blue" mr={3}>
               Close
             </Button>
             <Button
-              disabled={!audio || !video || !background_music || processing}
+              disabled={
+                !audio ||
+                !video ||
+                !background_music ||
+                processing ||
+                !passive_gif ||
+                !passive_background_sound
+              }
               onClick={uploadItem}
               colorScheme="secondary"
               color="black"
@@ -199,11 +247,13 @@ const Alc = () => {
       </Modal>
 
       {items && items.length > 0 ? (
-        <Table minW="700px">
+        <Table minW="700px" size="sm">
           <Thead>
             <Th>Audio</Th>
             <Th>Background Sound</Th>
             <Th>Video</Th>
+            <Th>Passive Learning GIF</Th>
+            <Th>Passive Learning Background sound</Th>
             <Th>Actions</Th>
           </Thead>
           <Tbody>
@@ -226,6 +276,16 @@ const Alc = () => {
                     </Link>
                   </Td>
                   <Td>
+                    <Link as="a" href={item.passive_gif.url} target="_blank">
+                      {item.passive_gif.name}
+                    </Link>
+                  </Td>
+                  <Td>
+                    <Link as="a" href={item.passive_background_sound.url} target="_blank">
+                      {item.passive_background_sound.name}
+                    </Link>
+                  </Td>
+                  <Td>
                     <IconButton
                       onClick={() => deleteItem(item._id)}
                       icon={<MdDeleteOutline />}
@@ -238,14 +298,7 @@ const Alc = () => {
           </Tbody>
         </Table>
       ) : (
-        <>
-          <Heading fontWeight="normal" fontSize="2xl" mb={3}>
-            No Items found
-          </Heading>
-          <Heading fontSize="sm" fontWeight="normal" color="GrayText">
-            No Items were uploaded before
-          </Heading>
-        </>
+        <NoMessage message="No Items Found" />
       )}
     </div>
   );

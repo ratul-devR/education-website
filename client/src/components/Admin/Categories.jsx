@@ -23,10 +23,9 @@ import config from "../../config";
 
 import useToast from "../../hooks/useToast";
 
-import No from "../../assets/no.svg";
-
 // components
 import AddQuestionModal from "./components/AddQuestionModal";
+import NoMessage from "../global/NoMessage";
 
 const Categories = () => {
   const [{ title, description, price, timeLimit }, setInput] = useState({
@@ -260,16 +259,7 @@ const Categories = () => {
           </Table>
         ) : (
           // if there is no category on the DB this image and text should shown instead of the categories
-          <Flex w="100%" justify="center" direction="column" align="center" py={20}>
-            <img
-              style={{ width: "100%", maxWidth: "300px", marginBottom: 20 }}
-              src={No}
-              alt="illustration"
-            />
-            <Heading fontSize="2xl" fontWeight="normal" color="gray.600">
-              No Categories
-            </Heading>
-          </Flex>
+          <NoMessage message="No Categories Found" />
         )}
       </div>
     );
