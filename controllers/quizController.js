@@ -31,15 +31,31 @@ module.exports = {
       // remove the question and never show it to him cause he knows the answer now
       await User.updateOne({ _id: user._id }, { $pull: { questions: questionId } });
       // add the question to known list
-      const updatedUser = await User.findOneAndUpdate(
-        { _id: user._id },
-        { $push: { questionsKnown: questionId } },
-        { new: true }
-      ).populate("courses");
+      let questionExists = false;
 
-      res
-        .status(201)
-        .json({ user: updatedUser, msg: "This question will not be shown to you again" });
+      for (let i = 0; i < user.questionsKnown.length; i++) {
+        const question = user.questionsKnown[i];
+        if (question == questionId) {
+          questionExists = true;
+        }
+      }
+
+      if (!questionExists) {
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: user._id },
+          { $push: { questionsKnown: questionId } },
+          { new: true }
+        ).populate("courses");
+
+        res
+          .status(201)
+          .json({ user: updatedUser, msg: "This question will not be shown to you again" });
+      } else {
+        const updatedUser = await User.findOne({ _id: req.user._id }).populate("courses");
+        res
+          .status(201)
+          .json({ user: updatedUser, msg: "This question will not be shown to you again" });
+      }
     } catch (err) {
       next(err);
     }
