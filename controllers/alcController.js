@@ -6,7 +6,15 @@ const Alc = require("../models/alc");
 module.exports = {
   uploadSingleAlc: async function (req, res, next) {
     try {
-      const { audio, video, background_music, passive_gif, passive_background_sound } = req.files;
+      const {
+        audio,
+        video,
+        background_music,
+        passive_images,
+        passive_audio,
+        passive_background_sound,
+      } = req.files;
+      const { timeout } = req.body;
 
       const domain = req.protocol + "://" + req.get("host") + "/uploads/alc";
 
@@ -17,14 +25,19 @@ module.exports = {
           name: background_music[0].filename,
           url: domain + "/" + background_music[0].filename,
         },
-        passive_gif: {
-          name: passive_gif[0].filename,
-          url: domain + "/" + passive_gif[0].filename,
+        passive_images: passive_images.map((passive_image) => ({
+          name: passive_image.filename,
+          url: domain + "/" + passive_image.filename,
+        })),
+        passive_audio: {
+          name: passive_audio[0].filename,
+          url: domain + "/" + passive_audio[0].filename,
         },
         passive_background_sound: {
           name: passive_background_sound[0].filename,
           url: domain + "/" + passive_background_sound[0].filename,
         },
+        timeout,
       });
 
       await newAlc.save();
@@ -64,9 +77,14 @@ module.exports = {
       unlink(path.join(__dirname, `/../public/uploads/alc/${item.background_music.name}`), (err) =>
         err ? err : null
       );
-      unlink(path.join(__dirname, `/../public/uploads/alc/${item.passive_gif.name}`), (err) =>
+      unlink(path.join(__dirname, `/../public/uploads/alc/${item.passive_audio.name}`), (err) =>
         err ? err : null
       );
+      item.passive_images.map((passive_image) => {
+        unlink(path.join(__dirname, `/../public/uploads/alc/${passive_image.name}`), (err) =>
+          err ? err : null
+        );
+      });
       unlink(
         path.join(__dirname, `/../public/uploads/alc/${item.passive_background_sound.name}`),
         (err) => (err ? err : null)
@@ -83,15 +101,30 @@ module.exports = {
 
   getRandomItem: async function (req, res, next) {
     try {
-      Alc.count().exec(function (err, count) {
-        var random = Math.floor(Math.random() * count);
+      const concerts = await Alc.find({});
 
-        Alc.findOne()
-          .skip(random)
-          .exec(function (err, result) {
-            res.status(200).json({ item: result });
-          });
-      });
+      let result = {};
+
+      for (let i = 0; i < concerts.length; i++) {
+        const concert = concerts[i];
+        if (!concert.viewers.includes(req.user._id)) {
+          result = concert;
+        }
+      }
+
+      res.status(200).json({ item: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  userViewedConcert: async function (req, res, next) {
+    try {
+      const { concertId } = req.body;
+
+      await Alc.updateOne({ _id: concertId }, { $push: { viewers: req.user._id } });
+
+      res.sendStatus(200);
     } catch (err) {
       next(err);
     }

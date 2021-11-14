@@ -90,7 +90,7 @@ const Questions = () => {
         </Heading>
         <Flex direction="column">
           {questions && questions.length > 0 ? (
-            <Table size="md" minW="800px">
+            <Table size="md" minW="700px">
               <Thead>
                 <Th>Question</Th>
                 <Th>Options</Th>
@@ -98,9 +98,9 @@ const Questions = () => {
                 <Th>Actions</Th>
               </Thead>
               <Tbody>
-                {questions.map(({ question, answer, options, _id }, index) => {
+                {questions.map(({ question, answer, options, _id }) => {
                   return (
-                    <Tr key={index}>
+                    <Tr key={_id}>
                       <Td>{question}</Td>
                       <Td>
                         <Stack
@@ -111,8 +111,13 @@ const Questions = () => {
                           justify="flex-start"
                           align="flex-start"
                         >
-                          {options.map((option) => (
-                            <Badge textTransform="none" colorScheme="purple" variant="subtle">
+                          {options.map((option, index) => (
+                            <Badge
+                              key={index}
+                              textTransform="none"
+                              colorScheme="purple"
+                              variant="subtle"
+                            >
                               {option}
                             </Badge>
                           ))}

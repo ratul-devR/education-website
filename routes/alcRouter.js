@@ -6,6 +6,7 @@ const {
   getItems,
   deleteItem,
   getRandomItem,
+  userViewedConcert,
 } = require("../controllers/alcController");
 
 // middlewares
@@ -25,5 +26,8 @@ router.delete("/:id", authorizeAdmin, deleteItem);
 
 // for getting a random item to show on the client side this one just requires regular login
 router.get("/getRandomItem", getRandomItem);
+
+// after the user has watched the concert, it should not be shown to the user again
+router.post("/userViewedConcert", userViewedConcert);
 
 module.exports = router;

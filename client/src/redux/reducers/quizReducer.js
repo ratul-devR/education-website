@@ -26,17 +26,7 @@ const quizReducer = (state = initialState, action) => {
 
     // for resetting the quiz
     case "RESET_QUIZ": {
-      return {
-        course: {},
-        questions: [],
-        loading: true,
-        currentIndex: 0,
-        done: false,
-        timeLimit: 0,
-        score: 0,
-        questionsDontKnow: 0,
-        questionsWrong: 0,
-      };
+      return initialState;
     }
 
     // for getting the next question

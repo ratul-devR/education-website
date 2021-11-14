@@ -14,6 +14,7 @@ import { Flex } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/button";
 import { MdDeleteOutline } from "react-icons/md";
 import { useEffect, useState } from "react";
+import { Input } from "@chakra-ui/input";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 
 import NoMessage from "../global/NoMessage";
@@ -23,14 +24,19 @@ import config from "../../config";
 
 // active learning concert and passive learning concert
 const Alc = () => {
-  const [{ audio, video, background_music, passive_gif, passive_background_sound }, setFiles] =
-    useState({
-      audio: "",
-      video: "",
-      background_music: "",
-      passive_gif: "",
-      passive_background_sound: "",
-    });
+  const [
+    { audio, video, background_music, passive_background_sound, passive_audio, passive_images },
+    setFiles,
+  ] = useState({
+    audio: "",
+    video: "",
+    background_music: "",
+    passive_audio: "",
+    passive_images: [],
+    passive_background_sound: "",
+  });
+  const [timeout, setTimeout] = useState();
+
   const [processing, setProcessing] = useState(false);
 
   const [items, setItems] = useState([]);
@@ -41,7 +47,7 @@ const Alc = () => {
 
   function handleInputChange(event) {
     const { name, files } = event.target;
-    setFiles((pre) => ({ ...pre, [name]: files[0] }));
+    setFiles((pre) => ({ ...pre, [name]: name === "passive_images" ? files : files[0] }));
   }
 
   async function uploadItem() {
@@ -51,7 +57,12 @@ const Alc = () => {
     formData.append("audio", audio);
     formData.append("video", video);
     formData.append("background_music", background_music);
-    formData.append("passive_gif", passive_gif);
+    for (let i = 0; i < passive_images.length; i++) {
+      const passiveImage = passive_images[i];
+      formData.append("passive_images", passiveImage);
+    }
+    formData.append("timeout", timeout);
+    formData.append("passive_audio", passive_audio);
     formData.append("passive_background_sound", passive_background_sound);
 
     try {
@@ -199,11 +210,35 @@ const Alc = () => {
               direction="column"
               mb={5}
             >
-              <Text mb={2}>Passive Learning GIF</Text>
+              <Text mb={2}>Passive Learning Images</Text>
               <input
-                name="passive_gif"
+                multiple
+                name="passive_images"
                 onChange={handleInputChange}
-                accept="image/gif"
+                accept="image/*"
+                type="file"
+              />
+            </Flex>
+            <Flex mb={5}>
+              <Input
+                value={timeout}
+                onChange={(event) => setTimeout(event.target.value)}
+                placeholder="TimeSpan for each images (seconds)"
+              />
+            </Flex>
+            <Flex
+              border="1px solid"
+              p={3}
+              borderRadius={5}
+              borderColor="gray.100"
+              direction="column"
+              mb={5}
+            >
+              <Text mb={2}>Passive Learning Audio</Text>
+              <input
+                name="passive_audio"
+                onChange={handleInputChange}
+                accept="audio/mpeg"
                 type="file"
               />
             </Flex>
@@ -214,7 +249,7 @@ const Alc = () => {
               borderColor="gray.100"
               direction="column"
             >
-              <Text mb={2}>Passive Learning Background-audio</Text>
+              <Text mb={2}>Passive Learning Background-sound</Text>
               <input
                 name="passive_background_sound"
                 onChange={handleInputChange}
@@ -233,7 +268,9 @@ const Alc = () => {
                 !video ||
                 !background_music ||
                 processing ||
-                !passive_gif ||
+                !passive_images.length ||
+                !passive_audio ||
+                !timeout ||
                 !passive_background_sound
               }
               onClick={uploadItem}
@@ -247,13 +284,16 @@ const Alc = () => {
       </Modal>
 
       {items && items.length > 0 ? (
-        <Table minW="700px" size="sm">
+        <Table minW="1500px" size="sm">
           <Thead>
             <Th>Audio</Th>
-            <Th>Background Sound</Th>
+            <Th>bg Sound</Th>
             <Th>Video</Th>
-            <Th>Passive Learning GIF</Th>
-            <Th>Passive Learning Background sound</Th>
+            <Th>PS Audio</Th>
+            <Th>PS Images</Th>
+            <Th>PS bg sound</Th>
+            <Th>Timeout</Th>
+            <Th>Total views</Th>
             <Th>Actions</Th>
           </Thead>
           <Tbody>
@@ -276,15 +316,18 @@ const Alc = () => {
                     </Link>
                   </Td>
                   <Td>
-                    <Link as="a" href={item.passive_gif.url} target="_blank">
-                      {item.passive_gif.name}
+                    <Link as="a" href={item.passive_audio.url} target="_blank">
+                      {item.passive_audio.name}
                     </Link>
                   </Td>
+                  <Td>{item.passive_images.length} Files</Td>
                   <Td>
                     <Link as="a" href={item.passive_background_sound.url} target="_blank">
                       {item.passive_background_sound.name}
                     </Link>
                   </Td>
+                  <Td>{item.timeout} seconds</Td>
+                  <Td>{item.viewers.length}</Td>
                   <Td>
                     <IconButton
                       onClick={() => deleteItem(item._id)}

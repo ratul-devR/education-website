@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { Flex } from "@chakra-ui/layout";
+import { Flex, Heading } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 import useToast from "../../hooks/useToast";
 import config from "../../config";
+import { Button } from "@chakra-ui/button";
+import { Link } from "react-router-dom";
 
 import NoMessage from "../global/NoMessage";
 
@@ -10,7 +12,12 @@ const Alc = () => {
   const [item, setItem] = useState({});
   const [loading, setLoading] = useState(true);
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [timer, setTimer] = useState(0);
+
   const [videoEnded, setVideoEnded] = useState(false);
+  const [concertEnded, setConcertEnded] = useState(false);
 
   const toast = useToast();
 
@@ -33,6 +40,20 @@ const Alc = () => {
     }
   }
 
+  async function handleConcertView(abortController) {
+    try {
+      await fetch(`${config.serverURL}/active_learning_concert/userViewedConcert`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ concertId: item._id }),
+        credentials: "include",
+        signal: abortController.signal,
+      });
+    } catch (err) {
+      toast({ status: "error", description: err.message });
+    }
+  }
+
   useEffect(() => {
     const abortController = new AbortController();
     document.title = `${config.appName} - Active Learning Concert`;
@@ -42,6 +63,41 @@ const Alc = () => {
       abortController.abort();
     };
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimer((pre) => pre + 1);
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+      setTimer(0);
+    };
+  }, [currentIndex, item.timeout, videoEnded]);
+
+  useEffect(() => {
+    if (
+      timer !== 0 &&
+      item.timeout !== 0 &&
+      timer === item.timeout &&
+      !concertEnded &&
+      videoEnded
+    ) {
+      setTimer(0);
+      if (currentIndex + 1 < item.passive_images.length) {
+        setCurrentIndex((pre) => pre + 1);
+      } else {
+        setConcertEnded(true);
+      }
+    }
+  }, [timer, item.timeout]);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    if (concertEnded) {
+      handleConcertView(abortController);
+    }
+    return () => abortController.abort();
+  }, [concertEnded]);
 
   if (loading) {
     return (
@@ -53,6 +109,22 @@ const Alc = () => {
 
   if (!item || !item.video) {
     return <NoMessage message="No Concerts Found" />;
+  }
+
+  if (concertEnded) {
+    return (
+      <Flex w="full" h="full" justify="center" align="center" direction="column">
+        <Heading fontSize="9xl" mb={5}>
+          😄
+        </Heading>
+        <Heading mb={5} textAlign="center">
+          The Concert has been ended
+        </Heading>
+        <Button colorScheme="secondary" color="black" as={Link} to="/dashboard">
+          Back To Dashboard
+        </Button>
+      </Flex>
+    );
   }
 
   return (
@@ -68,11 +140,11 @@ const Alc = () => {
           boxShadow="lg"
         >
           <img
-            src={item.passive_gif.url}
-            alt={item.passive_gif.name}
+            src={item.passive_images[currentIndex].url}
+            alt={item.passive_images[currentIndex].name}
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />
-          <audio src={item.audio.url} autoPlay></audio>
+          <audio src={item.passive_audio.url} autoPlay></audio>
           <audio
             src={item.passive_background_sound.url}
             autoPlay

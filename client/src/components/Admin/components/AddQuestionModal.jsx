@@ -63,15 +63,23 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose }) => {
 
       if (res.ok) {
         toast({ status: "success", description: body.msg });
-        onClose();
+        closeModal();
       }
     } catch (err) {
       toast({ status: "error", description: err.message || "We are having errors" });
     }
   }
 
+  // for closing up the modal and resetting the values
+  function closeModal() {
+    setInput({ answer: "", question: "" });
+    setOptionInput("");
+    setOptions([]);
+    onClose();
+  }
+
   return (
-    <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside">
+    <Modal onClose={closeModal} isOpen={isOpen} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Add Question to: "{modalValue.name}"</ModalHeader>
@@ -95,7 +103,7 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose }) => {
               />
             </form>
             {options && options.length > 0 && (
-              <HStack mb={3} wrap="wrap" gridGap={2}>
+              <HStack mb={3} wrap="wrap" gridGap={1}>
                 {options.length > 0 &&
                   options.map(({ _id, option }) => {
                     return (
@@ -127,7 +135,7 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose }) => {
           </Flex>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={onClose} colorScheme="blue" mr={3}>
+          <Button onClick={closeModal} colorScheme="blue" mr={3}>
             Cancel
           </Button>
           <Button

@@ -16,7 +16,8 @@ module.exports = function (req, res, next) {
     { name: "audio" },
     { name: "video" },
     { name: "background_music" },
-    { name: "passive_gif" },
+    { name: "passive_images" },
+    { name: "passive_audio" },
     { name: "passive_background_sound" },
   ])(req, res, (err) => {
     if (err) {
