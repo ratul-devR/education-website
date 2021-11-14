@@ -111,7 +111,7 @@ const Pay = () => {
             description: "The course was purchased successfully",
           });
           setProcessing(false);
-          history.push("/dashboard");
+          history.push("/dashboard/quiz");
           window.location.reload();
         }
       }

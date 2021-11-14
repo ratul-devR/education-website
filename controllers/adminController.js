@@ -78,15 +78,23 @@ module.exports = {
   addQuestion: async function (req, res, next) {
     try {
       const { categoryId } = req.params;
-      const { question, options, answer } = req.body;
+      const { question, options, answer, type } = req.body;
 
-      const newQuestion = new Question({ question, options, answer, category: categoryId });
+      let newQuestion;
+
+      if (type === "mcq") {
+        newQuestion = new Question({ question, options, answer, category: categoryId, type });
+      } else {
+        newQuestion = new Question({ question, answer, category: categoryId, type });
+      }
 
       await newQuestion.save();
 
       await Category.updateOne({ _id: categoryId }, { $push: { questions: newQuestion } });
 
-      res.status(201).json({ msg: "Question has been added to the category" });
+      res
+        .status(201)
+        .json({ msg: "Question has been added to the category", question: newQuestion });
     } catch (err) {
       next(err);
     }

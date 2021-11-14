@@ -20,8 +20,8 @@ import { Tag, TagLabel, TagCloseButton } from "@chakra-ui/tag";
 import useToast from "../../../hooks/useToast";
 import config from "../../../config";
 
-const AddQuestionModal = ({ modalValue, isOpen, onClose }) => {
-  const [{ question, answer }, setInput] = useState({ question: "", answer: "" });
+const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
+  const [{ question, answer, type }, setInput] = useState({ question: "", answer: "", type: "" });
   const [optionInput, setOptionInput] = useState("");
   const [options, setOptions] = useState([]);
   const toast = useToast();
@@ -56,13 +56,21 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose }) => {
       const res = await fetch(`${config.serverURL}/get_admin/add_question/${modalValue._id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, answer, options: optionsToSend }),
+        body: JSON.stringify({ question, answer, options: optionsToSend, type }),
         credentials: "include",
       });
       const body = await res.json();
 
       if (res.ok) {
         toast({ status: "success", description: body.msg });
+        setCategories((pre) =>
+          pre.map((category) => {
+            if (category._id == modalValue._id) {
+              category.questions.push(body.question);
+            }
+            return category;
+          })
+        );
         closeModal();
       }
     } catch (err) {
@@ -93,15 +101,36 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose }) => {
               value={question}
               onChange={HandleInputChange}
             />
-            <form onSubmit={AddOption}>
+            <Select
+              placeholder="Type of this question"
+              name="type"
+              value={type}
+              onChange={HandleInputChange}
+              mb={3}
+            >
+              <option value="mcq">MCQ</option>
+              <option value="text">Text</option>
+            </Select>
+            {type === "text" && (
               <Input
-                onChange={(event) => setOptionInput(event.target.value)}
-                value={optionInput}
-                mb={3}
-                colorScheme="red"
-                placeholder="Enter the options > hit enter"
+                name="answer"
+                onChange={HandleInputChange}
+                placeholder="Enter the answer"
+                value={answer}
               />
-            </form>
+            )}
+            {/* only if the type is mcq, then let the user to add options */}
+            {type === "mcq" && (
+              <form onSubmit={AddOption}>
+                <Input
+                  onChange={(event) => setOptionInput(event.target.value)}
+                  value={optionInput}
+                  mb={3}
+                  colorScheme="red"
+                  placeholder="Enter the options > hit enter"
+                />
+              </form>
+            )}
             {options && options.length > 0 && (
               <HStack mb={3} wrap="wrap" gridGap={1}>
                 {options.length > 0 &&
@@ -115,23 +144,24 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose }) => {
                   })}
               </HStack>
             )}
-
-            <Select
-              placeholder="Correct answer"
-              name="answer"
-              onChange={HandleInputChange}
-              value={answer}
-            >
-              {options &&
-                options.length &&
-                options.map(({ _id, option }) => {
-                  return (
-                    <option key={_id} value={option}>
-                      {option}
-                    </option>
-                  );
-                })}
-            </Select>
+            {options && options.length > 0 && (
+              <Select
+                placeholder="Correct answer"
+                name="answer"
+                onChange={HandleInputChange}
+                value={answer}
+              >
+                {options &&
+                  options.length &&
+                  options.map(({ _id, option }) => {
+                    return (
+                      <option key={_id} value={option}>
+                        {option}
+                      </option>
+                    );
+                  })}
+              </Select>
+            )}
           </Flex>
         </ModalBody>
         <ModalFooter>
@@ -141,7 +171,7 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose }) => {
           <Button
             colorScheme="secondary"
             color="black"
-            disabled={!options || options.length == 0 || !answer || !question}
+            disabled={!answer || !question || !type}
             onClick={addQuestionToCategory}
             mr={3}
           >

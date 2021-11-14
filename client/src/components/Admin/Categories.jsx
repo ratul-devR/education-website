@@ -212,6 +212,7 @@ const Categories = () => {
           isOpen={isAddQuestionModalOpen}
           onClose={isAddQuestionModalOnClose}
           modalValue={modalValue}
+          setCategories={setCategories}
         />
 
         {categories && categories.length > 0 ? (
@@ -244,9 +245,6 @@ const Categories = () => {
                       />
                       {/* after clicking on the button the user should be redirected to the /admin/addQuestion/:categoryId page */}
                       <IconButton
-                        // onClick={() =>
-                        //   // history.push(`${url}/addQuestion/${category._id}/${category.name}`)
-                        // }
                         onClick={() => openAddQuestionModal(category)}
                         colorScheme="blue"
                         icon={<GrAdd />}

@@ -108,7 +108,7 @@ const Alc = () => {
   }
 
   if (!item || !item.video) {
-    return <NoMessage message="No Concerts Found" />;
+    return <NoMessage message="No New Concerts Found" />;
   }
 
   if (concertEnded) {

@@ -22,9 +22,9 @@ const UserCourses = () => {
         Your courses
       </Heading>
 
-      <SimpleGrid columns={[1, 1, 2, 3]} spacing={3}>
-        {courses && courses.length > 0 ? (
-          courses.map((course) => {
+      {courses && courses.length > 0 ? (
+        <SimpleGrid columns={[1, 1, 2, 3]} spacing={3}>
+          {courses.map((course) => {
             return (
               <Box
                 key={course._id}
@@ -45,11 +45,11 @@ const UserCourses = () => {
                 <Text whiteSpace="pre-wrap">{course.description}</Text>
               </Box>
             );
-          })
-        ) : (
-          <NoMessage message="You don't own any course" />
-        )}
-      </SimpleGrid>
+          })}
+        </SimpleGrid>
+      ) : (
+        <NoMessage message="You don't own any course" />
+      )}
     </Flex>
   );
 };

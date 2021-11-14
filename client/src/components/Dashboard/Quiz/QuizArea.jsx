@@ -1,6 +1,7 @@
 import "./style.css";
 import { Button } from "@chakra-ui/button";
-import { Flex, Heading, Box } from "@chakra-ui/layout";
+import { Flex, Heading } from "@chakra-ui/layout";
+import { Input } from "@chakra-ui/input";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +20,7 @@ const QuizArea = () => {
   const [userKnowsAnswer, setUserKnowsAnswer] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [className, setClassName] = useState("option");
+  const [input, setInput] = useState("");
 
   const { currentIndex, questions } = useSelector((state) => state.quizReducer);
   const dispatch = useDispatch();
@@ -38,9 +40,15 @@ const QuizArea = () => {
 
   // for handling option click
   function checkAnswer(usersAnswer, questionId) {
-    const isCorrectAnswer = questions[currentIndex].answer === usersAnswer;
+    let isCorrectAnswer;
 
-    setSelectedAnswer(usersAnswer);
+    if (questions[currentIndex].type === "mcq") {
+      isCorrectAnswer = questions[currentIndex].answer === usersAnswer;
+      setSelectedAnswer(usersAnswer);
+    } else {
+      isCorrectAnswer = questions[currentIndex].answer.toLowerCase() === input.toLowerCase();
+      setSelectedAnswer(usersAnswer);
+    }
 
     if (isCorrectAnswer) {
       // updating the database
@@ -63,9 +71,19 @@ const QuizArea = () => {
       setClassName("option correct");
       // changing the score
       dispatch(CHANGE_SCORE());
+      if (questions[currentIndex].type === "text") {
+        toast({ status: "success", description: "Correct Answer" });
+      }
     } else {
       setClassName("option wrong");
       dispatch(WRONG_ANSWER());
+      if (questions[currentIndex].type === "text") {
+        toast({
+          status: "warning",
+          description: `The correct answer is: "${questions[currentIndex].answer}"`,
+          title: "Wrong Answer",
+        });
+      }
     }
   }
 
@@ -73,6 +91,7 @@ const QuizArea = () => {
     setUserKnowsAnswer(false);
     setClassName("option");
     setSelectedAnswer();
+    setInput("");
     return () => null;
   }, [currentIndex]);
 
@@ -110,24 +129,41 @@ const QuizArea = () => {
       ) : (
         // if the user knows the answer, then shop up the options
         <Flex w="full" h="full" justify="center" direction="column" gridRowGap={2}>
-          {questions[currentIndex].options.map((option, index) => {
-            return (
-              <div
-                onClick={() => !selectedAnswer && checkAnswer(option, questions[currentIndex]._id)}
-                key={index}
-                className={selectedAnswer === option ? className : "option"}
-                style={{
-                  background:
-                    option === questions[currentIndex].answer && selectedAnswer && "#38a169",
-                  color: option === questions[currentIndex].answer && selectedAnswer && "#fff",
-                  borderColor:
-                    option === questions[currentIndex].answer && selectedAnswer && "#38a169",
-                }}
-              >
-                {option}
-              </div>
-            );
-          })}
+          {questions[currentIndex].type === "mcq" ? (
+            questions[currentIndex].options.map((option, index) => {
+              return (
+                <div
+                  onClick={() =>
+                    !selectedAnswer && checkAnswer(option, questions[currentIndex]._id)
+                  }
+                  key={index}
+                  className={selectedAnswer === option ? className : "option"}
+                  style={{
+                    background:
+                      option === questions[currentIndex].answer && selectedAnswer && "#38a169",
+                    color: option === questions[currentIndex].answer && selectedAnswer && "#fff",
+                    borderColor:
+                      option === questions[currentIndex].answer && selectedAnswer && "#38a169",
+                  }}
+                >
+                  {option}
+                </div>
+              );
+            })
+          ) : (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                !selectedAnswer && checkAnswer(input, questions[currentIndex]._id);
+              }}
+            >
+              <Input
+                placeholder="Enter the answer > hit enter"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+              />
+            </form>
+          )}
         </Flex>
       )}
     </Flex>
