@@ -4,6 +4,7 @@ const Category = require("../models/category");
 
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
+const nodemailer = require("nodemailer");
 
 module.exports = {
   login: async function (req, res, next) {
@@ -52,12 +53,23 @@ module.exports = {
       // give the user 10 free questions from any random category [0] 'firstOne'
       const courses = await Category.find({});
       const course = courses && courses.length > 0 ? courses[0] : null;
-      const questions = course ? course.questions : [];
 
-      const freeQuestions = [];
+      if (course) {
+        const questions = course ? course.questions : [];
 
-      for (let i = 0; i < 10; i++) {
-        freeQuestions.push(questions[i]);
+        const freeQuestions = [];
+
+        for (let i = 0; i < 10; i++) {
+          freeQuestions.push(questions[i]);
+        }
+
+        freeQuestions.filter((freeQuestion) => freeQuestion !== null);
+
+        // now updating the user with the questions and courses
+        await User.updateOne({ _id: newUser._id }, { $push: { courses: course } });
+        if (freeQuestions.length > 0) {
+          await User.updateOne({ _id: newUser._id }, { $push: { questions: freeQuestions } });
+        }
       }
 
       // updating the referer
@@ -65,10 +77,6 @@ module.exports = {
         (await Org.updateOne({ _id: referer }, { $push: { refers: newUser._id } }));
 
       await newUser.save();
-
-      // now updating the user with the questions and courses
-      await User.updateOne({ _id: newUser._id }, { $push: { questions: freeQuestions } });
-      await User.updateOne({ _id: newUser._id }, { $push: { courses: course } });
 
       const authToken = await newUser.generateToken();
 
@@ -78,9 +86,54 @@ module.exports = {
         signed: true,
       });
 
+      // send a confirmation email to the user
+      const transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.EMAIL,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+      const domain = req.protocol + "://" + req.get("host");
+      await transporter.sendMail({
+        from: `${process.env.EMAIL}`,
+        to: newUser.email,
+        subject: "Confirm Your Email address",
+        html: `
+          <h2>Thanks for Registering</h2>
+          <p>In order to continue, you need to confirm your email address</p>
+          <a href="${domain + `/get_auth/confirmEmail/${newUser._id}`}">Confirm Email</a>
+        `,
+      });
+
       const userCreated = await User.findOne({ _id: newUser._id }).populate("courses");
 
-      res.status(201).json({ msg: "Your account has been created", user: userCreated });
+      res.status(201).json({
+        msg: "We sent you an email for confirmation",
+        title: "Attention",
+        user: userCreated,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  confirmEmail: async function (req, res, next) {
+    try {
+      const { accountId } = req.params;
+
+      if (mongoose.isValidObjectId(accountId)) {
+        const user = await User.findOneAndUpdate({ _id: accountId }, { verified: true });
+        if (user.role == "admin") {
+          res.redirect(`${process.env.APP_URL}/admin`);
+        } else {
+          res.redirect(`${process.env.APP_URL}/dashboard`);
+        }
+      } else {
+        res.status(400).json({ msg: "failed. client error" });
+      }
     } catch (err) {
       next(err);
     }
@@ -90,6 +143,7 @@ module.exports = {
     try {
       const {
         orgName,
+        email,
         streetAddress,
         city,
         postalCode,
@@ -103,6 +157,7 @@ module.exports = {
 
       const newOrg = new Org({
         name: orgName,
+        email,
         streetAddress,
         city,
         postalCode,

@@ -64,18 +64,18 @@ const App = () => {
         <Spinner colorScheme="primary" />
       </Flex>
     );
-  } else {
-    return (
-      <BrowserRouter>
-        <Switch>
-          <ProtectedRoute path="/dashboard" component={Dashboard} />
-          <AdminRoute path="/admin" component={Admin} />
-          <Route path="/auth" component={Registration} />
-          <Redirect path="*" to="/auth" />
-        </Switch>
-      </BrowserRouter>
-    );
   }
+
+  return (
+    <BrowserRouter>
+      <Switch>
+        <ProtectedRoute path="/dashboard" component={Dashboard} />
+        <AdminRoute path="/admin" component={Admin} />
+        <Route path="/auth" component={Registration} />
+        <Redirect path="*" to="/auth" />
+      </Switch>
+    </BrowserRouter>
+  );
 };
 
 export default App;

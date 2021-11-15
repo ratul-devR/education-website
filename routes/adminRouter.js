@@ -12,6 +12,7 @@ const {
   getQuestions,
   deleteQuestion,
   getUsers,
+  sendMails,
   getOrganizations,
 } = require("../controllers/adminController");
 
@@ -33,6 +34,8 @@ router.get("/users", getUsers);
 
 // for getting all the org's
 router.get("/organizations", getOrganizations);
+// for sending emails to organizations
+router.post("/sendMails", sendMails);
 
 // for adding a question to the category
 router.post("/add_question/:categoryId", addQuestion);

@@ -16,6 +16,7 @@ const CreateOrg = () => {
   const [
     {
       name,
+      email,
       streetAddress,
       city,
       postalCode,
@@ -29,6 +30,7 @@ const CreateOrg = () => {
     setInput,
   ] = useState({
     name: "",
+    email: "",
     streetAddress: "",
     city: "",
     postalCode: "",
@@ -54,6 +56,7 @@ const CreateOrg = () => {
         credentials: "include",
         body: JSON.stringify({
           orgName: name,
+          email,
           streetAddress,
           city,
           postalCode,
@@ -88,6 +91,7 @@ const CreateOrg = () => {
           Create Organization
         </Heading>
         <InputField placeholder="Name of your org" name="name" onChange={handleInputChange} />
+        <InputField placeholder="Email" name="email" onChange={handleInputChange} />
         <InputField
           placeholder="Street Address"
           name="streetAddress"

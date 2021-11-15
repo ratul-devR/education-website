@@ -7,7 +7,7 @@ const {
   sendResponseIfLoggedIn,
   logout,
   registerOrg,
-  handleAffiliate,
+  confirmEmail,
 } = require("../controllers/authController");
 
 const checkEmailExistence = require("../middlewares/auth/checkEmailExistence");
@@ -23,6 +23,9 @@ router.post("/login", login);
 
 // for registering an org
 router.post("/registerOrg", registerOrg);
+
+// for confirming an email address
+router.get("/confirmEmail/:accountId", confirmEmail);
 
 // for checking if the user is authenticated or not
 router.get("/checkLogin", checkLogin, sendResponseIfLoggedIn);

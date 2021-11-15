@@ -3,6 +3,7 @@ const csvJson = require("csvtojson/v2");
 const request = require("request");
 const { unlink } = require("fs");
 const path = require("path");
+const nodemailer = require("nodemailer");
 
 const Category = require("../models/category");
 const Question = require("../models/question");
@@ -34,6 +35,35 @@ module.exports = {
       const organizations = await Org.find({});
 
       res.status(200).json({ organizations });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  sendMails: async function (req, res, next) {
+    try {
+      const { subject, email } = req.body;
+      const transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.EMAIL,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+      const listOfMails = (await Org.find({ subscribed: true })).map((org) => org.email);
+      if (listOfMails.length === 0) {
+        res.status(400).json({ msg: "There are no organizations or they are not subscribed" });
+      }
+      await transporter.sendMail({
+        from: `${process.env.EMAIL}`,
+        to: listOfMails,
+        subject,
+        text: email,
+      });
+
+      res.status(200).json({ msg: `Message sent to all ${listOfMails.length} organizations` });
     } catch (err) {
       next(err);
     }
