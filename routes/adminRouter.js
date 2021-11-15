@@ -1,11 +1,14 @@
 const express = require("express");
 
+const uploadCsvFile = require("../middlewares/admin/uploadCsvFile");
+
 // controllers
 const {
   getCategories,
   postCategory,
   deleteCategory,
   addQuestion,
+  addQuestionsFromCsv,
   getQuestions,
   deleteQuestion,
   getUsers,
@@ -33,6 +36,8 @@ router.get("/organizations", getOrganizations);
 
 // for adding a question to the category
 router.post("/add_question/:categoryId", addQuestion);
+// for adding multiple questions using a .csv file only
+router.post("/add_questions_from_csv", uploadCsvFile, addQuestionsFromCsv);
 // deleting a question
 router.delete("/question/:questionId/:categoryId", deleteQuestion);
 

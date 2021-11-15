@@ -19,11 +19,13 @@
     "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "csvtojson": "^2.0.10",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.12",
     "multer": "^1.4.3",
+    "request": "^2.88.2",
     "stripe": "^8.186.1",
     "uuid": "^8.3.2"
   }

@@ -9,6 +9,9 @@ import useToast from "../../hooks/useToast";
 import { MdDeleteOutline } from "react-icons/md";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 
+import AddQuestionCsvModal from "./components/AddQuestionCsvModal";
+import NoMessage from "../global/NoMessage";
+
 const Questions = () => {
   const [category, setCategory] = useState({});
   const [loading, setLoading] = useState(true);
@@ -85,12 +88,15 @@ const Questions = () => {
   } else {
     return (
       <div>
-        <Heading fontWeight="normal" fontSize="2xl" color="primary" mb={5}>
+        <Heading fontWeight="normal" fontSize="2xl" color="primary" mb={10}>
           Questions in: "{category.name}"
         </Heading>
-        <Flex direction="column">
+        {/* the modal for uploading questions using csv file to the current category */}
+        <AddQuestionCsvModal category={category} setQuestions={setQuestions} />
+        {/* the table containing all the questions */}
+        <Flex direction="column" w="full" h="full">
           {questions && questions.length > 0 ? (
-            <Table size="md" minW="700px">
+            <Table size="md" minW="1000px">
               <Thead>
                 <Th>Question</Th>
                 <Th>Options</Th>
@@ -98,30 +104,34 @@ const Questions = () => {
                 <Th>Actions</Th>
               </Thead>
               <Tbody>
-                {questions.map(({ question, answer, options, _id }) => {
+                {questions.map(({ question, answer, type, options, _id }) => {
                   return (
                     <Tr key={_id}>
                       <Td>{question}</Td>
                       <Td>
-                        <Stack
-                          direction="row"
-                          wrap="wrap"
-                          display="flex"
-                          gridGap={2}
-                          justify="flex-start"
-                          align="flex-start"
-                        >
-                          {options.map((option, index) => (
-                            <Badge
-                              key={index}
-                              textTransform="none"
-                              colorScheme="purple"
-                              variant="subtle"
-                            >
-                              {option}
-                            </Badge>
-                          ))}
-                        </Stack>
+                        {type === "mcq" ? (
+                          <Stack
+                            direction="row"
+                            wrap="wrap"
+                            display="flex"
+                            gridGap={2}
+                            justify="flex-start"
+                            align="flex-start"
+                          >
+                            {options.map((option, index) => (
+                              <Badge
+                                key={index}
+                                textTransform="none"
+                                colorScheme="purple"
+                                variant="subtle"
+                              >
+                                {option}
+                              </Badge>
+                            ))}
+                          </Stack>
+                        ) : (
+                          "No Options"
+                        )}
                       </Td>
                       <Td>{answer}</Td>
                       <Td>
@@ -137,9 +147,7 @@ const Questions = () => {
               </Tbody>
             </Table>
           ) : (
-            <Heading fontSize="1xl" color="gray.500" fontWeight="normal">
-              No Questions found in this category
-            </Heading>
+            <NoMessage message="No Questions Found In This Category" />
           )}
         </Flex>
       </div>

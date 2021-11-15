@@ -1,4 +1,8 @@
 const mongoose = require("mongoose");
+const csvJson = require("csvtojson/v2");
+const request = require("request");
+const { unlink } = require("fs");
+const path = require("path");
 
 const Category = require("../models/category");
 const Question = require("../models/question");
@@ -95,6 +99,67 @@ module.exports = {
       res
         .status(201)
         .json({ msg: "Question has been added to the category", question: newQuestion });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  addQuestionsFromCsv: async function (req, res, next) {
+    try {
+      const file = req.file;
+      const { category } = req.body;
+      const filePath =
+        req.protocol + "://" + req.get("host") + `/uploads/question-csv-files/${file.filename}`;
+      // all the json data parsed from the csv file is here
+      const jsonData = await csvJson().fromStream(request.get(filePath));
+
+      // now let's convert the options field from string to array, if it exists
+      for (let i = 0; i < jsonData.length; i++) {
+        const question = jsonData[i];
+        question.category = category;
+        if (question.options) {
+          question.options = question.options.split("/ ");
+        } else {
+          question.options = [];
+        }
+      }
+
+      // now let's see if valid or required properties are added in the json data
+      // if it isn't then throw error! and also delete the previous file
+      for (let i = 0; i < jsonData.length; i++) {
+        const question = jsonData[i];
+        if (
+          !question.question ||
+          !question.answer ||
+          !question.type ||
+          (question.type === "mcq" && question.options.length === 0)
+        ) {
+          res.status(400).json({
+            msg: "Some required properties are missing in your csv file! or some of the values may be invalid",
+          });
+          unlink(
+            path.join(__dirname, `/../public/uploads/question-csv-files/${file.filename}`),
+            (err) => (err ? err : null)
+          );
+        }
+      }
+
+      // now time to save them!
+      const uploadedDocs = await Question.insertMany(jsonData);
+
+      // now update the fields of the category
+      await Category.updateOne({ _id: category }, { $push: { questions: uploadedDocs } });
+
+      // once everything is done, delete the file. Cause we don't need that
+      unlink(
+        path.join(__dirname, `/../public/uploads/question-csv-files/${file.filename}`),
+        (err) => (err ? err : null)
+      );
+
+      res.status(200).json({
+        msg: "The set of questions were uploaded from your csv file!",
+        questions: uploadedDocs,
+      });
     } catch (err) {
       next(err);
     }
