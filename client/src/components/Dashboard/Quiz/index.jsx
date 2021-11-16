@@ -22,7 +22,7 @@ import {
   QUIZ_DONE,
 } from "../../../redux/actions/quizActions";
 
-const Quiz = () => {
+const Quiz = ({ path }) => {
   const toast = useToast();
   const { courseId } = useParams();
 
@@ -44,7 +44,7 @@ const Quiz = () => {
   // for fetching all the Quiz details
   async function fetchQuiz(abortController) {
     try {
-      const res = await fetch(`${config.serverURL}/get_quiz/getUserQuestionsOfCourse/${courseId}`, {
+      const res = await fetch(`${config.serverURL}/get_quiz/${path}/${courseId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -120,13 +120,24 @@ const Quiz = () => {
           🙂
         </Heading>
         <Heading fontSize="2xl" mb={2} color="gray.500" fontWeight="normal" textAlign="center">
-          You don'y have any questions remaining
+          {path === "getUserUnknownQuestions"
+            ? "You don't have any unknown questions"
+            : "You don'y have any questions remaining"}
         </Heading>
         <Heading fontSize="1xl" fontWeight="normal" mb={3}>
-          Why you aren't getting some?
+          {path === "getUserUnknownQuestions"
+            ? "Would you like to play quiz?"
+            : "Why you aren't getting some?"}
         </Heading>
-        <Button colorScheme="secondary" color="black" as={Link} to={`/dashboard/pay/${course._id}`}>
-          Get Questions
+        <Button
+          colorScheme="secondary"
+          color="black"
+          as={Link}
+          to={
+            path === "getUserUnknownQuestions" ? `/dashboard/quiz` : `/dashboard/pay/${course._id}`
+          }
+        >
+          {path === "getUserUnknownQuestions" ? "Play Quiz" : "Get Questions"}
         </Button>
       </Flex>
     );
@@ -142,8 +153,17 @@ const Quiz = () => {
         <Heading color="primary" fontWeight="normal" mb={10}>
           {score}/{questions.length}
         </Heading>
-        <Button as={Link} to="/dashboard/quiz" colorScheme="secondary" color="black">
-          Go back to learnings
+        <Button
+          as={Link}
+          to={
+            path === "getUserUnknownQuestions" ? "/dashboard/activation_phrase" : "/dashboard/quiz"
+          }
+          colorScheme="secondary"
+          color="black"
+        >
+          {path === "getUserUnknownQuestions"
+            ? "Back To Activation Phrase"
+            : "Go back to learnings"}
         </Button>
         {score === questions.length ? (
           <Heading mt={10} color="green">
@@ -206,7 +226,7 @@ const Quiz = () => {
         rounded={5}
         boxShadow="md"
       >
-        <QuizArea />
+        <QuizArea path={path} />
       </Flex>
 
       {/* the footer containing the buttons and question count */}

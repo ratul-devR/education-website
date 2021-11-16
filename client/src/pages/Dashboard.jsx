@@ -12,6 +12,7 @@ import Layout from "../layouts/Dashboard";
 // pages
 import UserCourses from "../components/Dashboard/UserCourses";
 import Courses from "../components/Dashboard/Courses";
+import ActivationPhrase from "../components/Dashboard/ActivationPhrase";
 import Quiz from "../components/Dashboard/Quiz/";
 import Pay from "../components/Dashboard/Pay";
 import Learn from "../components/Dashboard/Learn";
@@ -55,9 +56,15 @@ const Dashboard = () => {
         <Switch>
           <Route path={path} exact component={Learn} />
           <Route path={`${path}/quiz`} exact component={UserCourses} />
+          <Route path={`${path}/activation_phrase`} exact component={ActivationPhrase} />
           <Route path={`${path}/courses`} component={Courses} />
           <Route path={`${path}/alc`} component={Alc} />
-          <Route path={`${path}/quiz/:courseId`} component={Quiz} />
+          <Route path={`${path}/quiz/:courseId`}>
+            <Quiz path={"getUserQuestionsOfCourse"} />
+          </Route>
+          <Route path={`${path}/activation_phrase/:courseId`}>
+            <Quiz path={"getUserUnknownQuestions"} />
+          </Route>
           <Route path={`${path}/pay/:courseId/`} component={Pay} />
         </Switch>
       </Elements>

@@ -16,7 +16,7 @@ import {
 } from "../../../redux/actions/quizActions";
 import { LOGIN } from "../../../redux/actions/authActions";
 
-const QuizArea = () => {
+const QuizArea = ({ path }) => {
   const [userKnowsAnswer, setUserKnowsAnswer] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [className, setClassName] = useState("option");
@@ -28,10 +28,25 @@ const QuizArea = () => {
 
   // if the user doesn't knows the answer then show him the next Q
   // and show up a toast
-  function userDoesNotKnowTheAnswer(questionId) {
-    console.log(questionId);
+  async function userDoesNotKnowTheAnswer(questionId) {
     dispatch(DONT_KNOW());
     dispatch(NEXT_QUESTION());
+    if (path !== "getUserUnknownQuestions") {
+      try {
+        const res = await fetch(`${config.serverURL}/get_quiz/dontKnow`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ questionId }),
+        });
+        const body = await res.json();
+        if (!res.ok) {
+          toast({ status: "error", description: body.msg });
+        }
+      } catch (err) {
+        toast({ status: "error", description: err.message });
+      }
+    }
   }
 
   // if the user knows the answer
@@ -52,8 +67,11 @@ const QuizArea = () => {
     }
 
     if (isCorrectAnswer) {
+      const correctAnswerPath =
+        path === "getUserUnknownQuestions" ? "apCorrectAnswer" : "correctAnswer";
+
       // updating the database
-      fetch(`${config.serverURL}/get_quiz/correctAnswer`, {
+      fetch(`${config.serverURL}/get_quiz/${correctAnswerPath}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
