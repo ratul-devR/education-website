@@ -28,7 +28,8 @@ const QuizArea = () => {
 
   // if the user doesn't knows the answer then show him the next Q
   // and show up a toast
-  function userDoesNotKnowTheAnswer() {
+  function userDoesNotKnowTheAnswer(questionId) {
+    console.log(questionId);
     dispatch(DONT_KNOW());
     dispatch(NEXT_QUESTION());
   }
@@ -120,7 +121,10 @@ const QuizArea = () => {
               </Button>
             </Tooltip>
             <Tooltip hasArrow label="That's fine. Let's try out the next one :)">
-              <Button onClick={userDoesNotKnowTheAnswer} colorScheme="red">
+              <Button
+                onClick={() => userDoesNotKnowTheAnswer(questions[currentIndex]._id)}
+                colorScheme="red"
+              >
                 I Don't know :(
               </Button>
             </Tooltip>
@@ -160,6 +164,7 @@ const QuizArea = () => {
               <Input
                 placeholder="Enter the answer > hit enter"
                 value={input}
+                disabled={selectedAnswer}
                 onChange={(e) => setInput(e.target.value)}
               />
             </form>

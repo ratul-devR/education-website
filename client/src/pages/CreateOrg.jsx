@@ -7,6 +7,8 @@ import { Button } from "@chakra-ui/button";
 import config from "../config";
 import { Checkbox } from "@chakra-ui/checkbox";
 import useToast from "../hooks/useToast";
+import { Alert, AlertIcon } from "@chakra-ui/alert";
+import validator from "validator";
 
 const InputField = (props) => {
   return <Input {...props} mb={3} bg="#fff" />;
@@ -41,6 +43,9 @@ const CreateOrg = () => {
     yourPosition: "",
     subscribe: false,
   });
+  const [processing, setProcessing] = useState(false);
+  const [affiliateLink, setAffiliateLink] = useState("");
+
   const toast = useToast();
 
   function handleInputChange(event) {
@@ -49,38 +54,48 @@ const CreateOrg = () => {
   }
 
   async function registerOrg() {
-    try {
-      const res = await fetch(`${config.serverURL}/get_auth/registerOrg`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          orgName: name,
-          email,
-          streetAddress,
-          city,
-          postalCode,
-          province,
-          phone,
-          type,
-          orgEmployeeName: yourName,
-          orgEmployeePosition: yourPosition,
-          subscribe,
-        }),
-      });
-      const body = await res.json();
+    setProcessing(true);
 
-      if (res.ok) {
-        toast({
-          status: "info",
-          description: `Here is your affiliate link > ${body.affiliateLink}`,
-          duration: 60000,
+    if (!validator.isEmail(email)) {
+      toast({ status: "warning", description: "Your email is invalid" });
+      setProcessing(false);
+    } else {
+      try {
+        const res = await fetch(`${config.serverURL}/get_auth/registerOrg`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            orgName: name,
+            email,
+            streetAddress,
+            city,
+            postalCode,
+            province,
+            phone,
+            type,
+            orgEmployeeName: yourName,
+            orgEmployeePosition: yourPosition,
+            subscribe,
+          }),
         });
-      } else {
-        toast({ status: "error", description: body.msg || "Unexpected Error occurred" });
+        const body = await res.json();
+
+        if (res.ok) {
+          toast({
+            status: "info",
+            description: body.msg,
+          });
+          setProcessing(false);
+          setAffiliateLink(body.affiliateLink);
+        } else {
+          toast({ status: "error", description: body.msg || "Unexpected Error occurred" });
+          setProcessing(false);
+        }
+      } catch (err) {
+        toast({ status: "error", description: err.message || "We are having an error" });
+        setProcessing(false);
       }
-    } catch (err) {
-      toast({ status: "error", description: err.message || "We are having an error" });
     }
   }
 
@@ -135,14 +150,21 @@ const CreateOrg = () => {
             !phone ||
             !type ||
             !yourName ||
-            !yourPosition
+            !yourPosition ||
+            processing
           }
           onClick={registerOrg}
           colorScheme="secondary"
           color="black"
         >
-          Register Organization
+          {processing ? "Processing..." : "Register Organization"}
         </Button>
+        {affiliateLink && (
+          <Alert mt={5} rounded={5} status="info">
+            <AlertIcon />
+            Here is your affiliate link: {affiliateLink}
+          </Alert>
+        )}
       </Flex>
     </Flex>
   );

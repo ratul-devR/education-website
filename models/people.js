@@ -20,6 +20,8 @@ const dataSchema = new mongoose.Schema({
 
   // questions he knows
   questionsKnown: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
+  // question he doesn't know
+  questionsUnknown: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
 });
 
 // for hashing the password

@@ -60,4 +60,12 @@ module.exports = {
       next(err);
     }
   },
+
+  dontKnow: async function (req, res, next) {
+    try {
+      const { questionId } = req.body;
+    } catch (err) {
+      next(err);
+    }
+  },
 };

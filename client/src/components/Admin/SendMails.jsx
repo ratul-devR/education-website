@@ -11,6 +11,8 @@ const SendMails = () => {
     subject: "",
     email: "",
   });
+  const [processing, setProcessing] = useState(false);
+
   const toast = useToast();
 
   function HandleInputChange(e) {
@@ -19,6 +21,7 @@ const SendMails = () => {
   }
 
   async function sendMails() {
+    setProcessing(true);
     try {
       const res = await fetch(`${config.serverURL}/get_admin/sendMails`, {
         method: "POST",
@@ -29,12 +32,15 @@ const SendMails = () => {
       const body = await res.json();
 
       if (res.ok) {
+        setProcessing(false);
         setInput({ email: "", subject: "" });
         toast({ status: "success", description: body.msg });
       } else {
+        setProcessing(false);
         toast({ status: "error", description: body.msg });
       }
     } catch (err) {
+      setProcessing(false);
       toast({ status: "error", description: err.message });
     }
   }
@@ -71,11 +77,11 @@ const SendMails = () => {
         />
         <Button
           onClick={sendMails}
-          disabled={!subject || !email}
+          disabled={!subject || !email || processing}
           colorScheme="secondary"
           color="black"
         >
-          Send Mail To All The Organizations
+          {processing ? "Processing..." : "Send This To Organizations"}
         </Button>
       </Flex>
     </Flex>

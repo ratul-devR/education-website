@@ -28,6 +28,8 @@ const Register = () => {
     password: "",
     conPass: "",
   });
+  const [processing, setProcessing] = useState(false);
+
   const dispatch = useDispatch();
   const toast = useToast();
   const history = useHistory();
@@ -67,6 +69,7 @@ const Register = () => {
 
   // for sending the data to the server and creating a new user
   async function createUser() {
+    setProcessing(true);
     try {
       const res = await fetch(`${config.serverURL}/get_auth/register`, {
         method: "POST",
@@ -83,13 +86,16 @@ const Register = () => {
       const body = await res.json();
 
       if (res.ok) {
+        setProcessing(false);
         dispatch(LOGIN(body.user));
         history.push("/dashboard");
         toast({ status: "success", description: body.msg });
       } else if (res.status === 400) {
+        setProcessing(false);
         toast({ status: "error", description: body.msg || "Something is wrong in our end" });
       }
     } catch (err) {
+      setProcessing(false);
       toast({ status: "error", description: err.message || "There was an unexpected error" });
     }
   }
@@ -140,8 +146,14 @@ const Register = () => {
           type="password"
           value={conPass}
         />
-        <Button onClick={ValidateInputInfo} colorScheme="secondary" color="black" mb={3}>
-          Sign in
+        <Button
+          disabled={processing}
+          onClick={ValidateInputInfo}
+          colorScheme="secondary"
+          color="black"
+          mb={3}
+        >
+          {processing ? "Processing..." : "Sign Up"}
         </Button>
         <Text fontSize="md" textAlign="center">
           Already have an account?{" "}

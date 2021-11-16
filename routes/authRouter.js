@@ -11,6 +11,7 @@ const {
 } = require("../controllers/authController");
 
 const checkEmailExistence = require("../middlewares/auth/checkEmailExistence");
+const checkOrgEmailExistence = require("../middlewares/auth/checkOrgEmailExistence");
 const checkLogin = require("../middlewares/auth/checkLogin");
 
 const router = express.Router();
@@ -22,7 +23,7 @@ router.post("/register", checkEmailExistence, register);
 router.post("/login", login);
 
 // for registering an org
-router.post("/registerOrg", registerOrg);
+router.post("/registerOrg", checkOrgEmailExistence, registerOrg);
 
 // for confirming an email address
 router.get("/confirmEmail/:accountId", confirmEmail);
