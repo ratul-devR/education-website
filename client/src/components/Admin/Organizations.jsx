@@ -55,18 +55,11 @@ const Organizations = () => {
       </Heading>
 
       {orgs && orgs.length > 0 ? (
-        <Table minW="1000px" size="sm" colorScheme="gray">
+        <Table minW="700px" size="md" colorScheme="gray">
           <Thead>
             <Th>Name</Th>
-            <Th>Type</Th>
-            <Th>City</Th>
-            <Th>Street Address</Th>
-            <Th>Postal Code</Th>
-            <Th>Province</Th>
             <Th>Phone</Th>
-            <Th>Employee Name</Th>
-            <Th>Employee Position</Th>
-            <Th>Affiliate Link</Th>
+            <Th>Email</Th>
             <Th>Total refers</Th>
           </Thead>
           <Tbody>
@@ -75,15 +68,8 @@ const Organizations = () => {
               return (
                 <Tr key={org._id}>
                   <Td>{org.name}</Td>
-                  <Td>{org.type}</Td>
-                  <Td>{org.city}</Td>
-                  <Td>{org.streetAddress}</Td>
-                  <Td>{org.postalCode}</Td>
-                  <Td>{org.province}</Td>
                   <Td>{org.phone}</Td>
-                  <Td>{org.employeeName}</Td>
-                  <Td>{org.employeePosition}</Td>
-                  <Td>{org.affiliateLink}</Td>
+                  <Td>{org.email}</Td>
                   <Td>{org.refers.length}</Td>
                 </Tr>
               );

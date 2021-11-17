@@ -284,7 +284,7 @@ const Alc = () => {
       </Modal>
 
       {items && items.length > 0 ? (
-        <Table minW="1500px" size="sm">
+        <Table minW="1500px">
           <Thead>
             <Th>Audio</Th>
             <Th>bg Sound</Th>
