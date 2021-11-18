@@ -16,15 +16,42 @@ import {
 } from "../../../redux/actions/quizActions";
 import { LOGIN } from "../../../redux/actions/authActions";
 
-const QuizArea = ({ path }) => {
+const QuizArea = ({ path, timerInterval }) => {
   const [userKnowsAnswer, setUserKnowsAnswer] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [className, setClassName] = useState("option");
   const [input, setInput] = useState("");
 
+  // audios
+  const [background_sound, setBackground_sound] = useState();
+  const [positive_sound, setPositive_sound] = useState();
+  const [negative_sound, setNegative_sound] = useState();
+
   const { currentIndex, questions } = useSelector((state) => state.quizReducer);
   const dispatch = useDispatch();
   const toast = useToast();
+
+  // fetch all the audio assets for the quiz
+  async function fetchAudioAssets(abortController) {
+    try {
+      const res = await fetch(`${config.serverURL}/get_quiz/get_assets`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        signal: abortController.signal,
+      });
+      const body = await res.json();
+      if (res.ok && body.asset) {
+        setBackground_sound(body.asset.background_sound.url);
+        setPositive_sound(body.asset.positive_sound.url);
+        setNegative_sound(body.asset.negative_sound.url);
+      } else {
+        toast({ status: "error", description: body.msg || "Failed to load audio assets" });
+      }
+    } catch (err) {
+      toast({ status: "error", description: err.message });
+    }
+  }
 
   // if the user doesn't knows the answer then show him the next Q
   // and show up a toast
@@ -56,6 +83,13 @@ const QuizArea = ({ path }) => {
 
   // for handling option click
   function checkAnswer(usersAnswer, questionId) {
+    // initialize the sound effects
+    const positiveAudio = new Audio(positive_sound);
+    const negativeAudio = new Audio(negative_sound);
+
+    // stop the timer
+    clearInterval(timerInterval);
+
     let isCorrectAnswer;
 
     if (questions[currentIndex].type === "mcq") {
@@ -67,6 +101,12 @@ const QuizArea = ({ path }) => {
     }
 
     if (isCorrectAnswer) {
+      // play the audio if it is available
+      if (positive_sound) {
+        positiveAudio.currentTime = 0.1;
+        positiveAudio.play();
+      }
+
       const correctAnswerPath =
         path === "getUserUnknownQuestions" ? "apCorrectAnswer" : "correctAnswer";
 
@@ -90,10 +130,16 @@ const QuizArea = ({ path }) => {
       setClassName("option correct");
       // changing the score
       dispatch(CHANGE_SCORE());
+      // if the question type is text, then show a toast
       if (questions[currentIndex].type === "text") {
         toast({ status: "success", description: "Correct Answer" });
       }
     } else {
+      // play the audio if it is available
+      if (negative_sound) {
+        negativeAudio.currentTime = 0.1;
+        negativeAudio.play();
+      }
       setClassName("option wrong");
       dispatch(WRONG_ANSWER());
       if (questions[currentIndex].type === "text") {
@@ -105,6 +151,24 @@ const QuizArea = ({ path }) => {
       }
     }
   }
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    fetchAudioAssets(abortController);
+    return () => abortController.abort();
+  }, []);
+
+  // play the background sound when it is ready
+  useEffect(() => {
+    const backgroundAudio = new Audio(background_sound);
+    if (background_sound) {
+      backgroundAudio.play();
+      backgroundAudio.volume = 0.2;
+    }
+    return () => {
+      backgroundAudio.pause();
+    };
+  }, [background_sound]);
 
   useEffect(() => {
     setUserKnowsAnswer(false);

@@ -7,6 +7,7 @@ const {
   onCorrectAnswer,
   dontKnow,
   apCorrectAnswer,
+  getQuizAssets,
 } = require("../controllers/quizController");
 
 const router = express.Router();
@@ -16,6 +17,9 @@ router.get("/getUserQuestionsOfCourse/:courseId", getUserQuestionsOfQuiz);
 
 // for getting questions for activation phrase. Only the questions the user doesn't know
 router.get("/getUserUnknownQuestions/:courseId", getUserUnknownQuestions);
+
+// for getting the quiz assets
+router.get("/get_assets", getQuizAssets);
 
 // for updating the user field after giving the correct answer of a question
 router.post("/correctAnswer", onCorrectAnswer);

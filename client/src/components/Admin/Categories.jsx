@@ -1,5 +1,5 @@
 import { Button, IconButton } from "@chakra-ui/button";
-import { Flex, Heading } from "@chakra-ui/layout";
+import { Flex } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
 import {
   Modal,
@@ -26,6 +26,7 @@ import useToast from "../../hooks/useToast";
 // components
 import AddQuestionModal from "./components/AddQuestionModal";
 import NoMessage from "../global/NoMessage";
+import AddQuizAssets from "./components/AddQuizAssets";
 
 const Categories = () => {
   const [{ title, description, price, timeLimit }, setInput] = useState({
@@ -36,7 +37,11 @@ const Categories = () => {
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [modalValue, setModalValue] = useState({ _id: "", name: "" });
+
+  const [quizAsset, setQuizAsset] = useState();
+  const [quizAssetLoading, setQuizAssetLoading] = useState(true);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -52,6 +57,30 @@ const Categories = () => {
   function HandleInputChange(event) {
     const { name, value } = event.target;
     setInput((pre) => ({ ...pre, [name]: value }));
+  }
+
+  // for fetching quiz assets
+  async function fetchQuizAssets(abortController) {
+    try {
+      const res = await fetch(`${config.serverURL}/get_admin/get_assets`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        signal: abortController.signal,
+        credentials: "include",
+      });
+      const body = await res.json();
+      if (res.ok) {
+        setQuizAssetLoading(false);
+        setQuizAsset(body.asset);
+      } else {
+        toast({
+          status: "error",
+          description: body.msg || "We are having unexpected server side issues",
+        });
+      }
+    } catch (err) {
+      toast({ status: "error", description: err.message });
+    }
   }
 
   // for fetching the categories
@@ -137,6 +166,7 @@ const Categories = () => {
     const abortController = new AbortController();
 
     fetchCategories(abortController);
+    fetchQuizAssets(abortController);
 
     return () => abortController.abort();
   }, []);
@@ -150,6 +180,13 @@ const Categories = () => {
   } else {
     return (
       <div>
+        {/* adding quiz assets section */}
+        <AddQuizAssets
+          setQuizAsset={setQuizAsset}
+          quizAsset={quizAsset}
+          loading={quizAssetLoading}
+        />
+
         {/* the modal button to open up the create category modal */}
         <Button mb={10} onClick={onOpen} color="black" colorScheme="secondary">
           Add new Category

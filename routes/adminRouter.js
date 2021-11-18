@@ -1,6 +1,7 @@
 const express = require("express");
 
 const uploadCsvFile = require("../middlewares/admin/uploadCsvFile");
+const quizAssetUpload = require("../middlewares/admin/uploadQuizAsset");
 
 // controllers
 const {
@@ -14,6 +15,9 @@ const {
   getUsers,
   sendMails,
   getOrganizations,
+  uploadQuizAssets,
+  getQuizAssets,
+  deleteQuizAssets,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -31,6 +35,13 @@ router.delete("/delete_category/:id", deleteCategory);
 
 // for getting all the user information's
 router.get("/users", getUsers);
+
+// for uploading quiz assets
+router.post("/upload_assets", quizAssetUpload, uploadQuizAssets);
+// for getting uploaded quiz assets
+router.get("/get_assets", getQuizAssets);
+// for deleting uploaded quiz asset
+router.delete("/delete_quiz_assets", deleteQuizAssets);
 
 // for getting all the org's
 router.get("/organizations", getOrganizations);

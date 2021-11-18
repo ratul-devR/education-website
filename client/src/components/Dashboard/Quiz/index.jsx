@@ -40,6 +40,7 @@ const Quiz = ({ path }) => {
   const dispatch = useDispatch();
 
   const [timer, setTimer] = useState(0);
+  const [timerInterval, setTimerInterval] = useState();
 
   // for fetching all the Quiz details
   async function fetchQuiz(abortController) {
@@ -90,9 +91,12 @@ const Quiz = ({ path }) => {
     const interval = setInterval(() => {
       setTimer((pre) => pre + 1);
     }, 1000);
+    // in the quiz area component, I am clearing this timer when the user selects an option or submit his answer
+    setTimerInterval(interval);
     return () => {
       clearInterval(interval);
       setTimer(0);
+      setTimerInterval(null);
     };
   }, [currentIndex, timeLimit]);
 
@@ -226,7 +230,7 @@ const Quiz = ({ path }) => {
         rounded={5}
         boxShadow="md"
       >
-        <QuizArea path={path} />
+        <QuizArea timerInterval={timerInterval} path={path} />
       </Flex>
 
       {/* the footer containing the buttons and question count */}

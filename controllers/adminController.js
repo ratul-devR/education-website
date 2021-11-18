@@ -8,6 +8,7 @@ const Category = require("../models/category");
 const Question = require("../models/question");
 const User = require("../models/people");
 const Org = require("../models/org");
+const QuizAsset = require("../models/quizAsset");
 
 const transporter = require("../utils/emailTransporter");
 
@@ -96,6 +97,65 @@ module.exports = {
       res
         .status(201)
         .json({ msg: `"${deletedDoc.name}" has been deleted`, categories: updatedDocs });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  uploadQuizAssets: async function (req, res, next) {
+    try {
+      const { background_sound, positive_sound, negative_sound } = req.files;
+      const domain = req.protocol + "://" + req.get("host") + "/";
+
+      const asset = new QuizAsset({
+        background_sound: {
+          name: background_sound[0].filename,
+          url: domain + "uploads/quiz-assets/" + background_sound[0].filename,
+        },
+        positive_sound: {
+          name: positive_sound[0].filename,
+          url: domain + "uploads/quiz-assets/" + positive_sound[0].filename,
+        },
+        negative_sound: {
+          name: negative_sound[0].filename,
+          url: domain + "uploads/quiz-assets/" + negative_sound[0].filename,
+        },
+      });
+
+      await asset.save();
+
+      res.status(200).json({ msg: "Uploaded And Saved Successfully", asset });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getQuizAssets: async function (req, res, next) {
+    try {
+      const asset = (await QuizAsset.find({}))[0] || null;
+      res.status(200).json({ asset });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  deleteQuizAssets: async function (req, res, next) {
+    try {
+      const asset = (await QuizAsset.find({}))[0];
+      unlink(
+        path.join(__dirname, `../public/uploads/quiz-assets/${asset.background_sound.name}`),
+        (err) => (err ? err : null)
+      );
+      unlink(
+        path.join(__dirname, `../public/uploads/quiz-assets/${asset.positive_sound.name}`),
+        (err) => (err ? err : null)
+      );
+      unlink(
+        path.join(__dirname, `../public/uploads/quiz-assets/${asset.negative_sound.name}`),
+        (err) => (err ? err : null)
+      );
+      await QuizAsset.deleteOne({ _id: asset._id });
+      res.status(201).json({ msg: "Deleted" });
     } catch (err) {
       next(err);
     }

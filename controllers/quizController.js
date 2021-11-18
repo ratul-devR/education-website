@@ -1,5 +1,6 @@
 const Category = require("../models/category");
 const User = require("../models/people");
+const QuizAsset = require("../models/quizAsset");
 
 module.exports = {
   getUserQuestionsOfQuiz: async function (req, res, next) {
@@ -43,6 +44,15 @@ module.exports = {
       }
 
       res.status(200).json({ courseQuestions, course });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getQuizAssets: async function (req, res, next) {
+    try {
+      const asset = (await QuizAsset.find({}))[0] || null;
+      res.status(200).json({ asset });
     } catch (err) {
       next(err);
     }
