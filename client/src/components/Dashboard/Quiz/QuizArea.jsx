@@ -23,9 +23,9 @@ const QuizArea = ({ path, timerInterval }) => {
   const [input, setInput] = useState("");
 
   // audios
-  const [background_sound, setBackground_sound] = useState();
-  const [positive_sound, setPositive_sound] = useState();
-  const [negative_sound, setNegative_sound] = useState();
+  const [backgroundAudio, setBackgroundAudio] = useState();
+  const [positiveAudio, setPositiveAudio] = useState();
+  const [negativeAudio, setNegativeAudio] = useState();
 
   const { currentIndex, questions } = useSelector((state) => state.quizReducer);
   const dispatch = useDispatch();
@@ -42,11 +42,9 @@ const QuizArea = ({ path, timerInterval }) => {
       });
       const body = await res.json();
       if (res.ok && body.asset) {
-        setBackground_sound(body.asset.background_sound.url);
-        setPositive_sound(body.asset.positive_sound.url);
-        setNegative_sound(body.asset.negative_sound.url);
-      } else {
-        toast({ status: "error", description: body.msg || "Failed to load audio assets" });
+        setBackgroundAudio(new Audio(body.asset.background_sound.url));
+        setPositiveAudio(new Audio(body.asset.positive_sound.url));
+        setNegativeAudio(new Audio(body.asset.negative_sound.url));
       }
     } catch (err) {
       toast({ status: "error", description: err.message });
@@ -81,12 +79,38 @@ const QuizArea = ({ path, timerInterval }) => {
     setUserKnowsAnswer(true);
   }
 
+  // play the feedback sound according to the answer
+  function playFeedBackAudio(correctAnswer) {
+    if (positiveAudio && negativeAudio) {
+      if (correctAnswer) {
+        positiveAudio.currentTime = 0;
+        positiveAudio.play();
+      } else {
+        negativeAudio.currentTime = 0;
+        negativeAudio.play();
+      }
+    }
+  }
+
+  // for stopping all feedback sounds for a specific action
+  function stopFeedBackSounds() {
+    if (positiveAudio && negativeAudio) {
+      positiveAudio.pause();
+      negativeAudio.pause();
+    }
+  }
+
+  // for stopping all the audios
+  function stopAllAudios() {
+    if (positiveAudio && negativeAudio && backgroundAudio) {
+      backgroundAudio.pause();
+      positiveAudio.pause();
+      negativeAudio.pause();
+    }
+  }
+
   // for handling option click
   function checkAnswer(usersAnswer, questionId) {
-    // initialize the sound effects
-    const positiveAudio = new Audio(positive_sound);
-    const negativeAudio = new Audio(negative_sound);
-
     // stop the timer
     clearInterval(timerInterval);
 
@@ -100,13 +124,9 @@ const QuizArea = ({ path, timerInterval }) => {
       setSelectedAnswer(usersAnswer);
     }
 
-    if (isCorrectAnswer) {
-      // play the audio if it is available
-      if (positive_sound) {
-        positiveAudio.currentTime = 0.1;
-        positiveAudio.play();
-      }
+    playFeedBackAudio(isCorrectAnswer);
 
+    if (isCorrectAnswer) {
       const correctAnswerPath =
         path === "getUserUnknownQuestions" ? "apCorrectAnswer" : "correctAnswer";
 
@@ -135,11 +155,6 @@ const QuizArea = ({ path, timerInterval }) => {
         toast({ status: "success", description: "Correct Answer" });
       }
     } else {
-      // play the audio if it is available
-      if (negative_sound) {
-        negativeAudio.currentTime = 0.1;
-        negativeAudio.play();
-      }
       setClassName("option wrong");
       dispatch(WRONG_ANSWER());
       if (questions[currentIndex].type === "text") {
@@ -160,22 +175,24 @@ const QuizArea = ({ path, timerInterval }) => {
 
   // play the background sound when it is ready
   useEffect(() => {
-    const backgroundAudio = new Audio(background_sound);
-    if (background_sound) {
+    if (backgroundAudio) {
+      backgroundAudio.currentTime = 0;
+      backgroundAudio.volume = 0.3;
       backgroundAudio.play();
-      backgroundAudio.volume = 0.2;
     }
     return () => {
-      backgroundAudio.pause();
+      stopAllAudios();
     };
-  }, [background_sound]);
+  }, [backgroundAudio, positiveAudio, negativeAudio]);
 
   useEffect(() => {
     setUserKnowsAnswer(false);
     setClassName("option");
     setSelectedAnswer();
     setInput("");
-    return () => null;
+    return () => {
+      stopFeedBackSounds();
+    };
   }, [currentIndex]);
 
   return (

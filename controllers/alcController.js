@@ -21,10 +21,12 @@ module.exports = {
       const newAlc = new Alc({
         audio: { name: audio[0].filename, url: domain + "/" + audio[0].filename },
         video: { name: video[0].filename, url: domain + "/" + video[0].filename },
-        background_music: {
-          name: background_music[0].filename,
-          url: domain + "/" + background_music[0].filename,
-        },
+        background_music: background_music
+          ? {
+              name: background_music[0].filename,
+              url: domain + "/" + background_music[0].filename,
+            }
+          : {},
         passive_images: passive_images.map((passive_image) => ({
           name: passive_image.filename,
           url: domain + "/" + passive_image.filename,
@@ -33,10 +35,12 @@ module.exports = {
           name: passive_audio[0].filename,
           url: domain + "/" + passive_audio[0].filename,
         },
-        passive_background_sound: {
-          name: passive_background_sound[0].filename,
-          url: domain + "/" + passive_background_sound[0].filename,
-        },
+        passive_background_sound: passive_background_sound
+          ? {
+              name: passive_background_sound[0].filename,
+              url: domain + "/" + passive_background_sound[0].filename,
+            }
+          : {},
         timeout,
       });
 
@@ -74,9 +78,12 @@ module.exports = {
       unlink(path.join(__dirname, `/../public/uploads/alc/${item.video.name}`), (err) =>
         err ? err : null
       );
-      unlink(path.join(__dirname, `/../public/uploads/alc/${item.background_music.name}`), (err) =>
-        err ? err : null
-      );
+      if (item.background_music) {
+        unlink(
+          path.join(__dirname, `/../public/uploads/alc/${item.background_music.name}`),
+          (err) => (err ? err : null)
+        );
+      }
       unlink(path.join(__dirname, `/../public/uploads/alc/${item.passive_audio.name}`), (err) =>
         err ? err : null
       );
@@ -85,10 +92,12 @@ module.exports = {
           err ? err : null
         );
       });
-      unlink(
-        path.join(__dirname, `/../public/uploads/alc/${item.passive_background_sound.name}`),
-        (err) => (err ? err : null)
-      );
+      if (item.passive_background_sound) {
+        unlink(
+          path.join(__dirname, `/../public/uploads/alc/${item.passive_background_sound.name}`),
+          (err) => (err ? err : null)
+        );
+      }
 
       // send the updated list
       const updatedList = await Alc.find({});

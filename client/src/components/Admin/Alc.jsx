@@ -28,12 +28,12 @@ const Alc = () => {
     { audio, video, background_music, passive_background_sound, passive_audio, passive_images },
     setFiles,
   ] = useState({
-    audio: "",
-    video: "",
-    background_music: "",
-    passive_audio: "",
+    audio: null,
+    video: null,
+    background_music: null,
+    passive_audio: null,
     passive_images: [],
-    passive_background_sound: "",
+    passive_background_sound: null,
   });
   const [timeout, setTimeout] = useState();
 
@@ -56,14 +56,18 @@ const Alc = () => {
 
     formData.append("audio", audio);
     formData.append("video", video);
-    formData.append("background_music", background_music);
+    if (background_music) {
+      formData.append("background_music", background_music);
+    }
     for (let i = 0; i < passive_images.length; i++) {
       const passiveImage = passive_images[i];
       formData.append("passive_images", passiveImage);
     }
     formData.append("timeout", timeout);
     formData.append("passive_audio", passive_audio);
-    formData.append("passive_background_sound", passive_background_sound);
+    if (passive_background_sound) {
+      formData.append("passive_background_sound", passive_background_sound);
+    }
 
     try {
       const res = await fetch(`${config.serverURL}/active_learning_concert`, {
@@ -266,12 +270,10 @@ const Alc = () => {
               disabled={
                 !audio ||
                 !video ||
-                !background_music ||
                 processing ||
                 !passive_images.length ||
                 !passive_audio ||
-                !timeout ||
-                !passive_background_sound
+                !timeout
               }
               onClick={uploadItem}
               colorScheme="secondary"
@@ -306,9 +308,13 @@ const Alc = () => {
                     </Link>
                   </Td>
                   <Td>
-                    <Link as="a" href={item.background_music.url} target="_blank">
-                      {item.background_music.name}
-                    </Link>
+                    {item.background_music ? (
+                      <Link as="a" href={item.background_music.url} target="_blank">
+                        {item.background_music.name}
+                      </Link>
+                    ) : (
+                      "Default"
+                    )}
                   </Td>
                   <Td>
                     <Link as="a" href={item.video.url} target="_blank">
@@ -322,9 +328,13 @@ const Alc = () => {
                   </Td>
                   <Td>{item.passive_images.length} Files</Td>
                   <Td>
-                    <Link as="a" href={item.passive_background_sound.url} target="_blank">
-                      {item.passive_background_sound.name}
-                    </Link>
+                    {item.passive_background_sound ? (
+                      <Link as="a" href={item.passive_background_sound.url} target="_blank">
+                        {item.passive_background_sound.name}
+                      </Link>
+                    ) : (
+                      "Default"
+                    )}
                   </Td>
                   <Td>{item.timeout} seconds</Td>
                   <Td>{item.viewers.length}</Td>

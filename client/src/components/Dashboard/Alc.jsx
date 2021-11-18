@@ -8,6 +8,10 @@ import { Link } from "react-router-dom";
 
 import NoMessage from "../global/NoMessage";
 
+// audios
+import PassiveLearningBgSound from "../../assets/audios/passive-learning.mp3";
+import ActiveLearningBgSound from "../../assets/audios/active-learning.mp3";
+
 const Alc = () => {
   const [item, setItem] = useState({});
   const [loading, setLoading] = useState(true);
@@ -146,9 +150,12 @@ const Alc = () => {
           />
           <audio src={item.passive_audio.url} autoPlay></audio>
           <audio
-            src={item.passive_background_sound.url}
+            src={
+              (item.passive_background_sound && item.passive_background_sound.url) ||
+              PassiveLearningBgSound
+            }
             autoPlay
-            onCanPlay={(e) => (e.target.volume = 0.1)}
+            onCanPlay={(e) => (e.target.volume = 0.3)}
           ></audio>
         </Flex>
       ) : (
@@ -173,8 +180,8 @@ const Alc = () => {
           <audio loop src={item.audio.url} autoPlay />
           <audio
             loop
-            src={item.background_music.url}
-            onCanPlay={(e) => (e.target.volume = 0.1)}
+            src={(item.background_music && item.background_music.url) || ActiveLearningBgSound}
+            onCanPlay={(e) => (e.target.volume = 0.3)}
             autoPlay
           />
         </Flex>
