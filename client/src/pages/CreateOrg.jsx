@@ -2,7 +2,7 @@ import { Flex } from "@chakra-ui/layout";
 import { Heading } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/input";
 import { Select } from "@chakra-ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@chakra-ui/button";
 import config from "../config";
 import { Checkbox } from "@chakra-ui/checkbox";
@@ -98,6 +98,10 @@ const CreateOrg = () => {
       }
     }
   }
+
+  useEffect(() => {
+    document.title = `${config.appName} - Register Organization`;
+  }, []);
 
   return (
     <Flex w="full" justify="center" py={20}>

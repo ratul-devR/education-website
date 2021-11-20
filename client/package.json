@@ -14,12 +14,10 @@
     "@stripe/stripe-js": "^1.21.1",
     "framer-motion": "^4.1.17",
     "react": "^17.0.0",
-    "react-countdown": "^2.3.2",
     "react-dom": "^17.0.0",
     "react-icons": "^4.3.1",
     "react-redux": "^7.2.6",
     "react-router-dom": "^5.3.0",
-    "react-timer-hook": "^3.0.5",
     "redux": "^4.1.2",
     "validator": "^13.6.0"
   },

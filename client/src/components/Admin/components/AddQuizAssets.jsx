@@ -90,7 +90,7 @@ export default function AddQuizAssets({ quizAsset, loading, setQuizAsset }) {
     );
   }
   return (
-    <Flex direction="column" mb={5} display="inline-block" w="full">
+    <Flex direction="column" mb={5} w="full" overflow="auto">
       <Heading color="primary" fontSize="2xl" fontWeight="normal" mb={3}>
         Quiz Assets
       </Heading>
@@ -127,7 +127,13 @@ export default function AddQuizAssets({ quizAsset, loading, setQuizAsset }) {
         </Table>
       ) : (
         <>
-          <Button onClick={onOpen} colorScheme="secondary" display="inline-block" color="black">
+          <Button
+            w="165px"
+            onClick={onOpen}
+            colorScheme="secondary"
+            display="inline-block"
+            color="black"
+          >
             Add Quiz Assets
           </Button>
           <Modal scrollBehavior="inside" isOpen={isOpen} onClose={onClose}>
@@ -173,7 +179,7 @@ export default function AddQuizAssets({ quizAsset, loading, setQuizAsset }) {
                 </Flex>
               </ModalBody>
               <ModalFooter>
-                <Button colorScheme="blue" mr={3}>
+                <Button onClick={onClose} colorScheme="blue" mr={3}>
                   Close
                 </Button>
                 <Button
