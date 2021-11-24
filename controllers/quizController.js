@@ -122,6 +122,8 @@ module.exports = {
         }
       }
 
+      await User.updateOne({ _id: user._id }, { $pull: { questions: questionId } });
+
       if (!questionExists) {
         await User.updateOne({ _id: user._id }, { $push: { questionsUnknown: questionId } });
         res.status(200).json({ msg: "done" });

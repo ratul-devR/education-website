@@ -6,6 +6,7 @@ const dataSchema = new mongoose.Schema({
   answer: { type: String, required: true },
   type: { type: String, required: true, enum: ["mcq", "text"] },
   category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
+  timeLimit: { type: Number, required: true },
 });
 
 const Question = new mongoose.model("Question", dataSchema);

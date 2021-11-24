@@ -8,6 +8,7 @@ const {
   addCourse,
   getCourseAccordingToId,
   purchaseCourse,
+  getCourseAndQuestions,
 } = require("../controllers/courseController");
 
 const router = express.Router();
@@ -20,6 +21,9 @@ router.get("/course/:courseId", checkLogin, getCourseAccordingToId);
 
 // for getting all the courses of the auth user
 router.get("/getAuthUserCourses", checkLogin, getAuthUserCourses);
+
+// for add questions and course into user
+router.post("/getCourseAndQuestions", checkLogin, getCourseAndQuestions);
 
 // for purchasing a course
 router.post("/purchaseCourse", purchaseCourse);

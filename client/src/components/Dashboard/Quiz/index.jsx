@@ -32,7 +32,6 @@ const Quiz = ({ path }) => {
     currentIndex,
     course,
     done,
-    timeLimit,
     score,
     questionsDontKnow,
     questionsWrong,
@@ -59,7 +58,6 @@ const Quiz = ({ path }) => {
           LOAD_QUIZ({
             questions: body.courseQuestions,
             course: body.course,
-            timeLimit: body.course.timeLimit,
           })
         );
       } else {
@@ -98,15 +96,23 @@ const Quiz = ({ path }) => {
       setTimer(0);
       setTimerInterval(null);
     };
-  }, [currentIndex, timeLimit]);
+  }, [currentIndex, currentIndex]);
 
   useEffect(() => {
-    if (timer !== 0 && timeLimit !== 0 && timer === timeLimit && !done && questions.length > 0) {
+    if (
+      timer &&
+      questions[currentIndex] &&
+      timer !== 0 &&
+      questions[currentIndex].timeLimit !== 0 &&
+      timer === questions[currentIndex].timeLimit &&
+      !done &&
+      questions.length > 0
+    ) {
       setTimer(0);
       dispatch(NEXT_QUESTION());
       toast({ status: "warning", description: "Time up" });
     }
-  }, [timer, timeLimit]);
+  }, [timer, currentIndex]);
 
   if (loading) {
     return (
@@ -117,7 +123,7 @@ const Quiz = ({ path }) => {
   }
 
   // if the user don't have any questions
-  if (questions.length === 0) {
+  if (questions.length === 0 || !course._id) {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
         <Heading mb={5} fontSize="9xl">
@@ -155,7 +161,7 @@ const Quiz = ({ path }) => {
           Quiz results
         </Heading>
         <Heading color="primary" fontWeight="normal" mb={10}>
-          {score}/{questions.length}
+          Correct: {score}/{questions.length}
         </Heading>
         <Button
           as={Link}
@@ -203,7 +209,7 @@ const Quiz = ({ path }) => {
           maxW="300px"
           rounded={5}
           value={timer}
-          max={timeLimit}
+          max={questions[currentIndex].timeLimit}
         />
       </Flex>
 

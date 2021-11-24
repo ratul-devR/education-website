@@ -64,14 +64,14 @@ module.exports = {
 
   postCategory: async function (req, res, next) {
     try {
-      const { title, description, price, timeLimit } = req.body;
+      const { title, description, price } = req.body;
 
       const categoryExist = (await Category.findOne({ name: title })) || null;
 
       if (categoryExist) {
         res.status(400).json({ msg: "This category already exists" });
       } else {
-        const newCategory = new Category({ name: title, description, price, timeLimit });
+        const newCategory = new Category({ name: title, description, price });
         await newCategory.save();
 
         const updatedCategories = await Category.find({});
@@ -164,14 +164,21 @@ module.exports = {
   addQuestion: async function (req, res, next) {
     try {
       const { categoryId } = req.params;
-      const { question, options, answer, type } = req.body;
+      const { question, options, answer, type, timeLimit } = req.body;
 
       let newQuestion;
 
       if (type === "mcq") {
-        newQuestion = new Question({ question, options, answer, category: categoryId, type });
+        newQuestion = new Question({
+          question,
+          options,
+          answer,
+          category: categoryId,
+          type,
+          timeLimit,
+        });
       } else {
-        newQuestion = new Question({ question, answer, category: categoryId, type });
+        newQuestion = new Question({ question, answer, category: categoryId, type, timeLimit });
       }
 
       await newQuestion.save();
@@ -214,6 +221,7 @@ module.exports = {
           !question.question ||
           !question.answer ||
           !question.type ||
+          !question.timeLimit ||
           (question.type === "mcq" && question.options.length === 0)
         ) {
           res.status(400).json({

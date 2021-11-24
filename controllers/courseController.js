@@ -55,6 +55,50 @@ module.exports = {
     }
   },
 
+  getCourseAndQuestions: async function (req, res, next) {
+    try {
+      const { courseId } = req.body;
+
+      const user = req.user;
+
+      const course = await Category.findOne({ _id: courseId });
+
+      const courseQuestions = course.questions;
+
+      let userQuestions = [];
+
+      for (let i = 0; i < courseQuestions.length; i++) {
+        const courseQuestion = courseQuestions[i];
+        if (!user.questions.includes(courseQuestion)) {
+          userQuestions.push(courseQuestion);
+        }
+      }
+
+      let courseExists = false;
+      for (let i = 0; i < user.courses.length; i++) {
+        const userCourse = user.courses[i];
+        if (userCourse._id == courseId) {
+          courseExists = true;
+        }
+      }
+
+      if (!courseExists) {
+        await User.updateOne({ _id: user._id }, { $push: { courses: courseId } });
+      }
+      let updatedUser = user;
+      if (userQuestions.length > 0) {
+        updatedUser = await User.findOneAndUpdate(
+          { _id: user._id },
+          { $push: { questions: userQuestions } }
+        ).populate("courses");
+      }
+
+      res.status(201).json({ msg: "Course was added successfully!", user: updatedUser });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   purchaseCourse: async function (req, res, next) {
     try {
       const { amount, courseId, userId } = req.body;

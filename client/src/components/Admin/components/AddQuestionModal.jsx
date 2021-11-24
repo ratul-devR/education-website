@@ -21,7 +21,12 @@ import useToast from "../../../hooks/useToast";
 import config from "../../../config";
 
 const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
-  const [{ question, answer, type }, setInput] = useState({ question: "", answer: "", type: "" });
+  const [{ question, answer, type, timeLimit }, setInput] = useState({
+    question: "",
+    answer: "",
+    type: "",
+    timeLimit: "",
+  });
   const [optionInput, setOptionInput] = useState("");
   const [options, setOptions] = useState([]);
   const toast = useToast();
@@ -56,7 +61,7 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
       const res = await fetch(`${config.serverURL}/get_admin/add_question/${modalValue._id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, answer, options: optionsToSend, type }),
+        body: JSON.stringify({ question, answer, options: optionsToSend, type, timeLimit }),
         credentials: "include",
       });
       const body = await res.json();
@@ -162,6 +167,12 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
                   })}
               </Select>
             )}
+            <Input
+              name="timeLimit"
+              value={timeLimit}
+              onChange={HandleInputChange}
+              placeholder="Time limit for this question"
+            />
           </Flex>
         </ModalBody>
         <ModalFooter>
