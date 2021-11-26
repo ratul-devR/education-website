@@ -1,6 +1,6 @@
 import "./style.css";
 import { Button } from "@chakra-ui/button";
-import { Flex, Heading } from "@chakra-ui/layout";
+import { Flex, Heading, Grid, GridItem } from "@chakra-ui/layout";
 import { Input } from "@chakra-ui/input";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { useEffect, useState } from "react";
@@ -150,20 +150,14 @@ const QuizArea = ({ path, timerInterval }) => {
       setClassName("option correct");
       // changing the score
       dispatch(CHANGE_SCORE());
-      // if the question type is text, then show a toast
-      if (questions[currentIndex].type === "text") {
-        toast({ status: "success", description: "Correct Answer" });
-      }
+      toast({ status: "success", description: "Correct Answer" });
     } else {
       setClassName("option wrong");
       dispatch(WRONG_ANSWER());
-      if (questions[currentIndex].type === "text") {
-        toast({
-          status: "warning",
-          description: `The correct answer is: "${questions[currentIndex].answer}"`,
-          title: "Wrong Answer",
-        });
-      }
+      toast({
+        status: "warning",
+        description: `Wrong Answer`,
+      });
     }
   }
 
@@ -199,47 +193,56 @@ const QuizArea = ({ path, timerInterval }) => {
     <Flex w="full" h="full" direction="column">
       <Heading
         whiteSpace="pre-wrap"
-        fontSize="1xl"
+        fontSize="4xl"
+        textAlign="center"
         py={3}
         fontWeight="normal"
-        color="GrayText"
-        mb={3}
+        mb={5}
       >
         {questions[currentIndex].question}
       </Heading>
 
       {!userKnowsAnswer ? (
         <Flex w="full" direction="column">
-          <Heading fontSize="1xl" fontWeight="normal" mb={3} whiteSpace="wrap">
-            Do you know the answer of this question?
-          </Heading>
-          <Flex w="full" justify="flex-start" align="center" gridColumnGap={2}>
-            <Tooltip hasArrow label="Great! Now let's see if you can give the correct answer">
-              <Button onClick={useKnowsTheAnswer} colorScheme="blue">
-                I know :)
+          <Flex w="full" justify="center" align="center" gridColumnGap={2}>
+            <Tooltip hasArrow label="Show Options">
+              <Button flex={1} onClick={useKnowsTheAnswer} colorScheme="blue">
+                I know
               </Button>
             </Tooltip>
-            <Tooltip hasArrow label="That's fine. Let's try out the next one :)">
+            <Tooltip hasArrow label="Try the next one">
               <Button
+                flex={1}
                 onClick={() => userDoesNotKnowTheAnswer(questions[currentIndex]._id)}
                 colorScheme="red"
               >
-                I Don't know :(
+                I Don't know
               </Button>
             </Tooltip>
           </Flex>
         </Flex>
       ) : (
-        // if the user knows the answer, then shop up the options
-        <Flex w="full" h="full" justify="center" direction="column" gridRowGap={2}>
+        // if the user knows the answer, then show up the options
+        <Grid
+          templateColumns={
+            questions[currentIndex].type === "text"
+              ? "1fr"
+              : { base: "1fr 1fr", sm: "1fr", md: "1fr 1fr", lg: "1fr 1fr" }
+          }
+          gridGap={2}
+          // w="full"
+          // h="full"
+          // justify="center"
+          // direction="column"
+        >
           {questions[currentIndex].type === "mcq" ? (
             questions[currentIndex].options.map((option, index) => {
               return (
                 <div
+                  key={index}
                   onClick={() =>
                     !selectedAnswer && checkAnswer(option, questions[currentIndex]._id)
                   }
-                  key={index}
                   className={selectedAnswer === option ? className : "option"}
                   style={{
                     background:
@@ -268,7 +271,7 @@ const QuizArea = ({ path, timerInterval }) => {
               />
             </form>
           )}
-        </Flex>
+        </Grid>
       )}
     </Flex>
   );

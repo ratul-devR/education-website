@@ -11,6 +11,7 @@ import {
   ModalBody,
 } from "@chakra-ui/modal";
 import { Flex } from "@chakra-ui/layout";
+import { Tooltip } from "@chakra-ui/tooltip";
 import { IconButton } from "@chakra-ui/button";
 import { MdDeleteOutline } from "react-icons/md";
 import { useEffect, useState } from "react";
@@ -174,7 +175,9 @@ const Alc = () => {
               direction="column"
               mb={5}
             >
-              <Text mb={2}>Audio</Text>
+              <Text mb={2}>
+                Audio<sup>*</sup>
+              </Text>
               <input name="audio" onChange={handleInputChange} accept="audio/mpeg" type="file" />
             </Flex>
             <Flex
@@ -200,7 +203,9 @@ const Alc = () => {
               borderColor="gray.100"
               direction="column"
             >
-              <Text mb={2}>Video</Text>
+              <Text mb={2}>
+                Video<sup>*</sup>
+              </Text>
               <input name="video" onChange={handleInputChange} accept="video/mp4" type="file" />
             </Flex>
 
@@ -214,7 +219,9 @@ const Alc = () => {
               direction="column"
               mb={5}
             >
-              <Text mb={2}>Passive Learning Images</Text>
+              <Text mb={2}>
+                Passive Learning Images<sup>*</sup>
+              </Text>
               <input
                 multiple
                 name="passive_images"
@@ -227,7 +234,7 @@ const Alc = () => {
               <Input
                 value={timeout}
                 onChange={(event) => setTimeout(event.target.value)}
-                placeholder="TimeSpan for each images (seconds)"
+                placeholder="TimeSpan for each images (seconds)*"
               />
             </Flex>
             <Flex
@@ -238,7 +245,9 @@ const Alc = () => {
               direction="column"
               mb={5}
             >
-              <Text mb={2}>Passive Learning Audio</Text>
+              <Text mb={2}>
+                Passive Learning Audio<sup>*</sup>
+              </Text>
               <input
                 name="passive_audio"
                 onChange={handleInputChange}
@@ -286,57 +295,96 @@ const Alc = () => {
       </Modal>
 
       {items && items.length > 0 ? (
-        <Table minW="1500px">
+        <Table minW="1320px">
           <Thead>
-            <Th>Audio</Th>
-            <Th>bg Sound</Th>
-            <Th>Video</Th>
-            <Th>PS Audio</Th>
-            <Th>PS Images</Th>
-            <Th>PS bg sound</Th>
+            <Th>
+              <Tooltip hasArrow label="Active Learning Audio">
+                Audio
+              </Tooltip>
+            </Th>
+            <Th>
+              <Tooltip hasArrow label="Active Learning Background-sound">
+                Bg Sound
+              </Tooltip>
+            </Th>
+            <Th>
+              <Tooltip hasArrow label="Active Learning Video">
+                Video
+              </Tooltip>
+            </Th>
+            <Th>
+              <Tooltip hasArrow label="Passive Learning Audio">
+                PS Audio
+              </Tooltip>
+            </Th>
+            <Th>
+              <Tooltip hasArrow label="Passive Learning Images">
+                PS Images
+              </Tooltip>
+            </Th>
+            <Th>
+              <Tooltip hasArrow label="Passive Learning Background-sound">
+                PS bg sound
+              </Tooltip>
+            </Th>
             <Th>Timeout</Th>
-            <Th>Total views</Th>
-            <Th>Actions</Th>
+            <Th>views</Th>
+            <Th>Action</Th>
           </Thead>
           <Tbody>
             {items.map((item) => {
               return (
                 <Tr key={item._id}>
                   <Td>
-                    <Link as="a" href={item.audio.url} target="_blank">
-                      {item.audio.name}
-                    </Link>
+                    <Tooltip hasArrow label={item.audio.name}>
+                      <Link noOfLines={1} as="a" href={item.audio.url} target="_blank">
+                        {item.audio.name.slice(0, 25)}
+                      </Link>
+                    </Tooltip>
                   </Td>
                   <Td>
                     {item.background_music ? (
-                      <Link as="a" href={item.background_music.url} target="_blank">
-                        {item.background_music.name}
-                      </Link>
+                      <Tooltip hasArrow label={item.background_music.name}>
+                        <Link noOfLines={1} as="a" href={item.background_music.url} target="_blank">
+                          {item.background_music.name.slice(0, 25)}
+                        </Link>
+                      </Tooltip>
                     ) : (
                       "Default"
                     )}
                   </Td>
                   <Td>
-                    <Link as="a" href={item.video.url} target="_blank">
-                      {item.video.name}
-                    </Link>
+                    <Tooltip hasArrow label={item.video.name}>
+                      <Link noOfLines={1} as="a" href={item.video.url} target="_blank">
+                        {item.video.name.slice(0, 25)}
+                      </Link>
+                    </Tooltip>
                   </Td>
                   <Td>
-                    <Link as="a" href={item.passive_audio.url} target="_blank">
-                      {item.passive_audio.name}
-                    </Link>
+                    <Tooltip hasArrow label={item.passive_audio.name}>
+                      <Link as="a" noOfLines={1} href={item.passive_audio.url} target="_blank">
+                        {item.passive_audio.name.slice(0, 25)}
+                      </Link>
+                    </Tooltip>
                   </Td>
                   <Td>{item.passive_images.length} Files</Td>
                   <Td>
                     {item.passive_background_sound ? (
-                      <Link as="a" href={item.passive_background_sound.url} target="_blank">
-                        {item.passive_background_sound.name}
-                      </Link>
+                      <Tooltip hasArrow label={item.passive_background_sound.name}>
+                        <Link
+                          as="a"
+                          noOfLines={1}
+                          href={item.passive_background_sound.url}
+                          target="_blank"
+                        >
+                          {item.passive_background_sound.name.slice(0, 25)}
+                        </Link>
+                      </Tooltip>
                     ) : (
                       "Default"
                     )}
                   </Td>
-                  <Td>{item.timeout} seconds</Td>
+                  <Td>{item.timeout} s</Td>
                   <Td>{item.viewers.length}</Td>
                   <Td>
                     <IconButton

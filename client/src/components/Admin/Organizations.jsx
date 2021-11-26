@@ -55,9 +55,11 @@ const Organizations = () => {
       </Heading>
 
       {orgs && orgs.length > 0 ? (
-        <Table minW="700px" size="md" colorScheme="gray">
+        <Table minW="1200px">
           <Thead>
+            <Th>Id</Th>
             <Th>Name</Th>
+            <Th>Type</Th>
             <Th>Phone</Th>
             <Th>Email</Th>
             <Th>Total refers</Th>
@@ -67,7 +69,9 @@ const Organizations = () => {
             {orgs.map((org) => {
               return (
                 <Tr key={org._id}>
+                  <Td>{org._id}</Td>
                   <Td>{org.name}</Td>
+                  <Td>{org.type}</Td>
                   <Td>{org.phone}</Td>
                   <Td>{org.email}</Td>
                   <Td>{org.refers.length}</Td>

@@ -19,7 +19,7 @@ const UserCourses = () => {
   return (
     <Flex direction="column" w="full" h="full">
       <Heading color="primary" fontWeight="normal" fontSize="2xl" mb={5}>
-        Your courses
+        Checking Phase
       </Heading>
 
       {courses && courses.length > 0 ? (

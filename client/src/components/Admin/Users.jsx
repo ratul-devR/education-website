@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import config from "../../config";
 import useToast from "../../hooks/useToast";
-import { Heading, Flex } from "@chakra-ui/react";
+import { Heading, Flex, Tooltip } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Spinner } from "@chakra-ui/spinner";
 
@@ -55,7 +55,7 @@ const Users = () => {
       </Heading>
 
       {users && users.length ? (
-        <Table minW="700px" size="md" colorScheme="gray">
+        <Table minW="900px" size="md" colorScheme="gray">
           <Thead>
             <Th>Name</Th>
             <Th>email</Th>
@@ -72,7 +72,15 @@ const Users = () => {
                   </Td>
                   <Td>{user.email}</Td>
                   <Td>{user.role}</Td>
-                  <Td>{user.referer ? user.referer.name : "None"}</Td>
+                  <Td>
+                    {user.referer ? (
+                      <Tooltip closeDelay={1500} hasArrow label={`Id: ${user.referer._id}`}>
+                        {user.referer.name}
+                      </Tooltip>
+                    ) : (
+                      "None"
+                    )}
+                  </Td>
                 </Tr>
               );
             })}
