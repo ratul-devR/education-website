@@ -164,7 +164,7 @@ module.exports = {
   addQuestion: async function (req, res, next) {
     try {
       const { categoryId } = req.params;
-      const { question, options, answer, type, timeLimit } = req.body;
+      const { question, options, answer, type, timeLimit, answers } = req.body;
 
       let newQuestion;
 
@@ -178,7 +178,7 @@ module.exports = {
           timeLimit,
         });
       } else {
-        newQuestion = new Question({ question, answer, category: categoryId, type, timeLimit });
+        newQuestion = new Question({ question, answers, category: categoryId, type, timeLimit });
       }
 
       await newQuestion.save();
@@ -199,17 +199,19 @@ module.exports = {
       const { category } = req.body;
       const filePath =
         req.protocol + "://" + req.get("host") + `/uploads/question-csv-files/${file.filename}`;
-      // all the json data parsed from the csv file is here
+      // all the json data parsed from the csv file is here (parsed)
       const jsonData = await csvJson().fromStream(request.get(filePath));
 
       // now let's convert the options field from string to array, if it exists
       for (let i = 0; i < jsonData.length; i++) {
         const question = jsonData[i];
         question.category = category;
-        if (question.options) {
+        if (question.type === "mcq") {
           question.options = question.options.split("/ ");
+          question.answers = question.answers.split(" ");
         } else {
           question.options = [];
+          question.answers = question.answers.split("/ ");
         }
       }
 
@@ -219,10 +221,10 @@ module.exports = {
         const question = jsonData[i];
         if (
           !question.question ||
-          !question.answer ||
           !question.type ||
           !question.timeLimit ||
-          (question.type === "mcq" && question.options.length === 0)
+          (question.type === "mcq" && question.options.length === 0) ||
+          (question.type === "text" && question.answers.length === 0)
         ) {
           res.status(400).json({
             msg: "Some required properties are missing in your csv file! or some of the values may be invalid",

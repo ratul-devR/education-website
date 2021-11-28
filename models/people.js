@@ -9,6 +9,7 @@ const dataSchema = new mongoose.Schema({
   password: { type: String, required: true, trim: true },
   role: { type: String, enum: ["user", "admin", "organization"], default: "user" },
   verified: { type: Boolean, default: false },
+  subscribe: { type: Boolean, default: false },
 
   // if any org has referred him
   referer: { type: mongoose.Schema.Types.ObjectId, ref: "Org" },

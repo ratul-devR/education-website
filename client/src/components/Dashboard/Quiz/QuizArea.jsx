@@ -1,6 +1,6 @@
 import "./style.css";
 import { Button } from "@chakra-ui/button";
-import { Flex, Heading, Grid, GridItem } from "@chakra-ui/layout";
+import { Flex, Heading, Grid } from "@chakra-ui/layout";
 import { Input } from "@chakra-ui/input";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { useEffect, useState } from "react";
@@ -111,19 +111,20 @@ const QuizArea = ({ path, timerInterval }) => {
 
   // for handling option click
   function checkAnswer(usersAnswer, questionId) {
+    setSelectedAnswer(usersAnswer);
+
     // stop the timer
     clearInterval(timerInterval);
 
     let isCorrectAnswer;
 
     if (questions[currentIndex].type === "mcq") {
-      isCorrectAnswer = questions[currentIndex].answer === usersAnswer;
-      setSelectedAnswer(usersAnswer);
+      isCorrectAnswer = questions[currentIndex].answers.includes(usersAnswer);
     } else {
-      isCorrectAnswer = questions[currentIndex].answer.toLowerCase() === input.toLowerCase();
-      setSelectedAnswer(usersAnswer);
+      isCorrectAnswer = questions[currentIndex].answers.includes(input);
     }
 
+    // play the sound according to the answer
     playFeedBackAudio(isCorrectAnswer);
 
     if (isCorrectAnswer) {
@@ -246,10 +247,15 @@ const QuizArea = ({ path, timerInterval }) => {
                   className={selectedAnswer === option ? className : "option"}
                   style={{
                     background:
-                      option === questions[currentIndex].answer && selectedAnswer && "#38a169",
-                    color: option === questions[currentIndex].answer && selectedAnswer && "#fff",
+                      questions[currentIndex].answers.includes(option) &&
+                      selectedAnswer &&
+                      "#38a169",
+                    color:
+                      questions[currentIndex].answers.includes(option) && selectedAnswer && "#fff",
                     borderColor:
-                      option === questions[currentIndex].answer && selectedAnswer && "#38a169",
+                      questions[currentIndex].answers.includes(option) &&
+                      selectedAnswer &&
+                      "#38a169",
                   }}
                 >
                   {option}

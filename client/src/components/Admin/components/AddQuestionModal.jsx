@@ -27,8 +27,13 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
     type: "",
     timeLimit: "",
   });
+
   const [optionInput, setOptionInput] = useState("");
   const [options, setOptions] = useState([]);
+
+  const [answersInput, setAnswersInput] = useState("");
+  const [answers, setAnswers] = useState([]);
+
   const toast = useToast();
 
   // for handling input change
@@ -54,14 +59,37 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
     setOptions((pre) => pre.filter((i) => i._id != id));
   }
 
+  // for adding an answer
+  function addAnswers(e) {
+    e.preventDefault();
+    setAnswers((pre) => [
+      ...pre,
+      { _id: Date.now() + Math.floor(Math.random() * 100), answer: answersInput },
+    ]);
+    setAnswersInput("");
+  }
+
+  // for removing an answer
+  function removeAnswer(id) {
+    setAnswers((pre) => pre.filter((i) => i._id != id));
+  }
+
   // for adding question to the category
   async function addQuestionToCategory() {
     const optionsToSend = options.map((i) => i.option);
+    const answersToSend = answers.map((answer) => answer.answer);
     try {
       const res = await fetch(`${config.serverURL}/get_admin/add_question/${modalValue._id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, answer, options: optionsToSend, type, timeLimit }),
+        body: JSON.stringify({
+          question,
+          answer,
+          options: optionsToSend,
+          type,
+          timeLimit,
+          answers: answersToSend,
+        }),
         credentials: "include",
       });
       const body = await res.json();
@@ -117,12 +145,26 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
               <option value="text">Text</option>
             </Select>
             {type === "text" && (
-              <Input
-                name="answer"
-                onChange={HandleInputChange}
-                placeholder="Enter the answer"
-                value={answer}
-              />
+              <form onSubmit={addAnswers}>
+                <Input
+                  onChange={(event) => setAnswersInput(event.target.value)}
+                  placeholder="Enter the possible answers"
+                  value={answersInput}
+                  mb={3}
+                />
+                {answers && answers.length > 0 && (
+                  <HStack mb={3} wrap="wrap" gridGap={1}>
+                    {answers.map(({ answer, _id }) => {
+                      return (
+                        <Tag variant="solid" size="md" key={_id}>
+                          <TagLabel>{answer}</TagLabel>
+                          <TagCloseButton onClick={() => removeAnswer(_id)} />
+                        </Tag>
+                      );
+                    })}
+                  </HStack>
+                )}
+              </form>
             )}
             {/* only if the type is mcq, then let the user to add options */}
             {type === "mcq" && (
@@ -138,23 +180,23 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
             )}
             {options && options.length > 0 && (
               <HStack mb={3} wrap="wrap" gridGap={1}>
-                {options.length > 0 &&
-                  options.map(({ _id, option }) => {
-                    return (
-                      <Tag variant="solid" size="md" key={_id}>
-                        <TagLabel>{option}</TagLabel>
-                        <TagCloseButton onClick={() => removeOption(_id)} />
-                      </Tag>
-                    );
-                  })}
+                {options.map(({ option, _id }) => {
+                  return (
+                    <Tag variant="solid" size="md" key={_id}>
+                      <TagLabel>{option}</TagLabel>
+                      <TagCloseButton onClick={() => removeOption(_id)} />
+                    </Tag>
+                  );
+                })}
               </HStack>
             )}
-            {options && options.length > 0 && (
+            {options && options.length > 0 && type === "mcq" && (
               <Select
                 placeholder="Correct answer"
                 name="answer"
                 onChange={HandleInputChange}
                 value={answer}
+                mb={3}
               >
                 {options &&
                   options.length &&
@@ -182,7 +224,13 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
           <Button
             colorScheme="secondary"
             color="black"
-            disabled={!answer || !question || !type}
+            disabled={
+              (type === "text" && !answers.length) ||
+              (type === "mcq" && !answer) ||
+              !question ||
+              !type ||
+              !timeLimit
+            }
             onClick={addQuestionToCategory}
             mr={3}
           >

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useHistory, useRouteMatch } from "react-router-dom";
 import { Flex, Input, Heading, Button, Text, Link } from "@chakra-ui/react";
+import { InputGroup, InputRightElement } from "@chakra-ui/input";
 import validator from "validator";
 import { useDispatch } from "react-redux";
 
@@ -18,6 +19,8 @@ const InputField = (props) => {
 
 const Login = () => {
   const [{ email, password }, setInput] = useState({ email: "", password: "" });
+  const [showPass, setShowPass] = useState(false);
+
   const { path } = useRouteMatch();
   const toast = useToast();
   const dispatch = useDispatch();
@@ -91,13 +94,20 @@ const Login = () => {
           type="email"
           value={email}
         />
-        <InputField
-          onChange={HandleInputChange}
-          placeholder="Enter your password"
-          name="password"
-          type="password"
-          value={password}
-        />
+        <InputGroup size="md">
+          <InputField
+            onChange={HandleInputChange}
+            placeholder="Enter your password"
+            name="password"
+            type={showPass ? "text" : "password"}
+            value={password}
+          />
+          <InputRightElement w="4rem">
+            <Button colorScheme="blue" onClick={() => setShowPass((pre) => !pre)} size="xs">
+              {showPass ? "hide" : "show"}
+            </Button>
+          </InputRightElement>
+        </InputGroup>
         <Button onClick={ValidateInputInfo} colorScheme="secondary" color="black" mb={3}>
           Sign in
         </Button>

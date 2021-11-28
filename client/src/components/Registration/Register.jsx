@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
-import { Flex, Heading, Button, Input, Text, Link } from "@chakra-ui/react";
+import {
+  Flex,
+  Heading,
+  Button,
+  Input,
+  Text,
+  Link,
+  InputGroup,
+  InputRightElement,
+} from "@chakra-ui/react";
 import validator from "validator";
 import { useDispatch } from "react-redux";
 
@@ -29,6 +38,8 @@ const Register = () => {
     conPass: "",
   });
   const [processing, setProcessing] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [showConPass, setShowConPass] = useState(false);
 
   const dispatch = useDispatch();
   const toast = useToast();
@@ -132,20 +143,34 @@ const Register = () => {
           type="email"
           value={email}
         />
-        <InputField
-          onChange={HandleInputChange}
-          placeholder="Enter your password"
-          name="password"
-          type="password"
-          value={password}
-        />
-        <InputField
-          onChange={HandleInputChange}
-          placeholder="Confirm password"
-          name="conPass"
-          type="password"
-          value={conPass}
-        />
+        <InputGroup size="md">
+          <InputField
+            onChange={HandleInputChange}
+            placeholder="Enter your password"
+            name="password"
+            type={showPass ? "text" : "password"}
+            value={password}
+          />
+          <InputRightElement w="4rem">
+            <Button onClick={() => setShowPass((pre) => !pre)} colorScheme="blue" size="xs">
+              {showPass ? "hide" : "show"}
+            </Button>
+          </InputRightElement>
+        </InputGroup>
+        <InputGroup size="md">
+          <InputField
+            onChange={HandleInputChange}
+            placeholder="Confirm password"
+            name="conPass"
+            type={showConPass ? "text" : "password"}
+            value={conPass}
+          />
+          <InputRightElement w="4rem">
+            <Button onClick={() => setShowConPass((pre) => !pre)} colorScheme="blue" size="xs">
+              {showConPass ? "hide" : "show"}
+            </Button>
+          </InputRightElement>
+        </InputGroup>
         <Button
           disabled={processing}
           onClick={ValidateInputInfo}

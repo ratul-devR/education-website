@@ -110,7 +110,7 @@ const Quiz = ({ path }) => {
       questions[currentIndex] &&
       timer !== 0 &&
       questions[currentIndex].timeLimit !== 0 &&
-      timer === questions[currentIndex].timeLimit &&
+      timer > questions[currentIndex].timeLimit &&
       !done &&
       questions.length > 0
     ) {

@@ -1,11 +1,11 @@
 import { Flex } from "@chakra-ui/layout";
 import { Heading } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/input";
+import { Checkbox } from "@chakra-ui/checkbox";
 import { Select } from "@chakra-ui/select";
 import { useEffect, useState } from "react";
 import { Button } from "@chakra-ui/button";
 import config from "../config";
-import { Checkbox } from "@chakra-ui/checkbox";
 import useToast from "../hooks/useToast";
 import { Alert, AlertIcon } from "@chakra-ui/alert";
 import validator from "validator";
@@ -33,6 +33,8 @@ const CreateOrg = () => {
   ] = useState({
     name: "",
     email: "",
+    password: "",
+    conPass: "",
     streetAddress: "",
     city: "",
     postalCode: "",
@@ -44,6 +46,8 @@ const CreateOrg = () => {
     subscribe: false,
   });
   const [processing, setProcessing] = useState(false);
+  const [addPeople, setAddPeople] = useState(false);
+  const [colleagues, setColleagues] = useState([]);
   const [affiliateLink, setAffiliateLink] = useState("");
 
   const toast = useToast();
@@ -104,8 +108,8 @@ const CreateOrg = () => {
   }, []);
 
   return (
-    <Flex w="full" justify="center" py={20}>
-      <Flex boxShadow="md" w="450px" bg="gray.50" p={10} direction="column" rounded={5}>
+    <Flex w="full" align="center" direction="column" py={20}>
+      <Flex boxShadow="md" mb={10} w="500px" bg="gray.50" p={10} direction="column" rounded={5}>
         <Heading color="primary" fontSize="2xl" fontWeight="normal" textAlign="center" mb={3}>
           Create Organization
         </Heading>
@@ -145,6 +149,9 @@ const CreateOrg = () => {
         >
           Subscribe to Newsletter
         </Checkbox>
+        <Checkbox onChange={() => setAddPeople((pre) => !pre)} mb={3} colorScheme="secondary">
+          Add Colleagues
+        </Checkbox>
         <Button
           disabled={
             !name ||
@@ -170,6 +177,16 @@ const CreateOrg = () => {
           </Alert>
         )}
       </Flex>
+
+      {/* for the people from organization */}
+      {addPeople && (
+        <Flex w="500px" justify="center" direction="column" bg="gray.50" p={10} boxShadow="md">
+          <Heading textAlign="center" mb={5} fontWeight="normal" fontSize="2xl" color="primary">
+            Add Colleagues
+          </Heading>
+          <Input placeholder="Enter Colleague Name" />
+        </Flex>
+      )}
     </Flex>
   );
 };

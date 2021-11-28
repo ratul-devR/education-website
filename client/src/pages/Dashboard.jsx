@@ -57,7 +57,7 @@ const Dashboard = () => {
           <Route path={path} exact component={Learn} />
           <Route path={`${path}/quiz`} exact component={UserCourses} />
           <Route path={`${path}/activation_phase`} exact component={ActivationPhrase} />
-          <Route path={`${path}/courses`} component={Courses} />
+          {/* <Route path={`${path}/courses`} component={Courses} /> */}
           <Route path={`${path}/alc`} component={Alc} />
           {/* "getUserQuestionsOfCourse" is the path for checking phase */}
           <Route path={`${path}/quiz/:courseId`}>

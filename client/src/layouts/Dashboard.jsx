@@ -61,7 +61,7 @@ const Dashboard = ({ children }) => {
             icon={<FaAssistiveListeningSystems />}
           />
         </Tooltip>
-        <Tooltip label="Courses" placement="right" hasArrow>
+        {/* <Tooltip label="Courses" placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"
@@ -71,7 +71,7 @@ const Dashboard = ({ children }) => {
             activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<BsGrid1X2Fill />}
           />
-        </Tooltip>
+        </Tooltip> */}
       </Flex>
       <VStack spacing={0} flex={1} overflow="hidden" h="full" w="full">
         <Flex

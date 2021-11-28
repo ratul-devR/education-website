@@ -105,20 +105,13 @@ const Questions = () => {
                 <Th>Actions</Th>
               </Thead>
               <Tbody>
-                {questions.map(({ question, answer, type, options, _id, timeLimit }) => {
+                {questions.map(({ question, answers, type, options, _id, timeLimit }) => {
                   return (
                     <Tr key={_id}>
                       <Td>{question}</Td>
                       <Td>
                         {type === "mcq" ? (
-                          <Stack
-                            direction="row"
-                            wrap="wrap"
-                            display="flex"
-                            gridGap={2}
-                            justify="flex-start"
-                            align="flex-start"
-                          >
+                          <Stack direction="row" wrap="wrap" display="flex" gridGap={2}>
                             {options.map((option, index) => (
                               <Badge
                                 key={index}
@@ -134,7 +127,20 @@ const Questions = () => {
                           "No Options"
                         )}
                       </Td>
-                      <Td>{answer}</Td>
+                      <Td>
+                        <Stack direction="row" wrap="wrap" display="flex" gridGap={2}>
+                          {answers.map((answer, index) => (
+                            <Badge
+                              key={index}
+                              textTransform="none"
+                              colorScheme="purple"
+                              variant="subtle"
+                            >
+                              {answer}
+                            </Badge>
+                          ))}
+                        </Stack>
+                      </Td>
                       <Td>{timeLimit}</Td>
                       <Td>
                         <IconButton
