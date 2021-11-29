@@ -2,7 +2,13 @@ import { Flex, Heading } from "@chakra-ui/layout";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { Button } from "@chakra-ui/button";
 import { useState } from "react";
-import config from "../config";
+import config from "../../config";
+import useToast from "../../hooks/useToast";
+import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { ORG_LOGIN } from "../../redux/actions/authActions";
+import { Link } from "react-router-dom";
+import { Link as ChakraLink } from "@chakra-ui/react";
 
 export default function LoginOrg() {
   const [input, setInput] = useState({
@@ -10,12 +16,32 @@ export default function LoginOrg() {
     password: "",
   });
   const [showPass, setShowPass] = useState(false);
+  const toast = useToast();
+  const history = useHistory();
+  const dispatch = useDispatch();
   function handleInputChange(e) {
     const { name, value } = e.target;
     setInput((pre) => ({ ...pre, [name]: value }));
   }
-  function loginOrg() {
-    const res = await fetch(`${config.serverURL}/get_auth/`);
+  async function loginOrg() {
+    try {
+      const res = await fetch(`${config.serverURL}/get_auth/loginOrg`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email: input.email, password: input.password }),
+      });
+      const body = await res.json();
+      if (res.ok) {
+        dispatch(ORG_LOGIN(body.org));
+        history.push("/orgDashboard");
+        toast({ status: "success", description: body.msg });
+      } else {
+        toast({ status: "error", description: body.msg });
+      }
+    } catch (err) {
+      toast({ status: "error", description: err.message });
+    }
   }
   return (
     <Flex w="full" h="full" justify="center" align="center">
@@ -44,9 +70,15 @@ export default function LoginOrg() {
             </Button>
           </InputRightElement>
         </InputGroup>
-        <Button onClick={loginOrg} colorScheme="secondary" color="black">
+        <Button mb={5} onClick={loginOrg} colorScheme="secondary" color="black">
           Sign in
         </Button>
+        <Flex justify="center">
+          Not Registered?{" "}
+          <ChakraLink ml={2} color="primary" as={Link} textAlign="center" to="/auth/createOrg">
+            Register
+          </ChakraLink>
+        </Flex>
       </Flex>
     </Flex>
   );

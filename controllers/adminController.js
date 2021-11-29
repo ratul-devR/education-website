@@ -45,7 +45,18 @@ module.exports = {
   sendMails: async function (req, res, next) {
     try {
       const { subject, email } = req.body;
-      const listOfMails = (await Org.find({ subscribed: true })).map((org) => org.email);
+      const orgs = await Org.find({ subscribed: true });
+
+      orgs.filter((org) => org.subscribed);
+
+      let listOfMails = [];
+
+      for (let i = 0; i < orgs.length; i++) {
+        const org = orgs[i];
+        listOfMails.push(org.email);
+        org.peoples.map((people) => listOfMails.push(people.email));
+      }
+
       if (listOfMails.length === 0) {
         res.status(400).json({ msg: "There are no organizations or they are not subscribed" });
       }

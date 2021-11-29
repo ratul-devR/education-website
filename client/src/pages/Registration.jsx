@@ -4,8 +4,8 @@ import { UnorderedList, ListItem, Link } from "@chakra-ui/react";
 
 import Login from "../components/Registration/Login";
 import Register from "../components/Registration/Register";
-import CreateOrg from "../pages/CreateOrg";
-import LoginOrg from "./LoginOrg";
+import CreateOrg from "../components/Registration/CreateOrg";
+import LoginOrg from "../components/Registration/LoginOrg";
 
 import Logo from "../assets/logo.png";
 

@@ -1,4 +1,5 @@
 const User = require("../../models/people");
+const Org = require("../../models/org");
 const jwt = require("jsonwebtoken");
 
 module.exports = async function (req, res, next) {
@@ -9,12 +10,18 @@ module.exports = async function (req, res, next) {
       const token = cookies[process.env.COOKIE_NAME];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await User.findOne({ _id: decoded._id }).populate("courses");
+      const org = await Org.findOne({ _id: decoded._id });
 
-      if (!user) {
-        res.status(401).json({ msg: "You are not logged in" });
-      } else {
-        req.user = user;
+      if (org) {
+        req.org = org;
         next();
+      } else {
+        if (!user) {
+          res.status(401).json({ msg: "You are not logged in" });
+        } else {
+          req.user = user;
+          next();
+        }
       }
     } else {
       res.status(401).json({ msg: "You are not logged in" });

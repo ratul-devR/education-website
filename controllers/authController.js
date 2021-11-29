@@ -193,14 +193,22 @@ module.exports = {
         res.status(400).json({ msg: "Invalid Credentials" });
       }
 
-      res.status(200).json({ msg: "Login Successfull" });
+      const token = await org.generateToken();
+
+      res.cookie(process.env.COOKIE_NAME, token, {
+        maxAge: process.env.COOKIE_MAX_AGE,
+        httpOnly: true,
+        signed: true,
+      });
+
+      res.status(200).json({ msg: "Login Successfull", org });
     } catch (err) {
       next(err);
     }
   },
 
   sendResponseIfLoggedIn: function (req, res) {
-    res.status(201).send(req.user);
+    res.status(201).send(req.user || req.org);
   },
 
   logout: function (req, res) {

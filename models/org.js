@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken")
 
 const dataSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -28,6 +29,17 @@ dataSchema.pre("save", function (next) {
     next();
   });
 });
+
+// for generting jwt
+dataSchema.methods.generateToken = function () {
+  try {
+    const org = this;
+    const token = jwt.sign({ _id: org._id.toString() }, process.env.JWT_SECRET);
+    return token;
+  } catch (err) {
+    console.log(err.message || err);
+  }
+};
 
 const Org = new mongoose.model("Org", dataSchema);
 
