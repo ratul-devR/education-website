@@ -5,6 +5,7 @@ import { UnorderedList, ListItem, Link } from "@chakra-ui/react";
 import Login from "../components/Registration/Login";
 import Register from "../components/Registration/Register";
 import CreateOrg from "../pages/CreateOrg";
+import LoginOrg from "./LoginOrg";
 
 import Logo from "../assets/logo.png";
 
@@ -36,6 +37,7 @@ const Registration = () => {
           <Route path={path} exact component={Login} />
           <Route path={`${path}/register`} component={Register} />
           <Route path={`${path}/createOrg`} component={CreateOrg} />
+          <Route path={`${path}/loginOrg`} component={LoginOrg} />
         </Switch>
       </Flex>
     </VStack>

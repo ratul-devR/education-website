@@ -64,19 +64,9 @@ module.exports = {
       if (course) {
         const questions = course.questions.length > 0 ? course.questions : [];
 
-        const freeQuestions = [];
-
-        for (let i = 0; i < 10; i++) {
-          if (questions[i]) {
-            freeQuestions.push(questions[i]);
-          }
-        }
-
         // now updating the user with the questions and courses
         await User.updateOne({ _id: newUser._id }, { $push: { courses: course } });
-        if (freeQuestions.length > 0) {
-          await User.updateOne({ _id: newUser._id }, { $push: { questions: freeQuestions } });
-        }
+        await User.updateOne({ _id: newUser._id }, { $push: { questions: questions } });
       }
 
       const authToken = await newUser.generateToken();
@@ -136,7 +126,9 @@ module.exports = {
       const {
         orgName,
         email,
+        password,
         streetAddress,
+        colleagues,
         city,
         postalCode,
         province,
@@ -150,12 +142,14 @@ module.exports = {
       const newOrg = new Org({
         name: orgName,
         email,
+        password,
         streetAddress,
         city,
         postalCode,
         province,
         phone,
         type,
+        peoples: colleagues,
         employeeName: orgEmployeeName,
         employeePosition: orgEmployeePosition,
         subscribed: subscribe,
@@ -178,6 +172,28 @@ module.exports = {
       });
 
       res.status(201).json({ affiliateLink, msg: "We just emailed you the affiliate Link" });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  loginOrg: async function (req, res, next) {
+    try {
+      const { email, password } = req.body;
+
+      const org = await Org.findOne({ email });
+
+      if (!org) {
+        res.status(400).json({ msg: "Invalid Credentials" });
+      }
+
+      const passwordMatched = await bcrypt.compare(password, org.password);
+
+      if (!passwordMatched) {
+        res.status(400).json({ msg: "Invalid Credentials" });
+      }
+
+      res.status(200).json({ msg: "Login Successfull" });
     } catch (err) {
       next(err);
     }

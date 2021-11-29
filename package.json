@@ -1,6 +1,7 @@
 {
   "name": "education-website",
   "version": "1.0.0",
+  "type": "commonjs",
   "description": "An educational website using the MERN stack",
   "main": "app.js",
   "repository": "git@github.com:ratul-devR/education-website.git",

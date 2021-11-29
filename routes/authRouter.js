@@ -8,6 +8,7 @@ const {
   logout,
   registerOrg,
   confirmEmail,
+  loginOrg
 } = require("../controllers/authController");
 
 const checkEmailExistence = require("../middlewares/auth/checkEmailExistence");
@@ -24,6 +25,9 @@ router.post("/login", login);
 
 // for registering an org
 router.post("/registerOrg", checkOrgEmailExistence, registerOrg);
+
+// for logging in the org's
+router.post("/loginOrg", loginOrg)
 
 // for confirming an email address
 router.get("/confirmEmail/:accountId", confirmEmail);
