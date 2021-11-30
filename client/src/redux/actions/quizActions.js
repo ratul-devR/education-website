@@ -24,7 +24,3 @@ export function DONT_KNOW() {
 export function WRONG_ANSWER() {
   return { type: "WRONG_ANSWER" };
 }
-
-export function QUIZ_DONE() {
-  return { type: "DONE" };
-}

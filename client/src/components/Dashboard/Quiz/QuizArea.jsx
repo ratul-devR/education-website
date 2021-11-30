@@ -8,12 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import config from "../../../config";
 import useToast from "../../../hooks/useToast";
 
-import {
-  CHANGE_SCORE,
-  DONT_KNOW,
-  NEXT_QUESTION,
-  WRONG_ANSWER,
-} from "../../../redux/actions/quizActions";
+import { CHANGE_SCORE, DONT_KNOW, WRONG_ANSWER } from "../../../redux/actions/quizActions";
 import { LOGIN } from "../../../redux/actions/authActions";
 
 const QuizArea = ({ path, timerInterval }) => {
@@ -21,6 +16,9 @@ const QuizArea = ({ path, timerInterval }) => {
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [className, setClassName] = useState("option");
   const [input, setInput] = useState("");
+
+  // whenever the user clicks on I don't know or I know, it means the user has commited that
+  const [userCommited, setUserCommited] = useState(false);
 
   // audios
   const [backgroundAudio, setBackgroundAudio] = useState();
@@ -53,9 +51,16 @@ const QuizArea = ({ path, timerInterval }) => {
 
   // if the user doesn't knows the answer then show him the next Q
   // and show up a toast
+  // this funtion will be called when the user click on I don't know and also when the user gives the wrong answer
   async function userDoesNotKnowTheAnswer(questionId) {
     dispatch(DONT_KNOW());
-    dispatch(NEXT_QUESTION());
+    setUserCommited(true);
+    // stop the timer
+    clearInterval(timerInterval);
+    // if this is not activation phase, only then call it
+    // cause if the user doesn't knows the answer, it will be moved to the activation phase
+    // but in activation phase, if the user doesn't knows the answer,
+    // it remains as it is.
     if (path !== "getUserUnknownQuestions") {
       try {
         const res = await fetch(`${config.serverURL}/get_quiz/dontKnow`, {
@@ -65,7 +70,9 @@ const QuizArea = ({ path, timerInterval }) => {
           body: JSON.stringify({ questionId }),
         });
         const body = await res.json();
-        if (!res.ok) {
+        if (res.ok) {
+          toast({ status: "error", description: "You don't know the answer" });
+        } else {
           toast({ status: "error", description: body.msg });
         }
       } catch (err) {
@@ -155,6 +162,8 @@ const QuizArea = ({ path, timerInterval }) => {
     } else {
       setClassName("option wrong");
       dispatch(WRONG_ANSWER());
+      // because the user has given the wrong answer, mark it as he doesn't knows that
+      userDoesNotKnowTheAnswer(questionId);
       toast({
         status: "warning",
         description: `Wrong Answer`,
@@ -185,6 +194,7 @@ const QuizArea = ({ path, timerInterval }) => {
     setClassName("option");
     setSelectedAnswer();
     setInput("");
+    setUserCommited(false);
     return () => {
       stopFeedBackSounds();
     };
@@ -207,12 +217,18 @@ const QuizArea = ({ path, timerInterval }) => {
         <Flex w="full" direction="column">
           <Flex w="full" justify="center" align="center" gridColumnGap={2}>
             <Tooltip hasArrow label="Show Options">
-              <Button flex={1} onClick={useKnowsTheAnswer} colorScheme="blue">
+              <Button
+                disabled={userCommited}
+                flex={1}
+                onClick={useKnowsTheAnswer}
+                colorScheme="blue"
+              >
                 I know
               </Button>
             </Tooltip>
             <Tooltip hasArrow label="Try the next one">
               <Button
+                disabled={userCommited}
                 flex={1}
                 onClick={() => userDoesNotKnowTheAnswer(questions[currentIndex]._id)}
                 colorScheme="red"

@@ -19,7 +19,7 @@ import {
   LOAD_QUIZ,
   NEXT_QUESTION,
   RESET_QUIZ,
-  QUIZ_DONE,
+  //  QUIZ_DONE,
 } from "../../../redux/actions/quizActions";
 
 const Quiz = ({ path }) => {
@@ -138,21 +138,19 @@ const Quiz = ({ path }) => {
         <Heading fontSize="2xl" mb={2} color="gray.500" fontWeight="normal" textAlign="center">
           {path === "getUserUnknownQuestions"
             ? "You don't have any unknown questions"
-            : "You don'y have any questions to learn"}
+            : "You don't have any new words to learn"}
         </Heading>
         <Heading fontSize="1xl" fontWeight="normal" mb={3}>
           {path === "getUserUnknownQuestions"
-            ? "Would you like to play quiz?"
-            : "Would like to learn from the learning phase?"}
+            ? "Would you like to go back to checking phase?"
+            : "Would you like to watch concerts?"}
         </Heading>
         <Button
           colorScheme="secondary"
           color="black"
           as={Link}
           to={
-            path === "getUserUnknownQuestions"
-              ? `/dashboard/quiz/${course._id}`
-              : `/dashboard/activation_phase/${course._id}`
+            path === "getUserUnknownQuestions" ? `/dashboard/quiz/${course._id}` : "/dashboard/alc"
           }
         >
           {path === "getUserUnknownQuestions" ? "Play Quiz" : "Learning Phase"}
@@ -174,14 +172,12 @@ const Quiz = ({ path }) => {
         <Button
           as={Link}
           to={
-            path === "getUserUnknownQuestions"
-              ? `/dashboard/quiz/${course._id}`
-              : `/dashboard/activation_phase/${course._id}`
+            path === "getUserUnknownQuestions" ? `/dashboard/quiz/${course._id}` : `/dashboard/alc`
           }
           colorScheme="secondary"
           color="black"
         >
-          {path === "getUserUnknownQuestions" ? "Play Quiz" : "Start Learning Phase"}
+          {path === "getUserUnknownQuestions" ? "Back to Checking Phase" : "Start Concerts"}
         </Button>
         {score === questions.length ? (
           <Heading mt={10} color="green">

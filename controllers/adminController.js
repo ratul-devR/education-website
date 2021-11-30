@@ -102,6 +102,13 @@ module.exports = {
       const deletedDoc = await Category.findByIdAndDelete({ _id: id });
 
       await Question.deleteMany({ category: id });
+      // now remove it from the users list also
+      await User.updateMany(
+        { courses: { $elemMatch: { $eq: id } } },
+        {
+          $pull: { courses: id },
+        }
+      );
 
       const updatedDocs = await Category.find({});
 
@@ -183,7 +190,7 @@ module.exports = {
         newQuestion = new Question({
           question,
           options,
-          answer,
+          answers: [answer],
           category: categoryId,
           type,
           timeLimit,
@@ -193,6 +200,13 @@ module.exports = {
       }
 
       await newQuestion.save();
+
+      await User.updateMany(
+        { courses: { $elemMatch: { $eq: categoryId } } },
+        {
+          $push: { questions: newQuestion._id },
+        }
+      );
 
       await Category.updateOne({ _id: categoryId }, { $push: { questions: newQuestion } });
 
@@ -252,6 +266,13 @@ module.exports = {
 
       // now update the fields of the category
       await Category.updateOne({ _id: category }, { $push: { questions: uploadedDocs } });
+      // add these questions to all the users who have this course
+      await User.updateMany(
+        { courses: { $elemMatch: { $eq: category } } },
+        {
+          $push: { questions: uploadedDocs },
+        }
+      );
 
       // once everything is done, delete the file. Cause we don't need that
       unlink(
@@ -301,6 +322,16 @@ module.exports = {
           { $pull: { questions: questionId } }
         ).populate("questions")
       ).questions;
+
+      // now also remove it from all the user's question list
+      await User.updateMany(
+        { courses: { $elemMatch: { $eq: categoryId } } },
+        {
+          $pull: { questions: deletedQuestion._id },
+          $pull: { questionsKnow: deletedQuestion._id },
+          $pull: { questionsUnknown: deletedQuestion._id },
+        }
+      );
 
       res.status(201).json({
         msg: `"${deletedQuestion.question}" has been removed`,

@@ -62,11 +62,6 @@ const quizReducer = (state = initialState, action) => {
       return { ...state, questionsWrong: state.questionsWrong + 1 };
     }
 
-    // for getting done with the QUIZ
-    case "DONE": {
-      return { ...state, done: true };
-    }
-
     default: {
       return state;
     }

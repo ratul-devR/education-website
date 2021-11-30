@@ -14,7 +14,7 @@ module.exports = {
         passive_audio,
         passive_background_sound,
       } = req.files;
-      const { timeout } = req.body;
+      const { timeout, category } = req.body;
 
       const domain = req.protocol + "://" + req.get("host") + "/uploads/alc";
 
@@ -42,11 +42,12 @@ module.exports = {
             }
           : {},
         timeout,
+        category,
       });
 
       await newAlc.save();
 
-      const updatedItemList = await Alc.find({});
+      const updatedItemList = await Alc.find({}).populate("category");
 
       res.status(201).json({ msg: "New Item was uploaded successfully", items: updatedItemList });
     } catch (err) {
@@ -56,7 +57,7 @@ module.exports = {
 
   getItems: async function (req, res, next) {
     try {
-      const items = await Alc.find({});
+      const items = await Alc.find({}).populate("category");
 
       res.status(200).json({ items });
     } catch (err) {
@@ -100,7 +101,7 @@ module.exports = {
       }
 
       // send the updated list
-      const updatedList = await Alc.find({});
+      const updatedList = await Alc.find({}).populate("category");
 
       res.status(200).json({ items: updatedList, msg: "Deleted Successfully" });
     } catch (err) {

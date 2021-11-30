@@ -39,17 +39,6 @@ const Dashboard = ({ children }) => {
             icon={<MdQuiz />}
           />
         </Tooltip>
-        <Tooltip label="Activation Phase" placement="right" hasArrow>
-          <IconButton
-            rounded={0}
-            bg="white"
-            as={NavLink}
-            exact
-            to="/dashboard/activation_phase"
-            activeStyle={{ background: "#FF218D", color: "#fff" }}
-            icon={<GiBrain />}
-          />
-        </Tooltip>
         <Tooltip label="Active and Passive Learning Concert" placement="right" hasArrow>
           <IconButton
             rounded={0}
@@ -59,6 +48,17 @@ const Dashboard = ({ children }) => {
             to="/dashboard/alc"
             activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<FaAssistiveListeningSystems />}
+          />
+        </Tooltip>
+        <Tooltip label="Activation Phase" placement="right" hasArrow>
+          <IconButton
+            rounded={0}
+            bg="white"
+            as={NavLink}
+            exact
+            to="/dashboard/activation_phase"
+            activeStyle={{ background: "#FF218D", color: "#fff" }}
+            icon={<GiBrain />}
           />
         </Tooltip>
         {/* <Tooltip label="Courses" placement="right" hasArrow>

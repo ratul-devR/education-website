@@ -124,8 +124,13 @@ const Alc = () => {
         <Heading mb={5} textAlign="center">
           The Concert has been ended
         </Heading>
-        <Button colorScheme="secondary" color="black" as={Link} to="/dashboard">
-          Back To Dashboard
+        <Button
+          colorScheme="secondary"
+          color="black"
+          as={Link}
+          to={`/dashboard/activation_phase/${item.category}`}
+        >
+          Start Activation Phase
         </Button>
       </Flex>
     );

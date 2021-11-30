@@ -16,6 +16,7 @@ import { IconButton } from "@chakra-ui/button";
 import { MdDeleteOutline } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { Input } from "@chakra-ui/input";
+import { Select } from "@chakra-ui/select";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 
 import NoMessage from "../global/NoMessage";
@@ -37,6 +38,9 @@ const Alc = () => {
     passive_background_sound: null,
   });
   const [timeout, setTimeout] = useState();
+  const [category, setCategory] = useState();
+
+  const [categories, setCategories] = useState();
 
   const [processing, setProcessing] = useState(false);
 
@@ -49,6 +53,28 @@ const Alc = () => {
   function handleInputChange(event) {
     const { name, files } = event.target;
     setFiles((pre) => ({ ...pre, [name]: name === "passive_images" ? files : files[0] }));
+  }
+
+  // for fetching all the categories
+  async function fetchCategories(abortController) {
+    try {
+      const res = await fetch(`${config.serverURL}/get_admin/categories`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        signal: abortController.signal,
+      });
+      const body = await res.json();
+      if (res.ok) {
+        if (body.categories.length > 0) {
+          setCategories(body.categories);
+        }
+      } else {
+        toast({ status: "error", description: body.msg });
+      }
+    } catch (err) {
+      toast({ status: "error", description: err.message || err });
+    }
   }
 
   async function uploadItem() {
@@ -65,6 +91,7 @@ const Alc = () => {
       formData.append("passive_images", passiveImage);
     }
     formData.append("timeout", timeout);
+    formData.append("category", category);
     formData.append("passive_audio", passive_audio);
     if (passive_background_sound) {
       formData.append("passive_background_sound", passive_background_sound);
@@ -143,6 +170,7 @@ const Alc = () => {
   useEffect(() => {
     const abortController = new AbortController();
     fetchItems(abortController);
+    fetchCategories(abortController);
     return () => abortController.abort();
   }, []);
 
@@ -256,6 +284,7 @@ const Alc = () => {
               />
             </Flex>
             <Flex
+              mb={3}
               border="1px solid"
               p={3}
               borderRadius={5}
@@ -270,6 +299,18 @@ const Alc = () => {
                 type="file"
               />
             </Flex>
+            <Select
+              placeholder={categories ? "Which Category?*" : "No Categories Found*"}
+              disabled={!categories}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              {categories &&
+                categories.length > 0 &&
+                categories.map((category) => {
+                  return <option value={category._id}>{category.name}</option>;
+                })}
+            </Select>
           </ModalBody>
           <ModalFooter>
             <Button onClick={onClose} colorScheme="blue" mr={3}>
@@ -282,7 +323,8 @@ const Alc = () => {
                 processing ||
                 !passive_images.length ||
                 !passive_audio ||
-                !timeout
+                !timeout ||
+                !category
               }
               onClick={uploadItem}
               colorScheme="secondary"
@@ -295,7 +337,7 @@ const Alc = () => {
       </Modal>
 
       {items && items.length > 0 ? (
-        <Table minW="1320px">
+        <Table minW="2150px">
           <Thead>
             <Th>
               <Tooltip hasArrow label="Active Learning Audio">
@@ -328,6 +370,7 @@ const Alc = () => {
               </Tooltip>
             </Th>
             <Th>Timeout</Th>
+            <Th>Category</Th>
             <Th>views</Th>
             <Th>Action</Th>
           </Thead>
@@ -385,6 +428,7 @@ const Alc = () => {
                     )}
                   </Td>
                   <Td>{item.timeout} s</Td>
+                  <Td>{item.category.name}</Td>
                   <Td>{item.viewers.length}</Td>
                   <Td>
                     <IconButton
