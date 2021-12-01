@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import config from "../../../config";
 import useToast from "../../../hooks/useToast";
+import reactStringReplace from "react-string-replace";
 
 import { CHANGE_SCORE, DONT_KNOW, WRONG_ANSWER } from "../../../redux/actions/quizActions";
 import { LOGIN } from "../../../redux/actions/authActions";
@@ -52,8 +53,10 @@ const QuizArea = ({ path, timerInterval }) => {
   // if the user doesn't knows the answer then show him the next Q
   // and show up a toast
   // this funtion will be called when the user click on I don't know and also when the user gives the wrong answer
-  async function userDoesNotKnowTheAnswer(questionId) {
-    dispatch(DONT_KNOW());
+  async function userDoesNotKnowTheAnswer(questionId, answered) {
+    if (!answered) {
+      dispatch(DONT_KNOW());
+    }
     setUserCommitted(true);
     // stop the timer
     clearInterval(timerInterval);
@@ -71,7 +74,9 @@ const QuizArea = ({ path, timerInterval }) => {
         });
         const body = await res.json();
         if (res.ok) {
-          toast({ status: "error", description: "You don't know the answer" });
+          if (!answered) {
+            toast({ status: "error", description: "You don't know the answer" });
+          }
         } else {
           toast({ status: "error", description: body.msg });
         }
@@ -163,7 +168,7 @@ const QuizArea = ({ path, timerInterval }) => {
       setClassName("option wrong");
       dispatch(WRONG_ANSWER());
       // because the user has given the wrong answer, mark it as he doesn't knows that
-      userDoesNotKnowTheAnswer(questionId);
+      userDoesNotKnowTheAnswer(questionId, true);
       toast({
         status: "warning",
         description: `Wrong Answer`,
@@ -211,7 +216,29 @@ const QuizArea = ({ path, timerInterval }) => {
         fontWeight="normal"
         mb={5}
       >
-        {questions[currentIndex].question}
+        {questions[currentIndex].type === "mcq"
+          ? questions[currentIndex].question
+          : reactStringReplace(questions[currentIndex].question, "_", () => {
+              return (
+                <Input
+                  minW="350px"
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      !selectedAnswer && checkAnswer(input, questions[currentIndex]._id);
+                    }
+                  }}
+                  mx={3}
+                  fontSize="2xl"
+                  width="auto"
+                  display="inline"
+                  variant="flushed"
+                  placeholder="Enter the answer > hit enter"
+                  value={input}
+                  disabled={selectedAnswer}
+                  onChange={(e) => setInput(e.target.value)}
+                />
+              );
+            })}
       </Heading>
 
       {!userKnowsAnswer ? (
@@ -231,7 +258,7 @@ const QuizArea = ({ path, timerInterval }) => {
               <Button
                 disabled={userCommitted}
                 flex={1}
-                onClick={() => userDoesNotKnowTheAnswer(questions[currentIndex]._id)}
+                onClick={() => userDoesNotKnowTheAnswer(questions[currentIndex]._id, false)}
                 colorScheme="red"
               >
                 I Don't know
@@ -253,7 +280,7 @@ const QuizArea = ({ path, timerInterval }) => {
           // justify="center"
           // direction="column"
         >
-          {questions[currentIndex].type === "mcq" ? (
+          {questions[currentIndex].type === "mcq" &&
             questions[currentIndex].options.map((option, index) => {
               return (
                 <div
@@ -278,22 +305,7 @@ const QuizArea = ({ path, timerInterval }) => {
                   {option}
                 </div>
               );
-            })
-          ) : (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                !selectedAnswer && checkAnswer(input, questions[currentIndex]._id);
-              }}
-            >
-              <Input
-                placeholder="Enter the answer > hit enter"
-                value={input}
-                disabled={selectedAnswer}
-                onChange={(e) => setInput(e.target.value)}
-              />
-            </form>
-          )}
+            })}
         </Grid>
       )}
     </Flex>
