@@ -276,6 +276,7 @@ const Categories = () => {
                         onClick={() => openAddQuestionModal(category)}
                         colorScheme="blue"
                         icon={<GrAdd />}
+                        mr={3}
                       />
                     </Td>
                   </Tr>

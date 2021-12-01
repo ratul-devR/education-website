@@ -26,6 +26,7 @@ module.exports = {
     }
   },
 
+  // this is for activation phase where the questions, the didn't knew will be shown
   getUserUnknownQuestions: async function (req, res, next) {
     try {
       const { courseId } = req.params;
@@ -43,7 +44,9 @@ module.exports = {
         }
       }
 
-      res.status(200).json({ courseQuestions, course });
+      const hasPurchased = user.coursesPurchased.includes(courseId);
+
+      res.status(200).json({ courseQuestions, course, hasPurchased });
     } catch (err) {
       next(err);
     }

@@ -83,10 +83,11 @@ const Admin = ({ children }) => {
         <Flex
           as="nav"
           w="full"
-          justify="space-around"
+          justify="space-between"
           align="center"
           boxShadow="md"
           height="60px"
+          px={10}
           background="white"
         >
           <img src={Logo} style={{ width: "150px", display: "block" }} alt="Logo" />
@@ -103,12 +104,13 @@ const Admin = ({ children }) => {
             overflow="hidden"
             justify="center"
             align="center"
+            p={3}
           >
             <Flex
               p={[5, 10, 10, 10]}
-              w="95%"
+              w="full"
               flexDirection="column"
-              h="95%"
+              h="full"
               bg="white"
               boxShadow="md"
               rounded={5}

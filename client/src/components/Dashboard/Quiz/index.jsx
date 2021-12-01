@@ -5,7 +5,7 @@ import { Flex, Heading } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 import { Button } from "@chakra-ui/button";
 import { Progress } from "@chakra-ui/progress";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import useToast from "../../../hooks/useToast";
 
@@ -25,6 +25,7 @@ import {
 const Quiz = ({ path }) => {
   const toast = useToast();
   const { courseId } = useParams();
+  const history = useHistory();
 
   const {
     loading,
@@ -53,6 +54,9 @@ const Quiz = ({ path }) => {
       const body = await res.json();
 
       if (res.ok) {
+        if (path === "getUserUnknownQuestions" && !body.hasPurchased) {
+          history.push(`/dashboard/pay/${body.course._id}`);
+        }
         document.title = `${config.appName} - ${
           path === "getUserUnknownQuestions" ? "Activation Phase" : "Checking Phase"
         }: ${body.course.name}`;
@@ -150,10 +154,12 @@ const Quiz = ({ path }) => {
           color="black"
           as={Link}
           to={
-            path === "getUserUnknownQuestions" ? `/dashboard/quiz/${course._id}` : "/dashboard/alc"
+            path === "getUserUnknownQuestions"
+              ? `/dashboard/quiz/${course._id}`
+              : `/dashboard/alc/${course._id}`
           }
         >
-          {path === "getUserUnknownQuestions" ? "Play Quiz" : "Learning Phase"}
+          {path === "getUserUnknownQuestions" ? "Play Quiz" : "Watch Concert"}
         </Button>
       </Flex>
     );
@@ -172,7 +178,9 @@ const Quiz = ({ path }) => {
         <Button
           as={Link}
           to={
-            path === "getUserUnknownQuestions" ? `/dashboard/quiz/${course._id}` : `/dashboard/alc`
+            path === "getUserUnknownQuestions"
+              ? `/dashboard/quiz/${course._id}`
+              : `/dashboard/alc/${course._id}`
           }
           colorScheme="secondary"
           color="black"

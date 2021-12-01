@@ -107,6 +107,7 @@ module.exports = {
         { courses: { $elemMatch: { $eq: id } } },
         {
           $pull: { courses: id },
+          $pull: { coursesPurchased: id },
         }
       );
 
@@ -268,7 +269,7 @@ module.exports = {
       await Category.updateOne({ _id: category }, { $push: { questions: uploadedDocs } });
       // add these questions to all the users who have this course
       await User.updateMany(
-        { courses: { $elemMatch: { $eq: category } } },
+        { coursesPurchased: { $elemMatch: { $eq: category } } },
         {
           $push: { questions: uploadedDocs },
         }

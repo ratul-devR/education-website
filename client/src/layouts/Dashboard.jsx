@@ -38,8 +38,8 @@ const Dashboard = ({ children }) => {
             activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<MdQuiz />}
           />
-        </Tooltip>
-        <Tooltip label="Active and Passive Learning Concert" placement="right" hasArrow>
+        </Tooltip>{" "}
+        {/* <Tooltip label="Active and Passive Learning Concert" placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"
@@ -49,7 +49,7 @@ const Dashboard = ({ children }) => {
             activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<FaAssistiveListeningSystems />}
           />
-        </Tooltip>
+        </Tooltip> */}
         <Tooltip label="Activation Phase" placement="right" hasArrow>
           <IconButton
             rounded={0}
@@ -77,11 +77,12 @@ const Dashboard = ({ children }) => {
         <Flex
           as="nav"
           w="full"
-          justify="space-around"
+          justify="space-between"
           align="center"
           boxShadow="md"
           height="60px"
           background="white"
+          px={10}
         >
           <img src={Logo} style={{ width: "150px", display: "block" }} alt="Logo" />
           <Button onClick={logout} colorScheme="blue">
@@ -97,13 +98,14 @@ const Dashboard = ({ children }) => {
             overflow="hidden"
             justify="center"
             align="center"
+            p={3}
           >
             <Flex
               p={[5, 10, 10, 10]}
-              w="95%"
+              w="full"
               overflowX="hidden"
               flexDirection="column"
-              h="95%"
+              h="full"
               bg="white"
               boxShadow="md"
               rounded={5}

@@ -11,12 +11,13 @@ import Layout from "../layouts/Dashboard";
 
 // pages
 import UserCourses from "../components/Dashboard/UserCourses";
-import Courses from "../components/Dashboard/Courses";
+// import Courses from "../components/Dashboard/Courses";
 import ActivationPhrase from "../components/Dashboard/ActivationPhrase";
 import Quiz from "../components/Dashboard/Quiz/";
 import Pay from "../components/Dashboard/Pay";
 import Learn from "../components/Dashboard/Learn";
 import Alc from "../components/Dashboard/Alc";
+import PaymentSuccess from "../components/Dashboard/PaymentSuccess"
 
 import useLogout from "../hooks/useLogout";
 
@@ -38,7 +39,7 @@ const Dashboard = () => {
           You are not verified
         </Heading>
         <Heading fontSize="md" textAlign="center" fontWeight="normal" mb={3}>
-          Please check you email address
+          Please check you email. You should receive a confirmation email.
         </Heading>
         <Heading mb={3} fontSize="md" color="GrayText" fontWeight="normal">
           {user.email}
@@ -58,7 +59,7 @@ const Dashboard = () => {
           <Route path={`${path}/quiz`} exact component={UserCourses} />
           <Route path={`${path}/activation_phase`} exact component={ActivationPhrase} />
           {/* <Route path={`${path}/courses`} component={Courses} /> */}
-          <Route path={`${path}/alc`} component={Alc} />
+          <Route path={`${path}/alc/:courseId`} component={Alc} />
           {/* "getUserQuestionsOfCourse" is the path for checking phase */}
           <Route path={`${path}/quiz/:courseId`}>
             <Quiz path={"getUserQuestionsOfCourse"} />
@@ -68,6 +69,7 @@ const Dashboard = () => {
             <Quiz path={"getUserUnknownQuestions"} />
           </Route>
           <Route path={`${path}/pay/:courseId/`} component={Pay} />
+          <Route path={`${path}/paymentSuccess`} component={PaymentSuccess} />
         </Switch>
       </Elements>
     </Layout>

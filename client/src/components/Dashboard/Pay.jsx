@@ -45,7 +45,7 @@ const Pay = () => {
             status: "info",
             duration: 60000,
             description:
-              "The course you are going to purchase, already exists in your account. Are you going to re-purchase it to get questions? If yes then proceed. It was just a reminder",
+              "The course you are going to purchase, already exists in your account. Are you going to re-purchase it?",
           });
         }
       } else if (res.status === 404) {
@@ -105,14 +105,13 @@ const Pay = () => {
         return;
       } else {
         if (result.paymentIntent.status === "succeeded") {
+          setProcessing(false);
+          history.push("/dashboard/paymentSuccess", { course });
           toast({
             status: "success",
             title: "Congratulations",
             description: "The course was purchased successfully",
           });
-          setProcessing(false);
-          history.push("/dashboard/quiz");
-          window.location.reload();
         }
       }
     } catch (err) {
@@ -136,24 +135,29 @@ const Pay = () => {
   }
 
   return (
-    <Flex direction="column" w="full" h="full" align="center">
+    <Flex direction="column" w="full" h="full" align="center" justify="center">
       <Flex
         as="form"
         onSubmit={handleSubmit}
         w="100%"
-        maxW="400px"
+        maxW="500px"
         direction="column"
         boxShadow="lg"
         p={10}
         rounded={5}
       >
         <Flex mb={10} direction="column">
-          <Heading fontSize="2xl" mb={2} textAlign="center" color="primary">
+          <Heading fontSize="3xl" mb={5} fontWeight="normal" textAlign="center" color="primary">
             {course.name}
           </Heading>
-          <Text fontStyle="italic" as="p" textAlign="center">
-            You will get {course.questions.length} questions
-          </Text>
+          <Heading fontSize="2xl" mb={2} fontWeight="normal">
+            What you will get?
+          </Heading>
+          <ul style={{ listStyle: "inside" }}>
+            <li>Access to all the concerts</li>
+            <li>Access to the activation phase</li>
+            <li>Get full access to Checking phase</li>
+          </ul>
         </Flex>
         <CardElement
           onChange={(e) => (e.error ? setCheckoutError(e.error.message) : setCheckoutError())}

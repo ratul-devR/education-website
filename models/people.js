@@ -16,6 +16,8 @@ const dataSchema = new mongoose.Schema({
 
   // courses he has added
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
+  // questions he has purchased
+  coursesPurchased: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   // questions he has got
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
 

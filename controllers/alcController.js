@@ -117,12 +117,38 @@ module.exports = {
 
       for (let i = 0; i < concerts.length; i++) {
         const concert = concerts[i];
-        if (!concert.viewers.includes(req.user._id)) {
+        if (
+          !concert.viewers.includes(req.user._id) &&
+          user.coursesPurchased.includes(concert.category)
+        ) {
           result = concert;
         }
       }
 
       res.status(200).json({ item: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getItemAccordingToId: async function (req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const alcs = await Alc.find({});
+
+      let item = null;
+
+      for (let i = 0; i < alcs.length; i++) {
+        const alc = alcs[i];
+        if (alc.category == id && !alc.viewers.includes(req.user._id)) {
+          item = alc;
+        }
+      }
+
+      const userHasPurchased = req.user.coursesPurchased.includes(id);
+
+      res.status(200).json({ hasPurchased: userHasPurchased, item });
     } catch (err) {
       next(err);
     }

@@ -5,6 +5,7 @@ import useToast from "../../hooks/useToast";
 import config from "../../config";
 import { Button } from "@chakra-ui/button";
 import { Link } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 
 import NoMessage from "../global/NoMessage";
 
@@ -24,10 +25,12 @@ const Alc = () => {
   const [concertEnded, setConcertEnded] = useState(false);
 
   const toast = useToast();
+  const history = useHistory();
+  const { courseId } = useParams();
 
   async function fetchItem(abortController) {
     try {
-      const res = await fetch(`${config.serverURL}/active_learning_concert/getRandomItem`, {
+      const res = await fetch(`${config.serverURL}/active_learning_concert/getItem/${courseId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -36,7 +39,10 @@ const Alc = () => {
       const body = await res.json();
 
       if (res.ok) {
-        setItem(body.item);
+        if (!body.hasPurchased) {
+          history.push(`/dashboard/pay/${courseId}`);
+        }
+        setItem(body.item || null);
         setLoading(false);
       }
     } catch (err) {
@@ -76,10 +82,11 @@ const Alc = () => {
       clearInterval(interval);
       setTimer(0);
     };
-  }, [currentIndex, item.timeout, videoEnded]);
+  }, [currentIndex, videoEnded]);
 
   useEffect(() => {
     if (
+      item &&
       timer !== 0 &&
       item.timeout !== 0 &&
       timer === item.timeout &&
@@ -93,7 +100,7 @@ const Alc = () => {
         setConcertEnded(true);
       }
     }
-  }, [timer, item.timeout]);
+  }, [timer]);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -112,7 +119,21 @@ const Alc = () => {
   }
 
   if (!item || !item.video) {
-    return <NoMessage message="No New Concerts Found" />;
+    return (
+      <Flex w="full" h="full" justify="center" align="center" direction="column">
+        <Heading mb={3} fontSize="2xl" color="GrayText" fontWeight="normal">
+          No New Concerts Were Found
+        </Heading>
+        <Button
+          colorScheme="secondary"
+          color="black"
+          as={Link}
+          to={`/dashboard/activation_phase/${courseId}`}
+        >
+          Start Activation Phase
+        </Button>
+      </Flex>
+    );
   }
 
   if (concertEnded) {

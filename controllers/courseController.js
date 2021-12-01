@@ -31,7 +31,7 @@ module.exports = {
         res.sendStatus(404);
       }
 
-      const userCourses = req.user.courses;
+      const userCourses = req.user.coursesPurchased;
 
       let courseExists = false;
 
@@ -126,27 +126,26 @@ module.exports = {
         const { courseId, userId } = event.data.object.metadata;
 
         const user = await User.findOne({ _id: userId });
-        const course = await Category.findOne({ _id: courseId });
 
         let courseExists = false;
-        for (let i = 0; i < user.courses.length; i++) {
-          if (user.courses[i] == courseId) {
+        for (let i = 0; i < user.coursesPurchased.length; i++) {
+          if (user.coursesPurchased[i] == courseId) {
             courseExists = true;
           }
         }
 
-        if (!courseExists) {
-          await User.updateOne({ _id: user._id }, { $push: { courses: courseId } });
-        }
+        let updatedUser;
 
-        const updatedUser = await User.findOneAndUpdate(
-          { _id: user._id },
-          { $push: { questions: course.questions } }
-        ).populate("courses");
+        if (!courseExists) {
+          updatedUser = await User.findOneAndUpdate(
+            { _id: user._id },
+            { $push: { coursesPurchased: courseId } }
+          );
+        }
 
         res.status(201).json({
           msg: "This course was successfully added. Now you can start learning!",
-          user: updatedUser,
+          user: updatedUser || user,
         });
       }
     }

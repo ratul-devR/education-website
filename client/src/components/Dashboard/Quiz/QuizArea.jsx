@@ -17,8 +17,8 @@ const QuizArea = ({ path, timerInterval }) => {
   const [className, setClassName] = useState("option");
   const [input, setInput] = useState("");
 
-  // whenever the user clicks on I don't know or I know, it means the user has commited that
-  const [userCommited, setUserCommited] = useState(false);
+  // whenever the user clicks on I don't know or I know, it means the user has committed that
+  const [userCommitted, setUserCommitted] = useState(false);
 
   // audios
   const [backgroundAudio, setBackgroundAudio] = useState();
@@ -54,7 +54,7 @@ const QuizArea = ({ path, timerInterval }) => {
   // this funtion will be called when the user click on I don't know and also when the user gives the wrong answer
   async function userDoesNotKnowTheAnswer(questionId) {
     dispatch(DONT_KNOW());
-    setUserCommited(true);
+    setUserCommitted(true);
     // stop the timer
     clearInterval(timerInterval);
     // if this is not activation phase, only then call it
@@ -182,6 +182,7 @@ const QuizArea = ({ path, timerInterval }) => {
     if (backgroundAudio) {
       backgroundAudio.currentTime = 0;
       backgroundAudio.volume = 0.3;
+      backgroundAudio.loop = true;
       backgroundAudio.play();
     }
     return () => {
@@ -194,7 +195,7 @@ const QuizArea = ({ path, timerInterval }) => {
     setClassName("option");
     setSelectedAnswer();
     setInput("");
-    setUserCommited(false);
+    setUserCommitted(false);
     return () => {
       stopFeedBackSounds();
     };
@@ -218,7 +219,7 @@ const QuizArea = ({ path, timerInterval }) => {
           <Flex w="full" justify="center" align="center" gridColumnGap={2}>
             <Tooltip hasArrow label="Show Options">
               <Button
-                disabled={userCommited}
+                disabled={userCommitted}
                 flex={1}
                 onClick={useKnowsTheAnswer}
                 colorScheme="blue"
@@ -228,7 +229,7 @@ const QuizArea = ({ path, timerInterval }) => {
             </Tooltip>
             <Tooltip hasArrow label="Try the next one">
               <Button
-                disabled={userCommited}
+                disabled={userCommitted}
                 flex={1}
                 onClick={() => userDoesNotKnowTheAnswer(questions[currentIndex]._id)}
                 colorScheme="red"
