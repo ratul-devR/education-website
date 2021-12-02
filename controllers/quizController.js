@@ -1,6 +1,7 @@
 const Category = require("../models/category");
 const User = require("../models/people");
 const QuizAsset = require("../models/quizAsset");
+const Question = require("../models/question");
 
 module.exports = {
   getUserQuestionsOfQuiz: async function (req, res, next) {
@@ -46,7 +47,16 @@ module.exports = {
 
       const hasPurchased = user.coursesPurchased.includes(courseId);
 
-      res.status(200).json({ courseQuestions, course, hasPurchased });
+      let hasAllPrerequisites = true;
+
+      for (let i = 0; i < course.prerequisites.length; i++) {
+        const prerequisite = course.prerequisites[i];
+        if (!user.coursesCompleted.includes(prerequisite)) {
+          hasAllPrerequisites = false;
+        }
+      }
+
+      res.status(200).json({ courseQuestions, course, hasPurchased, hasAllPrerequisites });
     } catch (err) {
       next(err);
     }
@@ -84,7 +94,32 @@ module.exports = {
           { _id: user._id },
           { $push: { questionsKnown: questionId } },
           { new: true }
-        ).populate("courses");
+        ).populate("courses questionsKnown");
+
+        // now let's see if the user has gained the knowing percentage, so he can mark this course as done
+        const question = await Question.findOne({ _id: questionId }).populate("category");
+        const passPercentage = question.category.passPercentage;
+        const totalQuestionsInCategory = question.category.questions.length;
+
+        let questionsUserKnowsInThisCategory = [];
+        for (let i = 0; i < updatedUser.questionsKnown.length; i++) {
+          const questionKnown = updatedUser.questionsKnown[i];
+          if (questionKnown.category.toString() == question.category._id.toString()) {
+            questionsUserKnowsInThisCategory.push(questionKnown);
+          }
+        }
+
+        const hasCompleted =
+          (questionsUserKnowsInThisCategory.length * 100) / totalQuestionsInCategory >=
+          passPercentage;
+
+        // if the user has completed/passed and if he already hasn't this course already finished in this DB
+        if (hasCompleted && !updatedUser.coursesCompleted.includes(question.category._id)) {
+          await User.updateOne(
+            { _id: updatedUser._id },
+            { $push: { coursesCompleted: question.category._id } }
+          );
+        }
 
         res.status(201).json({ user: updatedUser });
       } else {
@@ -100,10 +135,21 @@ module.exports = {
     try {
       const { questionId } = req.body;
 
-      const updatedUser = await User.findOneAndUpdate(
+      let updatedUser = await User.findOneAndUpdate(
         { _id: req.user._id },
         { $pull: { questionsUnknown: questionId } }
-      ).populate("courses");
+      );
+      let questionExists = false;
+      for (let i = 0; i < req.user.questionsKnown.length; i++) {
+        const questionKnown = req.user.questionsKnown[i];
+        if (questionKnown.toString() === questionId.toString()) {
+          questionExists = true;
+        }
+      }
+
+      if (!questionExists) {
+        updatedUser = await User.findOneAndUpdate({ _id: req.user._id }, { $push: { questionsKnown: questionId } })
+      }
 
       res.status(201).json({ user: updatedUser });
     } catch (err) {

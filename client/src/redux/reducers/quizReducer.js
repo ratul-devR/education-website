@@ -6,6 +6,7 @@ const initialState = {
   done: false,
   timeLimit: 0,
   score: 0,
+  totalPercentage: 0,
   questionsDontKnow: 0,
   questionsWrong: 0,
 };
@@ -49,7 +50,11 @@ const quizReducer = (state = initialState, action) => {
 
     // for changing the score
     case "CHANGE_SCORE": {
-      return { ...state, score: state.score + 1 };
+      return {
+        ...state,
+        score: state.score + 1,
+        totalPercentage: Math.round(((state.score + 1) * 100) / state.questions.length),
+      };
     }
 
     // if the user doesn't knows the answer

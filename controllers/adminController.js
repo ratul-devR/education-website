@@ -7,6 +7,7 @@ const path = require("path");
 const Category = require("../models/category");
 const Question = require("../models/question");
 const User = require("../models/people");
+const Alc = require("../models/alc");
 const Org = require("../models/org");
 const QuizAsset = require("../models/quizAsset");
 
@@ -15,7 +16,7 @@ const transporter = require("../utils/emailTransporter");
 module.exports = {
   getCategories: async function (req, res, next) {
     try {
-      const categories = (await Category.find({}).populate("questions")) || [];
+      const categories = (await Category.find({}).populate("questions prerequisites")) || [];
 
       res.status(201).json({ categories });
     } catch (err) {
@@ -58,7 +59,9 @@ module.exports = {
       }
 
       if (listOfMails.length === 0) {
-        res.status(400).json({ msg: "There are no organizations or they are not subscribed" });
+        res
+          .status(400)
+          .json({ msg: "There are no organizations/colleagues or they are not subscribed" });
       }
       await transporter.sendMail({
         from: `${process.env.EMAIL}`,
@@ -67,7 +70,9 @@ module.exports = {
         text: email,
       });
 
-      res.status(200).json({ msg: `Message sent to all ${listOfMails.length} organizations` });
+      res
+        .status(200)
+        .json({ msg: `Message sent to all ${listOfMails.length} organizations/colleagues` });
     } catch (err) {
       next(err);
     }
@@ -75,15 +80,24 @@ module.exports = {
 
   postCategory: async function (req, res, next) {
     try {
-      const { title, description, price } = req.body;
+      const { title, description, price, passPercentage, prerequisites } = req.body;
 
       const categoryExist = (await Category.findOne({ name: title })) || null;
 
       if (categoryExist) {
         res.status(400).json({ msg: "This category already exists" });
       } else {
-        const newCategory = new Category({ name: title, description, price });
+        const newCategory = new Category({
+          name: title,
+          description,
+          price,
+          prerequisites,
+          passPercentage,
+        });
         await newCategory.save();
+
+        // now add this category to add all the users course list
+        await User.updateMany({ role: "user" }, { $push: { courses: newCategory } });
 
         const updatedCategories = await Category.find({});
         res
@@ -110,8 +124,11 @@ module.exports = {
           $pull: { coursesPurchased: id },
         }
       );
+      // await User.updateMany({ courses: { $elemMatch: { $eq: id } } }, {  })
+      await Alc.deleteMany({ category: id });
+      // request.delete(`${req.protocol}://${req.get("host")/}`)
 
-      const updatedDocs = await Category.find({});
+      const updatedDocs = await Category.find({}).populate("prerequisites");
 
       res
         .status(201)
@@ -269,7 +286,7 @@ module.exports = {
       await Category.updateOne({ _id: category }, { $push: { questions: uploadedDocs } });
       // add these questions to all the users who have this course
       await User.updateMany(
-        { coursesPurchased: { $elemMatch: { $eq: category } } },
+        { courses: { $elemMatch: { $eq: category } } },
         {
           $push: { questions: uploadedDocs },
         }
@@ -329,7 +346,7 @@ module.exports = {
         { courses: { $elemMatch: { $eq: categoryId } } },
         {
           $pull: { questions: deletedQuestion._id },
-          $pull: { questionsKnow: deletedQuestion._id },
+          $pull: { questionsKnown: deletedQuestion._id },
           $pull: { questionsUnknown: deletedQuestion._id },
         }
       );

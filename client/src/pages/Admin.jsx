@@ -33,7 +33,7 @@ const Admin = () => {
           You are not verified
         </Heading>
         <Heading fontSize="md" textAlign="center" fontWeight="normal" mb={3}>
-          Please check you email address
+          Please check your mail inbox
         </Heading>
         <Heading mb={3} fontSize="md" color="GrayText" fontWeight="normal">
           {user.email}

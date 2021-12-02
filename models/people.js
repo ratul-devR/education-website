@@ -18,6 +18,8 @@ const dataSchema = new mongoose.Schema({
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   // questions he has purchased
   coursesPurchased: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
+  // courses the user has completed
+  coursesCompleted: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   // questions he has got
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
 
@@ -25,6 +27,8 @@ const dataSchema = new mongoose.Schema({
   questionsKnown: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
   // question he doesn't know
   questionsUnknown: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
+  // questions he didn't knew in the activation phase
+  unknownPack: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }]
 });
 
 // for hashing the password

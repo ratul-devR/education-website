@@ -6,6 +6,7 @@ import { Spinner } from "@chakra-ui/spinner";
 import { Button } from "@chakra-ui/button";
 import { Progress } from "@chakra-ui/progress";
 import { Link, useHistory } from "react-router-dom";
+import { CircularProgress, CircularProgressLabel } from "@chakra-ui/react";
 
 import useToast from "../../../hooks/useToast";
 
@@ -23,6 +24,8 @@ import {
 } from "../../../redux/actions/quizActions";
 
 const Quiz = ({ path }) => {
+  const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
+
   const toast = useToast();
   const { courseId } = useParams();
   const history = useHistory();
@@ -32,6 +35,7 @@ const Quiz = ({ path }) => {
     questions,
     currentIndex,
     course,
+    totalPercentage,
     done,
     score,
     questionsDontKnow,
@@ -54,7 +58,9 @@ const Quiz = ({ path }) => {
       const body = await res.json();
 
       if (res.ok) {
-        if (path === "getUserUnknownQuestions" && !body.hasPurchased) {
+        if (path === "getUserUnknownQuestions" && !body.hasAllPrerequisites) {
+          setHasAllPrerequisites(false);
+        } else if (path === "getUserUnknownQuestions" && !body.hasPurchased) {
           history.push(`/dashboard/pay/${body.course._id}`);
         }
         document.title = `${config.appName} - ${
@@ -97,7 +103,9 @@ const Quiz = ({ path }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimer((pre) => pre + 1);
+      if (!loading) {
+        setTimer((pre) => pre + 1);
+      }
     }, 1000);
     // in the quiz area component, I am clearing this timer when the user selects an option or submit his answer
     setTimerInterval(interval);
@@ -106,7 +114,7 @@ const Quiz = ({ path }) => {
       setTimer(0);
       setTimerInterval(null);
     };
-  }, [currentIndex, currentIndex, path]);
+  }, [currentIndex, currentIndex, path, loading]);
 
   useEffect(() => {
     if (
@@ -128,6 +136,23 @@ const Quiz = ({ path }) => {
     return (
       <Flex w="full" h="full" justify="center" align="center">
         <Spinner />
+      </Flex>
+    );
+  }
+
+  // if the user doesn't have all the prerequisites to access this course,
+  if (!hasAllPrerequisites && !loading) {
+    return (
+      <Flex w="full" h="full" justify="center" align="center" direction="column">
+        <Heading fontSize="9xl" mb={5}>
+          😶
+        </Heading>
+        <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
+          You Don't have all the prerequisites to access this course.
+        </Heading>
+        <Button onClick={() => history.goBack()} colorScheme="secondary" color="black">
+          Go Back
+        </Button>
       </Flex>
     );
   }
@@ -173,7 +198,9 @@ const Quiz = ({ path }) => {
           Quiz results
         </Heading>
         <Heading color="primary" fontWeight="normal" mb={10}>
-          Correct: {score}/{questions.length}
+          <CircularProgress color="primary" size="100px" value={totalPercentage}>
+            <CircularProgressLabel>{totalPercentage}%</CircularProgressLabel>
+          </CircularProgress>
         </Heading>
         <Button
           as={Link}
@@ -187,15 +214,6 @@ const Quiz = ({ path }) => {
         >
           {path === "getUserUnknownQuestions" ? "Back to Checking Phase" : "Start Concerts"}
         </Button>
-        {score === questions.length ? (
-          <Heading mt={10} color="green">
-            Excellent!!
-          </Heading>
-        ) : (
-          <Heading mt={10} color="blue.500">
-            Nice work!
-          </Heading>
-        )}
       </Flex>
     );
   }

@@ -1,6 +1,7 @@
 const User = require("../models/people");
 const Org = require("../models/org");
 const Category = require("../models/category");
+const Question = require("../models/question");
 
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
@@ -57,16 +58,13 @@ module.exports = {
 
       await newUser.save();
 
-      // give the user 10 free questions from any random category [0] 'firstOne'
       const courses = await Category.find({});
-      const course = courses && courses.length > 0 ? courses[0] : null;
+      const questions = await Question.find({});
 
-      if (course) {
-        const questions = course.questions.length > 0 ? course.questions : [];
-
+      if (courses.length > 0) {
         // now updating the user with the questions and courses
-        await User.updateOne({ _id: newUser._id }, { $push: { courses: course } });
-        await User.updateOne({ _id: newUser._id }, { $push: { questions: questions } });
+        await User.updateOne({ _id: newUser._id }, { $push: { courses } });
+        await User.updateOne({ _id: newUser._id }, { $push: { questions } });
       }
 
       const authToken = await newUser.generateToken();
@@ -93,7 +91,7 @@ module.exports = {
       const userCreated = await User.findOne({ _id: newUser._id }).populate("courses");
 
       res.status(201).json({
-        msg: "We sent you an email for confirmation",
+        msg: "We have sent you an email for confirmation",
         title: "Attention",
         user: userCreated,
       });
@@ -108,6 +106,9 @@ module.exports = {
 
       if (mongoose.isValidObjectId(accountId)) {
         const user = await User.findOneAndUpdate({ _id: accountId }, { verified: true });
+        if (!user) {
+          res.status(404).json({ msg: "User not found" });
+        }
         if (user.role == "admin") {
           res.redirect(`${process.env.APP_URL}/admin`);
         } else {

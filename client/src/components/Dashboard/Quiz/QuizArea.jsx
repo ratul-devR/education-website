@@ -234,7 +234,7 @@ const QuizArea = ({ path, timerInterval }) => {
                   variant="flushed"
                   placeholder="Enter the answer > hit enter"
                   value={input}
-                  disabled={selectedAnswer}
+                  disabled={selectedAnswer || !userKnowsAnswer}
                   onChange={(e) => setInput(e.target.value)}
                 />
               );

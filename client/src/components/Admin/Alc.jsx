@@ -428,7 +428,7 @@ const Alc = () => {
                     )}
                   </Td>
                   <Td>{item.timeout} s</Td>
-                  <Td>{item.category.name}</Td>
+                  {/*<Td>{item.category.name}</Td>*/}
                   <Td>{item.viewers.length}</Td>
                   <Td>
                     <IconButton

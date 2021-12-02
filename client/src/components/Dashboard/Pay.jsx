@@ -156,7 +156,6 @@ const Pay = () => {
           <ul style={{ listStyle: "inside" }}>
             <li>Access to all the concerts</li>
             <li>Access to the activation phase</li>
-            <li>Get full access to Checking phase</li>
           </ul>
         </Flex>
         <CardElement

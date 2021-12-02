@@ -11,6 +11,7 @@ export default function PaymentSuccess(props) {
   const history = useHistory();
   const toast = useToast();
   const dispatch = useDispatch();
+  console.log(props)
   async function startLearning() {
     try {
       const res = await fetch(`${config.serverURL}/get_auth/checkLogin`, {

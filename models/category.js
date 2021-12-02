@@ -4,6 +4,8 @@ const dataSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true, trim: true },
   description: { type: String, required: true, trim: true },
   price: { type: Number, required: true },
+  prerequisites: [ { type: mongoose.Schema.Types.ObjectId, ref: "Category" } ],
+  passPercentage: { type: Number, required: true },
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
 });
 

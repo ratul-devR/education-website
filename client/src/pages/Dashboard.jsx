@@ -17,7 +17,7 @@ import Quiz from "../components/Dashboard/Quiz/";
 import Pay from "../components/Dashboard/Pay";
 import Learn from "../components/Dashboard/Learn";
 import Alc from "../components/Dashboard/Alc";
-import PaymentSuccess from "../components/Dashboard/PaymentSuccess"
+import PaymentSuccess from "../components/Dashboard/PaymentSuccess";
 
 import useLogout from "../hooks/useLogout";
 
@@ -39,7 +39,7 @@ const Dashboard = () => {
           You are not verified
         </Heading>
         <Heading fontSize="md" textAlign="center" fontWeight="normal" mb={3}>
-          Please check you email. You should receive a confirmation email.
+          Please check you mail inbox
         </Heading>
         <Heading mb={3} fontSize="md" color="GrayText" fontWeight="normal">
           {user.email}

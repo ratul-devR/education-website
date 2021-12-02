@@ -10,7 +10,7 @@ import {
   ModalCloseButton,
   ModalBody,
 } from "@chakra-ui/modal";
-import { useDisclosure, Link as ChakraLink } from "@chakra-ui/react";
+import { useDisclosure, Link as ChakraLink, Select } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Input } from "@chakra-ui/input";
 import { MdDeleteOutline } from "react-icons/md";
@@ -29,11 +29,13 @@ import NoMessage from "../global/NoMessage";
 import AddQuizAssets from "./components/AddQuizAssets";
 
 const Categories = () => {
-  const [{ title, description, price }, setInput] = useState({
+  const [{ title, description, price, passPercentage }, setInput] = useState({
     title: "",
     description: "",
     price: "",
+    passPercentage: "",
   });
+  const [prerequisites, setPrerequisites] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -110,14 +112,15 @@ const Categories = () => {
       const res = await fetch(`${config.serverURL}/get_admin/post_category`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, price }),
+        body: JSON.stringify({ title, description, price, passPercentage, prerequisites }),
         credentials: "include",
       });
       const body = await res.json();
 
       if (res.ok) {
         setCategories(body.categories);
-        setInput("");
+        setInput({});
+        setPrerequisites([]);
         onClose();
         toast({ status: "success", description: body.msg });
       } else {
@@ -218,6 +221,45 @@ const Categories = () => {
                 type="number"
                 name="price"
                 value={price}
+                mb={3}
+              />
+              <select
+                style={{
+                  width: "100%",
+                  outline: "none",
+                  border: "2px solid #ddd",
+                  borderRadius: "5px",
+                  marginBottom: 12,
+                }}
+                value={prerequisites}
+                onChange={(event) =>
+                  setPrerequisites(
+                    Array.from(event.target.selectedOptions, (option) => option.value)
+                  )
+                }
+                multiple
+              >
+                <option
+                  style={{ padding: "10px", marginBottom: "5px", fontSize: "1.2rem" }}
+                  disabled
+                  value=""
+                >
+                  Prerequisites for this category/course
+                </option>
+                {categories.map((category, index) => {
+                  return (
+                    <option key={index} value={category._id} style={{ padding: "5px" }}>
+                      {category.name}
+                    </option>
+                  );
+                })}
+              </select>
+              <Input
+                type="number"
+                placeholder="Pass mark/percentage"
+                onChange={HandleInputChange}
+                name="passPercentage"
+                value={passPercentage}
               />
             </ModalBody>
             <ModalFooter>
@@ -228,7 +270,7 @@ const Categories = () => {
                 onClick={CreateCategory}
                 colorScheme="secondary"
                 color="black"
-                disabled={!title || !description || !price}
+                disabled={!title || !description || !price || !passPercentage}
               >
                 Save
               </Button>
@@ -249,6 +291,7 @@ const Categories = () => {
               <Th>Category name</Th>
               <Th>Price</Th>
               <Th>Total Questions</Th>
+              <Th>Prerequisites</Th>
               <Th>Actions</Th>
             </Thead>
             <Tbody>
@@ -263,6 +306,17 @@ const Categories = () => {
                     </Td>
                     <Td>{category.price}</Td>
                     <Td>{category.questions.length}</Td>
+                    <Td>
+                      {category.prerequisites.length > 0
+                        ? category.prerequisites.map((prerequisite, index) => {
+                            return (
+                              <span key={index} style={{ paddingRight: "10px" }}>
+                                {prerequisite.name}
+                              </span>
+                            );
+                          })
+                        : "No Prerequisites"}
+                    </Td>
                     <Td>
                       <IconButton
                         color="#fff"
