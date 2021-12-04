@@ -52,7 +52,7 @@ const QuizArea = ({ path, timerInterval }) => {
 
   // if the user doesn't knows the answer then show him the next Q
   // and show up a toast
-  // this funtion will be called when the user click on I don't know and also when the user gives the wrong answer
+  // this function will be called when the user click on I don't know and also when the user gives the wrong answer
   async function userDoesNotKnowTheAnswer(questionId, answered) {
     if (!answered) {
       dispatch(DONT_KNOW());

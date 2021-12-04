@@ -58,10 +58,18 @@ const Quiz = ({ path }) => {
       const body = await res.json();
 
       if (res.ok) {
-        if (path === "getUserUnknownQuestions" && !body.hasAllPrerequisites) {
+        if (!body.hasAllPrerequisites) {
           setHasAllPrerequisites(false);
-        } else if (path === "getUserUnknownQuestions" && !body.hasPurchased) {
-          history.push(`/dashboard/pay/${body.course._id}`);
+        } else if (
+          path === "getUserUnknownQuestions" &&
+          body.unknownQuestionsPack.length > 0 &&
+          body.courseQuestions.length === 0
+        ) {
+          history.push(`/dashboard/buyPackage/${body.course._id}`);
+          toast({
+            status: "info",
+            description: "You need to purchase this pack in order to learn the unknown questions",
+          });
         }
         document.title = `${config.appName} - ${
           path === "getUserUnknownQuestions" ? "Activation Phase" : "Checking Phase"
@@ -278,7 +286,6 @@ const Quiz = ({ path }) => {
             Get Result
           </Button> */}
         </Flex>
-
         <Heading fontSize="1xl" fontWeight="normal" color="blue.500">
           {currentIndex + 1} of {questions.length} Questions
         </Heading>

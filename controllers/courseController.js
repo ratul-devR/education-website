@@ -41,7 +41,16 @@ module.exports = {
         }
       }
 
-      res.status(200).json({ course, courseExists });
+      const unknownQuestionPack = []
+      const user = await User.findOne({ _id: req.user._id }).populate("unknownQuestionsPack");
+      for (let i = 0; i < user.unknownQuestionsPack.length; i++) {
+        const unknownQuestion = user.unknownQuestionsPack[i]
+        if (unknownQuestion.category.toString() == courseId) {
+          unknownQuestionPack.push(unknownQuestion)
+        }
+      }
+
+      res.status(200).json({ course, courseExists, unknownQuestionPack });
     } catch (err) {
       next(err);
     }

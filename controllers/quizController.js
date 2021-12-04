@@ -21,7 +21,17 @@ module.exports = {
         }
       }
 
-      res.status(200).json({ courseQuestions, course });
+      let hasAllPrerequisites = true;
+
+      // checking if the user has all the prerequisites to access this course
+      for (let i = 0; i < course.prerequisites.length; i++) {
+        const prerequisite = course.prerequisites[i];
+        if (!user.coursesCompleted.includes(prerequisite)) {
+          hasAllPrerequisites = false;
+        }
+      }
+
+      res.status(200).json({ courseQuestions, course, hasAllPrerequisites });
     } catch (err) {
       next(err);
     }
@@ -32,7 +42,9 @@ module.exports = {
     try {
       const { courseId } = req.params;
 
-      const user = await User.findOne({ _id: req.user._id }).populate("questionsUnknown");
+      const user = await User.findOne({ _id: req.user._id }).populate(
+        "questionsUnknown unknownQuestionsPack"
+      );
       const course = await Category.findOne({ _id: courseId });
 
       const courseQuestions = [];
@@ -49,6 +61,7 @@ module.exports = {
 
       let hasAllPrerequisites = true;
 
+      // checking if the user has all the prerequisites to access this course
       for (let i = 0; i < course.prerequisites.length; i++) {
         const prerequisite = course.prerequisites[i];
         if (!user.coursesCompleted.includes(prerequisite)) {
@@ -56,7 +69,18 @@ module.exports = {
         }
       }
 
-      res.status(200).json({ courseQuestions, course, hasPurchased, hasAllPrerequisites });
+      const unknownQuestionsPack = [];
+      // checking if the user has questions in his pack from this category
+      for (let i = 0; i < user.unknownQuestionsPack.length; i++) {
+        const unknownQuestion = user.unknownQuestionsPack[i];
+        if (unknownQuestion.category.toString() == courseId.toString()) {
+          unknownQuestionsPack.push(unknownQuestion);
+        }
+      }
+
+      res
+        .status(200)
+        .json({ courseQuestions, course, hasPurchased, hasAllPrerequisites, unknownQuestionsPack });
     } catch (err) {
       next(err);
     }
@@ -148,7 +172,10 @@ module.exports = {
       }
 
       if (!questionExists) {
-        updatedUser = await User.findOneAndUpdate({ _id: req.user._id }, { $push: { questionsKnown: questionId } })
+        updatedUser = await User.findOneAndUpdate(
+          { _id: req.user._id },
+          { $push: { questionsKnown: questionId } }
+        );
       }
 
       res.status(201).json({ user: updatedUser });
@@ -164,8 +191,8 @@ module.exports = {
 
       let questionExists = false;
 
-      for (let i = 0; i < user.questionsUnknown.length; i++) {
-        const question = user.questionsUnknown[i];
+      for (let i = 0; i < user.unknownQuestionsPack.length; i++) {
+        const question = user.unknownQuestionsPack[i];
         if (question == questionId) {
           questionExists = true;
         }
@@ -174,7 +201,7 @@ module.exports = {
       await User.updateOne({ _id: user._id }, { $pull: { questions: questionId } });
 
       if (!questionExists) {
-        await User.updateOne({ _id: user._id }, { $push: { questionsUnknown: questionId } });
+        await User.updateOne({ _id: user._id }, { $push: { unknownQuestionsPack: questionId } });
         res.status(200).json({ msg: "done" });
       } else {
         res.status(200).json({ msg: "done" });

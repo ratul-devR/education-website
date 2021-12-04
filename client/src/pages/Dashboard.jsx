@@ -18,6 +18,7 @@ import Pay from "../components/Dashboard/Pay";
 import Learn from "../components/Dashboard/Learn";
 import Alc from "../components/Dashboard/Alc";
 import PaymentSuccess from "../components/Dashboard/PaymentSuccess";
+import BuyPackage from "../components/Dashboard/BuyPackage"
 
 import useLogout from "../hooks/useLogout";
 
@@ -69,6 +70,7 @@ const Dashboard = () => {
             <Quiz path={"getUserUnknownQuestions"} />
           </Route>
           <Route path={`${path}/pay/:courseId/`} component={Pay} />
+          <Route path={`${path}/buyPackage/:courseId`} component={BuyPackage} />
           <Route path={`${path}/paymentSuccess`} component={PaymentSuccess} />
         </Switch>
       </Elements>

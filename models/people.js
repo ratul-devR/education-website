@@ -27,8 +27,8 @@ const dataSchema = new mongoose.Schema({
   questionsKnown: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
   // question he doesn't know
   questionsUnknown: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
-  // questions he didn't knew in the activation phase
-  unknownPack: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }]
+  // the unknown questions pack they will be pushed in the questionsUnknown property once the user purchases this pack
+  unknownQuestionsPack: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
 });
 
 // for hashing the password

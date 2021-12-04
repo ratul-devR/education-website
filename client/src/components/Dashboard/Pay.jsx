@@ -147,16 +147,10 @@ const Pay = () => {
         rounded={5}
       >
         <Flex mb={10} direction="column">
-          <Heading fontSize="3xl" mb={5} fontWeight="normal" textAlign="center" color="primary">
+          <Heading fontSize="3xl" mb={3} fontWeight="normal" textAlign="center" color="primary">
             {course.name}
           </Heading>
-          <Heading fontSize="2xl" mb={2} fontWeight="normal">
-            What you will get?
-          </Heading>
-          <ul style={{ listStyle: "inside" }}>
-            <li>Access to all the concerts</li>
-            <li>Access to the activation phase</li>
-          </ul>
+          <Text textAlign="center">Your Purchase for "{course.name}"</Text>
         </Flex>
         <CardElement
           onChange={(e) => (e.error ? setCheckoutError(e.error.message) : setCheckoutError())}
