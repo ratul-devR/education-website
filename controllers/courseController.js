@@ -41,12 +41,12 @@ module.exports = {
         }
       }
 
-      const unknownQuestionPack = []
+      const unknownQuestionPack = [];
       const user = await User.findOne({ _id: req.user._id }).populate("unknownQuestionsPack");
       for (let i = 0; i < user.unknownQuestionsPack.length; i++) {
-        const unknownQuestion = user.unknownQuestionsPack[i]
+        const unknownQuestion = user.unknownQuestionsPack[i];
         if (unknownQuestion.category.toString() == courseId) {
-          unknownQuestionPack.push(unknownQuestion)
+          unknownQuestionPack.push(unknownQuestion);
         }
       }
 
@@ -118,10 +118,58 @@ module.exports = {
         metadata: {
           courseId,
           userId,
+          type: "course",
         },
       });
 
       res.status(200).json({ client_secret: paymentIntent.client_secret });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  buyPackage: async function (req, res, next) {
+    try {
+      const { amount, courseId, userId } = req.body;
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: "usd",
+        metadata: { courseId, userId, type: "package" },
+      });
+      res.status(200).json({ client_secret: paymentIntent.client_secret });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  buyPackageWebhookHandle: async function (req, res, next) {
+    try {
+      const event = req.body;
+      switch (event.type) {
+        case "payment_intent.succeeded": {
+          const { type, courseId, userId } = event.data.object.metadata;
+          if (type === "package") {
+            const user = await User.findOne({ _id: userId }).populate("unknownQuestionsPack");
+            const unknownQuestionsPack = user.unknownQuestionsPack;
+
+            const packQuestionsFromThisCategory = [];
+            for (let i = 0; i < unknownQuestionsPack.length; i++) {
+              const unknownQuestion = unknownQuestionsPack[i];
+              if (unknownQuestion.category.toString() === courseId.toString()) {
+                packQuestionsFromThisCategory.push(unknownQuestion._id);
+              }
+            }
+
+            await User.updateOne(
+              { _id: user._id },
+              {
+                $pull: { unknownQuestionsPack: { $in: packQuestionsFromThisCategory } },
+                $push: { questionsUnknown: packQuestionsFromThisCategory },
+              }
+            );
+          }
+        }
+      }
     } catch (err) {
       next(err);
     }
@@ -132,30 +180,25 @@ module.exports = {
 
     switch (event.type) {
       case "payment_intent.succeeded": {
-        const { courseId, userId } = event.data.object.metadata;
+        const { courseId, userId, type } = event.data.object.metadata;
 
-        const user = await User.findOne({ _id: userId });
+        if (type === "course") {
+          const user = await User.findOne({ _id: userId });
 
-        let courseExists = false;
-        for (let i = 0; i < user.coursesPurchased.length; i++) {
-          if (user.coursesPurchased[i] == courseId) {
-            courseExists = true;
+          let courseExists = false;
+          for (let i = 0; i < user.coursesPurchased.length; i++) {
+            if (user.coursesPurchased[i] == courseId) {
+              courseExists = true;
+            }
+          }
+
+          if (!courseExists) {
+            await User.findOneAndUpdate(
+              { _id: user._id },
+              { $push: { coursesPurchased: courseId } }
+            );
           }
         }
-
-        let updatedUser;
-
-        if (!courseExists) {
-          updatedUser = await User.findOneAndUpdate(
-            { _id: user._id },
-            { $push: { coursesPurchased: courseId } }
-          );
-        }
-
-        res.status(201).json({
-          msg: "This course was successfully added. Now you can start learning!",
-          user: updatedUser || user,
-        });
       }
     }
   },

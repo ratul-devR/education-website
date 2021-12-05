@@ -7,11 +7,11 @@ import config from "../../config";
 import { useDispatch } from "react-redux";
 import { LOGIN } from "../../redux/actions/authActions";
 
-export default function PaymentSuccess(props) {
+export default function PaymentSuccess({ location }) {
   const history = useHistory();
   const toast = useToast();
   const dispatch = useDispatch();
-  console.log(props)
+  const { course, type } = location.state;
   async function startLearning() {
     try {
       const res = await fetch(`${config.serverURL}/get_auth/checkLogin`, {
@@ -22,7 +22,8 @@ export default function PaymentSuccess(props) {
       const body = await res.json();
       if (res.ok) {
         dispatch(LOGIN(body));
-        history.push(`/dashboard/alc/${props.location.state.course._id}`);
+        let pushPath = type === "course" ? `alc/${course._id}` : `activation_phase/${course._id}`;
+        history.push(`/dashboard/${pushPath}`);
       } else {
         toast({ status: "error", description: body.msg });
       }
@@ -33,11 +34,16 @@ export default function PaymentSuccess(props) {
   return (
     <Flex w="full" h="full" justify="center" align="center" direction="column">
       <Heading mb={3} fontSize="2xl" fontWeight="normal" textAlign="center">
-        Thanks for Purchasing "{props.location.state.course.name}"
+        Thanks for Purchasing "{course.name}"{" "}
+        <span>{type === "package" ? "Question Pack" : ""}</span>
       </Heading>
-      <Text mb={5}>Now You can access everything in this course</Text>
-      <Button as={Link} onClick={startLearning} colorScheme="secondary" color="black">
-        Start Learning
+      <Text mb={5}>
+        {type === "course"
+          ? "Now You can access everything in this course"
+          : "Now you can start learning your unknown questions"}
+      </Text>
+      <Button onClick={startLearning} colorScheme="secondary" color="black">
+        {type === "course" ? "Start Learning" : "Start Activation Phase"}
       </Button>
     </Flex>
   );

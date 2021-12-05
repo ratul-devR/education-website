@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RESET_QUIZ } from "../../redux/actions/quizActions";
 import { Flex, Heading, Text } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
@@ -16,9 +16,10 @@ export default function BuyPackage() {
   const [course, setCourse] = useState();
   const [unknownQuestionsPack, setUnknownQuestionsPack] = useState([]);
   const [checkoutError, setCheckoutError] = useState();
-  const [processing, setProcessing] = useState(false)
+  const [processing, setProcessing] = useState(false);
   const [loading, setLoading] = useState(true);
   const { courseId } = useParams();
+  const { user } = useSelector((state) => state.authReducer);
   const dispatch = useDispatch();
   const history = useHistory();
   const toast = useToast();
@@ -54,10 +55,52 @@ export default function BuyPackage() {
   }
   // for handling the payment
   async function handleSubmit(e) {
-    e.preventDefault()
-    setProcessing(true)
-    const cardElement = elements.getElement("card")
-    console.log(cardElement)
+    e.preventDefault();
+    setProcessing(true);
+    const cardElement = elements.getElement("card");
+    try {
+      const res = await fetch(`${config.serverURL}/get_courses/buyPackage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          amount: course.price * 100,
+          courseId: course._id,
+          userId: user._id,
+        }),
+      });
+      const { client_secret } = await res.json();
+      const paymentMethodReq = await stripe.createPaymentMethod({
+        type: "card",
+        card: cardElement,
+      });
+      if (paymentMethodReq.error) {
+        setCheckoutError(paymentMethodReq.error.message);
+        setProcessing(false);
+        return;
+      }
+      const result = await stripe.confirmCardPayment(client_secret, {
+        payment_method: paymentMethodReq.paymentMethod.id,
+      });
+      if (result.error) {
+        setCheckoutError(result.error.message);
+        setProcessing(false);
+        return;
+      } else {
+        if (result.paymentIntent.status === "succeeded") {
+          setProcessing(false);
+          history.push("/dashboard/paymentSuccess", { course, type: "package" });
+        }
+        toast({
+          status: "success",
+          title: "Success",
+          description: "Your purchase of the package has been succeeded",
+        });
+      }
+    } catch (err) {
+      setCheckoutError(err.message);
+      setProcessing(false);
+    }
   }
   useEffect(() => {
     const abortController = new AbortController();
@@ -76,7 +119,16 @@ export default function BuyPackage() {
   }
   return (
     <Flex w="full" h="full" justify="center" align="center">
-      <Flex as="form" onSubmit={handleSubmit} w="500px" direction="column" justify="center" p={10} rounded={5} boxShadow="lg">
+      <Flex
+        as="form"
+        onSubmit={handleSubmit}
+        w="500px"
+        direction="column"
+        justify="center"
+        p={10}
+        rounded={5}
+        boxShadow="lg"
+      >
         <Heading textAlign="center" mb={3} fontWeight="normal" fontSize="2xl" color="primary">
           {course.name}
         </Heading>
@@ -87,8 +139,14 @@ export default function BuyPackage() {
         <CardElement
           onChange={(e) => (e.error ? setCheckoutError(e.error.message) : setCheckoutError())}
         />
-        <Button type="submit"disabled={!stripe || processing} mt={5} colorScheme="secondary" color="black">
-          Purchase By Paying ({course.price}$)
+        <Button
+          type="submit"
+          disabled={!stripe || processing}
+          mt={5}
+          colorScheme="secondary"
+          color="black"
+        >
+          {processing ? "Processing..." : `Purchase By Paying (${course.price}$)`}
         </Button>
         {checkoutError && (
           <Badge
@@ -99,7 +157,9 @@ export default function BuyPackage() {
             variant="subtle"
             p={1}
             rounded={2}
-          >{checkoutError}</Badge>
+          >
+            {checkoutError}
+          </Badge>
         )}
       </Flex>
     </Flex>

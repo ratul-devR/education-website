@@ -100,13 +100,13 @@ const Pay = () => {
       });
 
       if (result.error) {
-        setCheckoutError(error.message);
+        setCheckoutError(result.error.message);
         setProcessing(false);
         return;
       } else {
         if (result.paymentIntent.status === "succeeded") {
           setProcessing(false);
-          history.push("/dashboard/paymentSuccess", { course });
+          history.push("/dashboard/paymentSuccess", { course, type: "course" });
           toast({
             status: "success",
             title: "Congratulations",

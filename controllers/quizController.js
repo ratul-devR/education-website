@@ -3,13 +3,20 @@ const User = require("../models/people");
 const QuizAsset = require("../models/quizAsset");
 const Question = require("../models/question");
 
+const agenda = require("../jobs/agenda");
+
 module.exports = {
   getUserQuestionsOfQuiz: async function (req, res, next) {
     try {
       const { courseId } = req.params;
 
-      const user = await User.findOne({ _id: req.user._id }).populate("questions");
+      const user = await User.findById(req.user._id).populate("questions");
+
       const course = await Category.findOne({ _id: courseId });
+
+      if (!course) {
+        res.status(404).json({ msg: "Course Not Found! Please stop navigating with URL's" });
+      }
 
       const courseQuestions = [];
 
@@ -162,7 +169,7 @@ module.exports = {
       let updatedUser = await User.findOneAndUpdate(
         { _id: req.user._id },
         { $pull: { questionsUnknown: questionId } }
-      );
+      ).populate("courses");
       let questionExists = false;
       for (let i = 0; i < req.user.questionsKnown.length; i++) {
         const questionKnown = req.user.questionsKnown[i];
@@ -175,8 +182,15 @@ module.exports = {
         updatedUser = await User.findOneAndUpdate(
           { _id: req.user._id },
           { $push: { questionsKnown: questionId } }
-        );
+        ).populate("courses");
       }
+
+      // for repetition phase this question will be shown again in the checking phase after several time
+      // fix the rejection error in agenda
+      agenda.schedule(new Date().getTime() + 10000, "after1day", {
+        userId: updatedUser._id,
+        question: questionId,
+      });
 
       res.status(201).json({ user: updatedUser });
     } catch (err) {

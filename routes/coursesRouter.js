@@ -9,6 +9,8 @@ const {
   getCourseAccordingToId,
   purchaseCourse,
   getCourseAndQuestions,
+  buyPackage,
+  buyPackageWebhookHandle,
 } = require("../controllers/courseController");
 
 const router = express.Router();
@@ -26,7 +28,13 @@ router.get("/getAuthUserCourses", checkLogin, getAuthUserCourses);
 router.post("/getCourseAndQuestions", checkLogin, getCourseAndQuestions);
 
 // for purchasing a course
-router.post("/purchaseCourse", purchaseCourse);
+router.post("/purchaseCourse", checkLogin, purchaseCourse);
+
+// for buying a package
+router.post("/buyPackage", checkLogin, buyPackage);
+
+// for adding the package after a successful payment
+router.post("/buyPackageWebhook", buyPackageWebhookHandle);
 
 // for adding a course after a successful payment
 router.post("/webhook", addCourse);

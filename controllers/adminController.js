@@ -116,17 +116,21 @@ module.exports = {
       const deletedDoc = await Category.findByIdAndDelete({ _id: id });
 
       await Question.deleteMany({ category: id });
-      // now remove it from the users list also
-      await User.updateMany(
-        { courses: { $elemMatch: { $eq: id } } },
+      // now remove it from all the users field
+      // ! stupid doesn't works. IDK why
+      /* await User.updateMany(
+        { role: "user" },
         {
-          $pull: { courses: id },
-          $pull: { coursesPurchased: id },
+          $pull: { courses: deletedDoc._id },
+          $pull: { coursesPurchased: deletedDoc._id },
+          $pull: { coursesCompleted: deletedDoc._id },
+          $pullAll: { questions: deletedDoc.questions },
+          $pullAll: { questionsKnown: deletedDoc.questions },
+          $pullAll: { questionsUnknown: deletedDoc.questions },
+          $pullAll: { unknownQuestionsPack: deletedDoc.questions },
         }
-      );
-      // await User.updateMany({ courses: { $elemMatch: { $eq: id } } }, {  })
+      ); */
       await Alc.deleteMany({ category: id });
-      // request.delete(`${req.protocol}://${req.get("host")/}`)
 
       const updatedDocs = await Category.find({}).populate("prerequisites");
 
@@ -348,6 +352,7 @@ module.exports = {
           $pull: { questions: deletedQuestion._id },
           $pull: { questionsKnown: deletedQuestion._id },
           $pull: { questionsUnknown: deletedQuestion._id },
+          $pull: { unknownQuestionsPack: deletedQuestion._id },
         }
       );
 
