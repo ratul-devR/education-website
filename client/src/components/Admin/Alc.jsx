@@ -370,7 +370,6 @@ const Alc = () => {
               </Tooltip>
             </Th>
             <Th>Timeout</Th>
-            <Th>Category</Th>
             <Th>views</Th>
             <Th>Action</Th>
           </Thead>
@@ -428,7 +427,6 @@ const Alc = () => {
                     )}
                   </Td>
                   <Td>{item.timeout} s</Td>
-                  {/*<Td>{item.category.name}</Td>*/}
                   <Td>{item.viewers.length}</Td>
                   <Td>
                     <IconButton
