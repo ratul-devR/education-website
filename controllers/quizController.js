@@ -187,7 +187,18 @@ module.exports = {
 
       // for repetition phase this question will be shown again in the checking phase after several time
       // fix the rejection error in agenda
-      agenda.schedule(new Date().getTime() + 10000, "after1day", {
+      const after1Day = new Date().getTime() + 86400000;
+      const after7Day = new Date().getTime() + after1Day * 7;
+      const after21Day = new Date().getTime() + after1Day * 21;
+      agenda.schedule(after1Day, "repetition", {
+        userId: updatedUser._id,
+        question: questionId,
+      });
+      agenda.schedule(after7Day, "repetition", {
+        userId: updatedUser._id,
+        question: questionId,
+      });
+      agenda.schedule(after21Day, "repetition", {
         userId: updatedUser._id,
         question: questionId,
       });
@@ -200,7 +211,7 @@ module.exports = {
 
   dontKnow: async function (req, res, next) {
     try {
-      const { questionId } = req.body;
+      const { questionId /*type*/ } = req.body;
       const user = req.user;
 
       let questionExists = false;
@@ -213,6 +224,22 @@ module.exports = {
       }
 
       await User.updateOne({ _id: user._id }, { $pull: { questions: questionId } });
+
+      /*// for the repetition phase
+      if (type === "checking_phase") {
+        for (let i = 0; i < updatedUser.repeatedQuestions.length; i++) {
+          const repeatedQuestion = updatedUser.repeatedQuestions[i].question;
+          const questionDay = updatedUser.repeatedQuestions[i].day;
+          if (repeatedQuestion.toString() == questionId.toString()) {
+            // it means this is a repeated question and the user has given the wrong answer
+            // now remove it from questions known and schedule for pushing it in the questions array
+            const oneDay = new Date().getTime() + 86400000;
+            const sevenDay = new Date().getTime() + oneDay * 7;
+            const twentyOneDay = new Date().getTime() +  oneDay * 21;
+            agenda.schedule();
+          }
+        }
+      }*/
 
       if (!questionExists) {
         await User.updateOne({ _id: user._id }, { $push: { unknownQuestionsPack: questionId } });

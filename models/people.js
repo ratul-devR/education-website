@@ -21,6 +21,8 @@ const dataSchema = new mongoose.Schema({
   coursesCompleted: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   // questions he has got
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
+  // questions that were repeated in the repetition phase
+  repeatedQuestions: [{ question: mongoose.Schema.Types.ObjectId, day: Number }],
 
   // questions he knows
   questionsKnown: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],

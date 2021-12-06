@@ -2,7 +2,7 @@ const MongoClient = require("mongodb").MongoClient;
 const { ObjectId } = require("mongoose").Types;
 
 module.exports = function (agenda) {
-	agenda.define("after1day", (job, done) => {
+	agenda.define("repetition", (job, done) => {
 		const client = new MongoClient(process.env.MONGO_URL);
 
 		client.connect(async (err) => {
@@ -28,10 +28,19 @@ module.exports = function (agenda) {
 					}
 
 					if (!questionExists) {
-						await db
-							.collection("peoples")
-							.updateOne({ _id: userId }, { $push: { questions: ObjectId(questionId) } });
+						await db.collection("peoples").updateOne(
+							{ _id: userId },
+							{
+								$push: { questions: ObjectId(questionId) },
+							}
+						);
 					}
+					/*await db
+						.collection("peoples")
+						.updateOne(
+							{ _id: userId },
+							{ $push: { repeatedQuestions: { question: ObjectId(questionId), day: 1 } } }
+						);*/
 					client.close();
 					done();
 				} catch (err) {
