@@ -168,6 +168,8 @@ module.exports = {
               }
             );
           }
+
+          res.status(201).json({ msg: "The work has been done" });
         }
       }
     } catch (err) {
@@ -199,6 +201,8 @@ module.exports = {
             );
           }
         }
+
+        res.status(201).json({ msg: "The work has been done" });
       }
     }
   },
