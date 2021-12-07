@@ -7,7 +7,8 @@ import { useParams, useHistory } from "react-router-dom";
 import config from "../../config";
 import useToast from "../../hooks/useToast";
 import { MdDeleteOutline } from "react-icons/md";
-import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
+import { Table, Thead, Tbody, Tr, Th, Td, Tfoot } from "@chakra-ui/table";
 
 import AddQuestionCsvModal from "./components/AddQuestionCsvModal";
 import NoMessage from "../global/NoMessage";
@@ -16,9 +17,18 @@ const Questions = () => {
   const [category, setCategory] = useState({});
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [questionsPerPage] = useState(20);
   const toast = useToast();
   const history = useHistory();
   const { categoryId } = useParams();
+
+  const indexOfLastQuestion = currentPage * questionsPerPage;
+  const indexOfFirstQuestion = indexOfLastQuestion - questionsPerPage;
+  const currentQuestions = questions.slice(indexOfFirstQuestion, indexOfLastQuestion);
+  const totalPages = Math.ceil(questions.length / questionsPerPage)
+
+  const paginate = (number) => number >= 1 && number <= totalPages && setCurrentPage(number)
 
   // for fetching all the questions
   async function fetchQuestions(abortController) {
@@ -60,7 +70,7 @@ const Questions = () => {
         const body = await res.json();
 
         if (res.ok) {
-          setQuestions(body.questions);
+          setQuestions((pre) => pre.filter((question) => question._id !== body.question._id));
           toast({ status: "success", description: body.msg });
         } else {
           toast({ status: "error", description: body.msg || "We are having a server side error" });
@@ -95,7 +105,7 @@ const Questions = () => {
         <AddQuestionCsvModal category={category} setQuestions={setQuestions} />
         {/* the table containing all the questions */}
         <Flex direction="column" w="full" h="full">
-          {questions && questions.length > 0 ? (
+          {currentQuestions && currentQuestions.length > 0 ? (
             <Table size="md" minW="1000px">
               <Thead>
                 <Th>Question</Th>
@@ -105,7 +115,7 @@ const Questions = () => {
                 <Th>Actions</Th>
               </Thead>
               <Tbody>
-                {questions.map(({ question, answers, type, options, _id, timeLimit }) => {
+                {currentQuestions.map(({ question, answers, type, options, _id, timeLimit }) => {
                   return (
                     <Tr key={_id}>
                       <Td>{question}</Td>
@@ -153,6 +163,19 @@ const Questions = () => {
                   );
                 })}
               </Tbody>
+              <Tfoot>
+                <Tr textAlign="center">
+                  <Td colSpan={4}>
+                    <Heading fontSize="xl" fontWeight="normal" color="GrayText">
+                      {currentPage} / {totalPages}
+                    </Heading>
+                  </Td>
+                  <Td display="flex">
+                    <IconButton onClick={() => paginate(currentPage - 1)} colorScheme="blue" mr={3} icon={<AiOutlineLeft/>} />
+                    <IconButton onClick={() => paginate(currentPage + 1)} colorScheme="blue" icon={<AiOutlineRight/>} />
+                  </Td>
+                </Tr>
+              </Tfoot>
             </Table>
           ) : (
             <NoMessage message="No Questions Found In This Category" />

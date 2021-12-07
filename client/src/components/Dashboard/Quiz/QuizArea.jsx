@@ -70,7 +70,10 @@ const QuizArea = ({ path, timerInterval }) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ questionId, type: path === "getUserUnknownQuestions" ? "activation_phase" : "checking_phase" }),
+          body: JSON.stringify({
+            questionId,
+            type: path === "getUserUnknownQuestions" ? "activation_phase" : "checking_phase",
+          }),
         });
         const body = await res.json();
         if (res.ok) {

@@ -46,7 +46,7 @@ const SendMails = () => {
   }
 
   return (
-    <Flex w="full" h="full" direction="column" align="center">
+    <Flex w="full" h="full" direction="column" align="center" justify="center">
       <Heading mb={5} textAlign="center" fontSize="2xl" fontWeight="normal" color="primary">
         Send Mail to organizations
       </Heading>
@@ -54,7 +54,7 @@ const SendMails = () => {
         w="100%"
         border="1px solid"
         borderColor="gray.100"
-        maxW="550px"
+        maxW="600px"
         p={10}
         rounded={5}
         boxShadow="md"

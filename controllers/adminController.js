@@ -99,7 +99,7 @@ module.exports = {
         // now add this category to add all the users course list
         await User.updateMany({ role: "user" }, { $push: { courses: newCategory } });
 
-        const updatedCategories = await Category.find({});
+        const updatedCategories = await Category.find({}).populate("prerequisites");
         res
           .status(201)
           .json({ msg: `"${newCategory.name}" has been created`, categories: updatedCategories });
@@ -338,12 +338,7 @@ module.exports = {
 
       const deletedQuestion = await Question.findByIdAndDelete({ _id: questionId });
 
-      const updatedQuestions = (
-        await Category.findOneAndUpdate(
-          { _id: categoryId },
-          { $pull: { questions: questionId } }
-        ).populate("questions")
-      ).questions;
+      await Category.findOneAndUpdate({ _id: categoryId }, { $pull: { questions: questionId } });
 
       // now also remove it from all the user's question list
       await User.updateMany(
@@ -358,7 +353,7 @@ module.exports = {
 
       res.status(201).json({
         msg: `"${deletedQuestion.question}" has been removed`,
-        questions: updatedQuestions,
+        question: deletedQuestion,
       });
     } catch (err) {
       next(err);
