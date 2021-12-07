@@ -9,7 +9,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 module.exports = {
   getCourses: async function (req, res, next) {
     try {
-      const courses = await Category.find({}).populate("questions");
+      const courses = await Category.find({}).lean({ defaults: true }).populate("questions");
 
       res.status(200).json({ courses });
     } catch (err) {
@@ -25,7 +25,7 @@ module.exports = {
         res.sendStatus(404);
       }
 
-      const course = await Category.findOne({ _id: courseId });
+      const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
 
       if (!course) {
         res.sendStatus(404);
@@ -70,7 +70,7 @@ module.exports = {
 
       const user = req.user;
 
-      const course = await Category.findOne({ _id: courseId });
+      const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
 
       const courseQuestions = course.questions;
 
@@ -92,14 +92,19 @@ module.exports = {
       }
 
       if (!courseExists) {
-        await User.updateOne({ _id: user._id }, { $push: { courses: courseId } });
+        await User.updateOne({ _id: user._id }, { $push: { courses: courseId } }).lean({
+          defaults: true,
+        });
       }
+
       let updatedUser = user;
       if (userQuestions.length > 0) {
         updatedUser = await User.findOneAndUpdate(
           { _id: user._id },
           { $push: { questions: userQuestions } }
-        ).populate("courses");
+        )
+          .lean({ defaults: true })
+          .populate("courses");
       }
 
       res.status(201).json({ msg: "Course was added successfully!", user: updatedUser });
@@ -149,7 +154,9 @@ module.exports = {
         case "payment_intent.succeeded": {
           const { type, courseId, userId } = event.data.object.metadata;
           if (type === "package") {
-            const user = await User.findOne({ _id: userId }).populate("unknownQuestionsPack");
+            const user = await User.findOne({ _id: userId })
+              .lean({ defaults: true })
+              .populate("unknownQuestionsPack");
             const unknownQuestionsPack = user.unknownQuestionsPack;
 
             const packQuestionsFromThisCategory = [];
@@ -166,7 +173,7 @@ module.exports = {
                 $pull: { unknownQuestionsPack: { $in: packQuestionsFromThisCategory } },
                 $push: { questionsUnknown: packQuestionsFromThisCategory },
               }
-            );
+            ).lean({ defaults: true });
           }
 
           res.status(201).json({ msg: "The work has been done" });
@@ -185,7 +192,7 @@ module.exports = {
         const { courseId, userId, type } = event.data.object.metadata;
 
         if (type === "course") {
-          const user = await User.findOne({ _id: userId });
+          const user = await User.findOne({ _id: userId }).lean({ defaults: true });
 
           let courseExists = false;
           for (let i = 0; i < user.coursesPurchased.length; i++) {
@@ -198,7 +205,7 @@ module.exports = {
             await User.findOneAndUpdate(
               { _id: user._id },
               { $push: { coursesPurchased: courseId } }
-            );
+            ).lean({ defaults: true });
           }
         }
 

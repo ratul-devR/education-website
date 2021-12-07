@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const mongooseLeanDefaults = require("mongoose-lean-defaults").default;
 
 const dataSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -19,6 +20,8 @@ const dataSchema = new mongoose.Schema({
   refers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
   peoples: Array,
 });
+
+dataSchema.plugin(mongooseLeanDefaults);
 
 dataSchema.pre("save", function (next) {
   const org = this;

@@ -118,7 +118,7 @@ const Categories = () => {
       const body = await res.json();
 
       if (res.ok) {
-        setCategories(body.categories);
+        setCategories((pre) => [...pre, body.category]);
         setInput({});
         setPrerequisites([]);
         onClose();
@@ -146,7 +146,7 @@ const Categories = () => {
 
         if (res.ok) {
           toast({ status: "success", description: body.msg });
-          setCategories(body.categories);
+          setCategories((pre) => pre.filter((category) => category._id !== body.category._id));
         } else if (res.status === 400) {
           toast({ status: "error", description: body.msg });
         } else if (res.status === 401) {

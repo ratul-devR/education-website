@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongooseLeanDefaults = require('mongoose-lean-defaults').default
 
 const dataSchema = new mongoose.Schema({
   audio: { name: String, url: String },
@@ -11,6 +12,8 @@ const dataSchema = new mongoose.Schema({
   viewers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
   category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", ref: "Category" },
 });
+
+dataSchema.plugin(mongooseLeanDefaults)
 
 const Alc = new mongoose.model("Alc", dataSchema);
 

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const mongooseLeanDefaults = require('mongoose-lean-defaults').default
 
 const dataSchema = new mongoose.Schema({
   firstName: { type: String, required: true, trim: true },
@@ -31,6 +32,8 @@ const dataSchema = new mongoose.Schema({
   // the unknown questions pack they will be pushed in the questionsUnknown property once the user purchases this pack
   unknownQuestionsPack: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
 });
+
+dataSchema.plugin(mongooseLeanDefaults)
 
 // for hashing the password
 dataSchema.pre("save", function (next) {

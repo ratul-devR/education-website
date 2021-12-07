@@ -9,8 +9,10 @@ module.exports = async function (req, res, next) {
     if (cookies) {
       const token = cookies[process.env.COOKIE_NAME];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findOne({ _id: decoded._id }).populate("courses");
-      const org = await Org.findOne({ _id: decoded._id });
+      const user = await User.findOne({ _id: decoded._id })
+        .lean({ defaults: true })
+        .populate("courses");
+      const org = await Org.findOne({ _id: decoded._id }).lean({ defaults: true });
 
       if (org) {
         req.org = org;

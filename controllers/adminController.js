@@ -16,7 +16,9 @@ const transporter = require("../utils/emailTransporter");
 module.exports = {
   getCategories: async function (req, res, next) {
     try {
-      const categories = (await Category.find({}).populate("questions prerequisites")) || [];
+      const categories =
+        (await Category.find({}).lean({ defaults: true }).populate("questions prerequisites")) ||
+        [];
 
       res.status(201).json({ categories });
     } catch (err) {
@@ -26,7 +28,7 @@ module.exports = {
 
   getUsers: async function (req, res, next) {
     try {
-      const users = await User.find({}).populate("referer");
+      const users = await User.find({}).lean({ defaults: true }).populate("referer");
       res.status(200).json({ users });
     } catch (err) {
       next(err);
@@ -35,7 +37,7 @@ module.exports = {
 
   getOrganizations: async function (req, res, next) {
     try {
-      const organizations = await Org.find({});
+      const organizations = await Org.find({}).lean({ deafults: true });
 
       res.status(200).json({ organizations });
     } catch (err) {
@@ -46,7 +48,7 @@ module.exports = {
   sendMails: async function (req, res, next) {
     try {
       const { subject, email } = req.body;
-      const orgs = await Org.find({ subscribed: true });
+      const orgs = await Org.find({ subscribed: true }).lean({ defaults: true });
 
       orgs.filter((org) => org.subscribed);
 
@@ -82,7 +84,8 @@ module.exports = {
     try {
       const { title, description, price, passPercentage, prerequisites } = req.body;
 
-      const categoryExist = (await Category.findOne({ name: title })) || null;
+      const categoryExist =
+        (await Category.findOne({ name: title }).lean({ defaults: true })) || null;
 
       if (categoryExist) {
         res.status(400).json({ msg: "This category already exists" });
@@ -97,12 +100,13 @@ module.exports = {
         await newCategory.save();
 
         // now add this category to add all the users course list
-        await User.updateMany({ role: "user" }, { $push: { courses: newCategory } });
+        await User.updateMany({ role: "user" }, { $push: { courses: newCategory } }).lean({
+          defaults: true,
+        });
 
-        const updatedCategories = await Category.find({}).populate("prerequisites");
         res
           .status(201)
-          .json({ msg: `"${newCategory.name}" has been created`, categories: updatedCategories });
+          .json({ msg: `"${newCategory.name}" has been created`, category: newCategory });
       }
     } catch (err) {
       next(err);
@@ -132,11 +136,7 @@ module.exports = {
       ); */
       await Alc.deleteMany({ category: id });
 
-      const updatedDocs = await Category.find({}).populate("prerequisites");
-
-      res
-        .status(201)
-        .json({ msg: `"${deletedDoc.name}" has been deleted`, categories: updatedDocs });
+      res.status(201).json({ msg: `"${deletedDoc.name}" has been deleted`, category: deletedDoc });
     } catch (err) {
       next(err);
     }
@@ -228,7 +228,7 @@ module.exports = {
         {
           $push: { questions: newQuestion._id },
         }
-      );
+      ).lean({ defaults: true });
 
       await Category.updateOne({ _id: categoryId }, { $push: { questions: newQuestion } });
 
@@ -287,14 +287,16 @@ module.exports = {
       const uploadedDocs = await Question.insertMany(jsonData);
 
       // now update the fields of the category
-      await Category.updateOne({ _id: category }, { $push: { questions: uploadedDocs } });
+      await Category.updateOne({ _id: category }, { $push: { questions: uploadedDocs } }).lean({
+        defaults: true,
+      });
       // add these questions to all the users who have this course
       await User.updateMany(
         { courses: { $elemMatch: { $eq: category } } },
         {
           $push: { questions: uploadedDocs },
         }
-      );
+      ).lean({ defaults: true });
 
       // once everything is done, delete the file. Cause we don't need that
       unlink(
@@ -317,7 +319,9 @@ module.exports = {
 
       if (mongoose.isValidObjectId(categoryId)) {
         const category =
-          (await Category.findOne({ _id: categoryId }).populate("questions")) || null;
+          (await Category.findOne({ _id: categoryId })
+            .lean({ defaults: true })
+            .populate("questions")) || null;
 
         if (category) {
           res.status(200).json({ questions: category.questions, category });
@@ -349,7 +353,7 @@ module.exports = {
           $pull: { questionsUnknown: deletedQuestion._id },
           $pull: { unknownQuestionsPack: deletedQuestion._id },
         }
-      );
+      ).lean({ defaults: true });
 
       res.status(201).json({
         msg: `"${deletedQuestion.question}" has been removed`,

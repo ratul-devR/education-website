@@ -63,8 +63,10 @@ module.exports = {
 
       if (courses.length > 0) {
         // now updating the user with the questions and courses
-        await User.updateOne({ _id: newUser._id }, { $push: { courses } });
-        await User.updateOne({ _id: newUser._id }, { $push: { questions } });
+        await User.updateOne({ _id: newUser._id }, { $push: { courses } }).lean({ defaults: true });
+        await User.updateOne({ _id: newUser._id }, { $push: { questions } }).lean({
+          default: true,
+        });
       }
 
       const authToken = await newUser.generateToken();
@@ -88,7 +90,9 @@ module.exports = {
         `,
       });
 
-      const userCreated = await User.findOne({ _id: newUser._id }).populate("courses");
+      const userCreated = await User.findOne({ _id: newUser._id })
+        .lean({ defaults: true })
+        .populate("courses");
 
       res.status(201).json({
         msg: "We have sent you an email for confirmation",

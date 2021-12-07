@@ -44,7 +44,7 @@ const Alc = () => {
 
   const [processing, setProcessing] = useState(false);
 
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState();
   const [loading, setLoading] = useState(true);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -66,9 +66,7 @@ const Alc = () => {
       });
       const body = await res.json();
       if (res.ok) {
-        if (body.categories.length > 0) {
-          setCategories(body.categories);
-        }
+        setCategories(body.categories || []);
       } else {
         toast({ status: "error", description: body.msg });
       }
@@ -132,7 +130,6 @@ const Alc = () => {
 
       if (res.ok) {
         setItems(body.items);
-        setLoading(false);
       } else {
         toast({ status: "error", description: body.msg });
       }
@@ -173,6 +170,12 @@ const Alc = () => {
     fetchCategories(abortController);
     return () => abortController.abort();
   }, []);
+
+  useEffect(() => {
+    if (items && categories) {
+      setLoading(false);
+    }
+  }, [items, categories]);
 
   if (loading) {
     return (
@@ -308,7 +311,11 @@ const Alc = () => {
               {categories &&
                 categories.length > 0 &&
                 categories.map((category) => {
-                  return <option value={category._id}>{category.name}</option>;
+                  return (
+                    <option value={category._id} key={category._id}>
+                      {category.name}
+                    </option>
+                  );
                 })}
             </Select>
           </ModalBody>

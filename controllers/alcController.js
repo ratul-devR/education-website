@@ -47,7 +47,7 @@ module.exports = {
 
       await newAlc.save();
 
-      const updatedItemList = await Alc.find({}).populate("category");
+      const updatedItemList = await Alc.find({}).lean({ defaults: true }).populate("category");
 
       res.status(201).json({ msg: "New Item was uploaded successfully", items: updatedItemList });
     } catch (err) {
@@ -57,7 +57,7 @@ module.exports = {
 
   getItems: async function (req, res, next) {
     try {
-      const items = await Alc.find({}).populate("category");
+      const items = await Alc.find({}).lean({ defaults: true }).populate("category");
 
       res.status(200).json({ items });
     } catch (err) {
@@ -101,7 +101,7 @@ module.exports = {
       }
 
       // send the updated list
-      const updatedList = await Alc.find({}).populate("category");
+      const updatedList = await Alc.find({}).lean({ defaults: true }).populate("category");
 
       res.status(200).json({ items: updatedList, msg: "Deleted Successfully" });
     } catch (err) {
@@ -158,7 +158,7 @@ module.exports = {
     try {
       const { concertId } = req.body;
 
-      await Alc.updateOne({ _id: concertId }, { $push: { viewers: req.user._id } });
+      await Alc.updateOne({ _id: concertId }, { $push: { viewers: req.user._id } }).lean({ defaults: true });
 
       res.sendStatus(200);
     } catch (err) {

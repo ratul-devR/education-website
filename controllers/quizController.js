@@ -10,9 +10,9 @@ module.exports = {
     try {
       const { courseId } = req.params;
 
-      const user = await User.findById(req.user._id).populate("questions");
+      const user = await User.findById(req.user._id).lean({ defaults: true }).populate("questions");
 
-      const course = await Category.findOne({ _id: courseId });
+      const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
 
       if (!course) {
         res.status(404).json({ msg: "Course Not Found! Please stop navigating with URL's" });
@@ -49,10 +49,10 @@ module.exports = {
     try {
       const { courseId } = req.params;
 
-      const user = await User.findOne({ _id: req.user._id }).populate(
+      const user = await User.findOne({ _id: req.user._id }).lean({ defaults: true }).populate(
         "questionsUnknown unknownQuestionsPack"
       );
-      const course = await Category.findOne({ _id: courseId });
+      const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
 
       const courseQuestions = [];
 
@@ -95,7 +95,7 @@ module.exports = {
 
   getQuizAssets: async function (req, res, next) {
     try {
-      const asset = (await QuizAsset.find({}))[0] || null;
+      const asset = (await QuizAsset.find({}).lean({ defaults: true }))[0] || null;
       res.status(200).json({ asset });
     } catch (err) {
       next(err);
@@ -108,7 +108,7 @@ module.exports = {
       const user = req.user;
 
       // remove the question and never show it to him cause he knows the answer now
-      await User.updateOne({ _id: user._id }, { $pull: { questions: questionId } });
+      await User.updateOne({ _id: user._id }, { $pull: { questions: questionId } }).lean({ defaults: true });
 
       // add the question to known list
       let questionExists = false;
@@ -125,10 +125,10 @@ module.exports = {
           { _id: user._id },
           { $push: { questionsKnown: questionId } },
           { new: true }
-        ).populate("courses questionsKnown");
+        ).lean({ defaults: true }).populate("courses questionsKnown");
 
         // now let's see if the user has gained the knowing percentage, so he can mark this course as done
-        const question = await Question.findOne({ _id: questionId }).populate("category");
+        const question = await Question.findOne({ _id: questionId }).lean({ defaults: true }).populate("category");
         const passPercentage = question.category.passPercentage;
         const totalQuestionsInCategory = question.category.questions.length;
 
@@ -149,7 +149,7 @@ module.exports = {
           await User.updateOne(
             { _id: updatedUser._id },
             { $push: { coursesCompleted: question.category._id } }
-          );
+          ).lean({ defaults: true });
         }
 
         res.status(201).json({ user: updatedUser });
@@ -169,7 +169,7 @@ module.exports = {
       let updatedUser = await User.findOneAndUpdate(
         { _id: req.user._id },
         { $pull: { questionsUnknown: questionId } }
-      ).populate("courses");
+      ).lean({ defaults: true }).populate("courses");
       let questionExists = false;
       for (let i = 0; i < req.user.questionsKnown.length; i++) {
         const questionKnown = req.user.questionsKnown[i];
@@ -182,7 +182,7 @@ module.exports = {
         updatedUser = await User.findOneAndUpdate(
           { _id: req.user._id },
           { $push: { questionsKnown: questionId } }
-        ).populate("courses");
+        ).lean({ defaults: true }).populate("courses");
       }
 
       // for repetition phase this question will be shown again in the checking phase after several time
@@ -223,7 +223,7 @@ module.exports = {
         }
       }
 
-      await User.updateOne({ _id: user._id }, { $pull: { questions: questionId } });
+      await User.updateOne({ _id: user._id }, { $pull: { questions: questionId } }).lean({ defaults: true });
 
       /*// for the repetition phase
       if (type === "checking_phase") {
@@ -242,7 +242,7 @@ module.exports = {
       }*/
 
       if (!questionExists) {
-        await User.updateOne({ _id: user._id }, { $push: { unknownQuestionsPack: questionId } });
+        await User.updateOne({ _id: user._id }, { $push: { unknownQuestionsPack: questionId } }).lean({ defaults: true });
         res.status(200).json({ msg: "done" });
       } else {
         res.status(200).json({ msg: "done" });
