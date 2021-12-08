@@ -1,81 +1,47 @@
-import { useEffect, useState } from "react";
-import { Spinner } from "@chakra-ui/spinner";
-import { Flex, SimpleGrid, Box } from "@chakra-ui/layout";
-import { Heading, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, SimpleGrid } from "@chakra-ui/layout";
+import { Link } from "react-router-dom";
+import { Text, Spinner } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
-import { useDispatch } from "react-redux";
-import { /* Link */ useHistory } from "react-router-dom";
+import { useEffect, useState } from "react";
+import config from "../../config";
+import useToast from "../../hooks/useToast";
 
 import NoMessage from "../global/NoMessage";
 
-import useToast from "../../hooks/useToast";
-
-import config from "../../config";
-
-import { LOGIN } from "../../redux/actions/authActions";
-
-const Courses = () => {
+const UserCourses = ({ title }) => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const dispatch = useDispatch();
-  const history = useHistory();
   const toast = useToast();
 
-  // for getting all the courses
-  async function getCourses(abortController) {
+  async function fetchCourses(abortController) {
     try {
-      const res = await fetch(`${config.serverURL}/get_courses/`, {
+      const res = await fetch(`${config.serverURL}/get_courses`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         signal: abortController.signal,
       });
       const body = await res.json();
-
       if (res.ok) {
-        setCourses(body.courses);
         setLoading(false);
+        setCourses(body.courses);
       } else {
-        toast({ status: "error", description: body.msg || "Cannot load courses" });
+        toast({ status: "error", description: body.msg || "Unexpected Server Side Error" });
       }
     } catch (err) {
       toast({ status: "error", description: err.message });
     }
   }
 
-  // for adding the course in the user
-  async function getCourseAndQuestions(courseId) {
-    try {
-      const res = await fetch(`${config.serverURL}/get_courses/getCourseAndQuestions`, {
-        method: "POST",
-        body: JSON.stringify({ courseId }),
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      const body = await res.json();
-      if (res.ok) {
-        dispatch(LOGIN(body.user));
-        history.push("/dashboard/quiz");
-        toast({ status: "success", description: body.msg });
-      } else {
-        toast({ status: "error", description: body.msg });
-      }
-    } catch (err) {
-      toast({ status: "error", description: err.message });
-    }
-  }
-
-  // for adding a course
   useEffect(() => {
     const abortController = new AbortController();
-
-    getCourses(abortController);
-
-    document.title = `${config.appName} - Courses`;
-
-    return () => abortController.abort();
-  }, []);
+    fetchCourses(abortController);
+    document.title = `${config.appName} - ${title}`;
+    return () => {
+      abortController.abort();
+      setLoading(true);
+    };
+  }, [title]);
 
   if (loading) {
     return (
@@ -86,48 +52,52 @@ const Courses = () => {
   }
 
   return (
-    <Flex direction="column">
-      <Heading mb={5} fontSize="2xl" fontWeight="normal" color="primary">
-        Courses
+    <Flex direction="column" w="full" h="full">
+      <Heading color="primary" fontWeight="normal" fontSize="xl" mb={5}>
+        {title}
       </Heading>
 
-      <SimpleGrid columns={{ lg: 2, sm: 1, xl: 3, md: 2 }} spacing={3}>
-        {courses && courses.length > 0 ? (
-          courses.map((course) => {
+      {courses && courses.length > 0 ? (
+        <SimpleGrid pb={5} columns={[1, 1, 2, 3]} spacing={5}>
+          {courses.map((course) => {
             return (
-              <Box border="1px solid" borderColor="gray.200" rounded={3} p={5} key={course._id}>
-                {/* box header containing the button and the course name */}
-                <Flex justifyContent="space-between" alignItems="flex-start" mb={3}>
-                  <Heading fontWeight="normal" fontSize="xl">
+              <Box
+                key={course._id}
+                boxShadow="md"
+                p={5}
+                rounded={5}
+                border="1px solid"
+                borderColor="gray.200"
+              >
+                <Flex mb={3} justify="space-between" align="center">
+                  <Heading noOfLines={1} fontSize="2xl" fontWeight="normal">
                     {course.name}
                   </Heading>
                   <Button
-                    // as={Link}
-                    // to={`/dashboard/pay/${course._id}`}
-                    onClick={() => getCourseAndQuestions(course._id)}
-                    color="black"
+                    as={Link}
+                    to={
+                      title === "Checking Phase"
+                        ? `/dashboard/quiz/${course._id}`
+                        : `/dashboard/activation_phase/${course._id}`
+                    }
                     colorScheme="secondary"
+                    color="black"
                   >
-                    Get
+                    Learn
                   </Button>
                 </Flex>
-                {/* the course description */}
-                <Text as="p" whiteSpace="pre-wrap">
+                <Text color="GrayText" whiteSpace="pre-wrap">
                   {course.description}
                 </Text>
-                {/* box footer containing some course details like question count etc */}
-                <Heading fontSize="md" fontWeight="normal" color="primary" mt={3}>
-                  {course.questions.length} Questions
-                </Heading>
               </Box>
             );
-          })
-        ) : (
-          <NoMessage message="No Courses Were Found" />
-        )}
-      </SimpleGrid>
+          })}
+        </SimpleGrid>
+      ) : (
+        <NoMessage message="You don't own any course" />
+      )}
     </Flex>
   );
 };
 
-export default Courses;
+export default UserCourses;
