@@ -96,8 +96,9 @@ module.exports = {
 
       // add the question to known list if the user already doesn't knows that
       let userAlreadyKnows = question.knownUsers.includes(user._id);
-      if (!userAlreadyKnows)
+      if (!userAlreadyKnows) {
         await Question.updateOne({ $push: { knownUsers: user._id } }).lean({ defaults: true });
+      }
 
       if (!userAlreadyKnows) {
         // let's see if the user has gained the pass percentage of knowing questions in this course
