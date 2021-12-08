@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const Category = require("../models/category");
-// const Questions = require("../models/question");
+const Question = require("../models/question");
 const User = require("../models/people");
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
@@ -9,7 +9,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 module.exports = {
   getCourses: async function (req, res, next) {
     try {
-      const courses = await Category.find({}).lean({ defaults: true }).populate("questions");
+      const courses = await Category.find({}).lean({ defaults: true });
 
       res.status(200).json({ courses });
     } catch (err) {
@@ -31,83 +31,13 @@ module.exports = {
         res.sendStatus(404);
       }
 
-      const userCourses = req.user.coursesPurchased;
+      let courseExists = course.purchasedBy.includes(req.user._id);
 
-      let courseExists = false;
-
-      for (let i = 0; i < userCourses.length; i++) {
-        if (userCourses[i]._id == courseId) {
-          courseExists = true;
-        }
-      }
-
-      const unknownQuestionPack = [];
-      const user = await User.findOne({ _id: req.user._id }).populate("unknownQuestionsPack");
-      for (let i = 0; i < user.unknownQuestionsPack.length; i++) {
-        const unknownQuestion = user.unknownQuestionsPack[i];
-        if (unknownQuestion.category.toString() == courseId) {
-          unknownQuestionPack.push(unknownQuestion);
-        }
-      }
+      const unknownQuestionPack = await Question.find({
+        $and: [{ category: course._id }, { packUsers: { $in: [req.user._id] } }],
+      });
 
       res.status(200).json({ course, courseExists, unknownQuestionPack });
-    } catch (err) {
-      next(err);
-    }
-  },
-
-  getAuthUserCourses: async function (req, res, next) {
-    try {
-      res.status(200).json({ courses: req.user.courses });
-    } catch (err) {
-      next(err);
-    }
-  },
-
-  getCourseAndQuestions: async function (req, res, next) {
-    try {
-      const { courseId } = req.body;
-
-      const user = req.user;
-
-      const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
-
-      const courseQuestions = course.questions;
-
-      let userQuestions = [];
-
-      for (let i = 0; i < courseQuestions.length; i++) {
-        const courseQuestion = courseQuestions[i];
-        if (!user.questions.includes(courseQuestion)) {
-          userQuestions.push(courseQuestion);
-        }
-      }
-
-      let courseExists = false;
-      for (let i = 0; i < user.courses.length; i++) {
-        const userCourse = user.courses[i];
-        if (userCourse._id == courseId) {
-          courseExists = true;
-        }
-      }
-
-      if (!courseExists) {
-        await User.updateOne({ _id: user._id }, { $push: { courses: courseId } }).lean({
-          defaults: true,
-        });
-      }
-
-      let updatedUser = user;
-      if (userQuestions.length > 0) {
-        updatedUser = await User.findOneAndUpdate(
-          { _id: user._id },
-          { $push: { questions: userQuestions } }
-        )
-          .lean({ defaults: true })
-          .populate("courses");
-      }
-
-      res.status(201).json({ msg: "Course was added successfully!", user: updatedUser });
     } catch (err) {
       next(err);
     }
@@ -154,26 +84,21 @@ module.exports = {
         case "payment_intent.succeeded": {
           const { type, courseId, userId } = event.data.object.metadata;
           if (type === "package") {
-            const user = await User.findOne({ _id: userId })
-              .lean({ defaults: true })
-              .populate("unknownQuestionsPack");
-            const unknownQuestionsPack = user.unknownQuestionsPack;
-
-            const packQuestionsFromThisCategory = [];
-            for (let i = 0; i < unknownQuestionsPack.length; i++) {
-              const unknownQuestion = unknownQuestionsPack[i];
-              if (unknownQuestion.category.toString() === courseId.toString()) {
-                packQuestionsFromThisCategory.push(unknownQuestion._id);
-              }
-            }
-
-            await User.updateOne(
-              { _id: user._id },
+            const user = await User.findOne({ _id: userId }).lean({ defaults: true });
+            const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
+            const courseQuestionsToPack = await Question.find({
+              $and: [{ category: course._id }, { packUsers: { $in: [user._id] } }],
+            });
+            // after the successfull payment add user to the unknown list and remove the user from pack list cause this package has been purchased
+            await Question.updateMany(
               {
-                $pull: { unknownQuestionsPack: { $in: packQuestionsFromThisCategory } },
-                $push: { questionsUnknown: packQuestionsFromThisCategory },
+                _id: { $in: courseQuestionsToPack.map((question) => question._id) },
+              },
+              {
+                $push: { unknownUsers: user._id },
+                $pull: { packUsers: user._id }
               }
-            ).lean({ defaults: true });
+            );
           }
 
           res.status(201).json({ msg: "The work has been done" });
@@ -193,19 +118,10 @@ module.exports = {
 
         if (type === "course") {
           const user = await User.findOne({ _id: userId }).lean({ defaults: true });
-
-          let courseExists = false;
-          for (let i = 0; i < user.coursesPurchased.length; i++) {
-            if (user.coursesPurchased[i] == courseId) {
-              courseExists = true;
-            }
-          }
-
-          if (!courseExists) {
-            await User.findOneAndUpdate(
-              { _id: user._id },
-              { $push: { coursesPurchased: courseId } }
-            ).lean({ defaults: true });
+          const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
+          const courseAlreadyPurchased = course.purchasedBy.includes(user._id);
+          if (!courseAlreadyPurchased) {
+            await Category.updateOne({ _id: course._id }, { $push: { purchasedBy: user._id } });
           }
         }
 

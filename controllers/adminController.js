@@ -37,7 +37,7 @@ module.exports = {
 
   getOrganizations: async function (req, res, next) {
     try {
-      const organizations = await Org.find({}).lean({ deafults: true });
+      const organizations = await Org.find({}).lean({ defaults: true });
 
       res.status(200).json({ organizations });
     } catch (err) {
@@ -49,8 +49,6 @@ module.exports = {
     try {
       const { subject, email } = req.body;
       const orgs = await Org.find({ subscribed: true }).lean({ defaults: true });
-
-      orgs.filter((org) => org.subscribed);
 
       let listOfMails = [];
 
@@ -99,11 +97,6 @@ module.exports = {
         });
         await newCategory.save();
 
-        // now add this category to add all the users course list
-        await User.updateMany({ role: "user" }, { $push: { courses: newCategory } }).lean({
-          defaults: true,
-        });
-
         res
           .status(201)
           .json({ msg: `"${newCategory.name}" has been created`, category: newCategory });
@@ -120,20 +113,6 @@ module.exports = {
       const deletedDoc = await Category.findByIdAndDelete({ _id: id });
 
       await Question.deleteMany({ category: id });
-      // now remove it from all the users field
-      // ! stupid doesn't works. IDK why
-      /* await User.updateMany(
-        { role: "user" },
-        {
-          $pull: { courses: deletedDoc._id },
-          $pull: { coursesPurchased: deletedDoc._id },
-          $pull: { coursesCompleted: deletedDoc._id },
-          $pullAll: { questions: deletedDoc.questions },
-          $pullAll: { questionsKnown: deletedDoc.questions },
-          $pullAll: { questionsUnknown: deletedDoc.questions },
-          $pullAll: { unknownQuestionsPack: deletedDoc.questions },
-        }
-      ); */
       await Alc.deleteMany({ category: id });
 
       res.status(201).json({ msg: `"${deletedDoc.name}" has been deleted`, category: deletedDoc });
@@ -223,13 +202,6 @@ module.exports = {
 
       await newQuestion.save();
 
-      await User.updateMany(
-        { courses: { $elemMatch: { $eq: categoryId } } },
-        {
-          $push: { questions: newQuestion._id },
-        }
-      ).lean({ defaults: true });
-
       await Category.updateOne({ _id: categoryId }, { $push: { questions: newQuestion } });
 
       res
@@ -290,13 +262,6 @@ module.exports = {
       await Category.updateOne({ _id: category }, { $push: { questions: uploadedDocs } }).lean({
         defaults: true,
       });
-      // add these questions to all the users who have this course
-      await User.updateMany(
-        { courses: { $elemMatch: { $eq: category } } },
-        {
-          $push: { questions: uploadedDocs },
-        }
-      ).lean({ defaults: true });
 
       // once everything is done, delete the file. Cause we don't need that
       unlink(
@@ -343,17 +308,6 @@ module.exports = {
       const deletedQuestion = await Question.findByIdAndDelete({ _id: questionId });
 
       await Category.findOneAndUpdate({ _id: categoryId }, { $pull: { questions: questionId } });
-
-      // now also remove it from all the user's question list
-      await User.updateMany(
-        { courses: { $elemMatch: { $eq: categoryId } } },
-        {
-          $pull: { questions: deletedQuestion._id },
-          $pull: { questionsKnown: deletedQuestion._id },
-          $pull: { questionsUnknown: deletedQuestion._id },
-          $pull: { unknownQuestionsPack: deletedQuestion._id },
-        }
-      ).lean({ defaults: true });
 
       res.status(201).json({
         msg: `"${deletedQuestion.question}" has been removed`,

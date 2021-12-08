@@ -10,30 +10,26 @@ module.exports = {
     try {
       const { courseId } = req.params;
 
-      const user = await User.findById(req.user._id).lean({ defaults: true }).populate("questions");
-
-      const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
+      const user = await User.findById(req.user._id).lean({ defaults: true });
+      const course = await Category.findOne({ _id: courseId })
+        .lean({ defaults: true })
+        .populate("questions prerequisites");
 
       if (!course) {
         res.status(404).json({ msg: "Course Not Found! Please stop navigating with URL's" });
       }
 
-      const courseQuestions = [];
-
-      if (user.questions.length > 0) {
-        for (let i = 0; i < user.questions.length; i++) {
-          if (user.questions[i].category == courseId) {
-            courseQuestions.push(user.questions[i]);
-          }
-        }
-      }
+      // questions the doesn't knows
+      const courseQuestions = await Question.find({
+        $and: [{ category: course._id }, { knownUsers: { $nin: [req.user._id] } }],
+      }).lean({ defaults: true });
 
       let hasAllPrerequisites = true;
 
       // checking if the user has all the prerequisites to access this course
       for (let i = 0; i < course.prerequisites.length; i++) {
         const prerequisite = course.prerequisites[i];
-        if (!user.coursesCompleted.includes(prerequisite)) {
+        if (!prerequisite.completedBy.includes(user._id)) {
           hasAllPrerequisites = false;
         }
       }
@@ -44,50 +40,37 @@ module.exports = {
     }
   },
 
-  // this is for activation phase where the questions, the didn't knew will be shown
+  // this is for activation phase where the questions, he didn't knew will be shown (unknownQuestions)
   getUserUnknownQuestions: async function (req, res, next) {
     try {
       const { courseId } = req.params;
 
-      const user = await User.findOne({ _id: req.user._id }).lean({ defaults: true }).populate(
-        "questionsUnknown unknownQuestionsPack"
-      );
-      const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
+      const user = await User.findOne({ _id: req.user._id }).lean({ defaults: true });
 
-      const courseQuestions = [];
+      const course = await Category.findOne({ _id: courseId })
+        .lean({ defaults: true })
+        .populate("prerequisites");
 
-      if (user.questionsUnknown.length > 0) {
-        for (let i = 0; i < user.questionsUnknown.length; i++) {
-          if (user.questionsUnknown[i].category == courseId) {
-            courseQuestions.push(user.questionsUnknown[i]);
-          }
-        }
-      }
-
-      const hasPurchased = user.coursesPurchased.includes(courseId);
+      // questions the user doesn't know
+      const courseQuestions = await Question.find({
+        $and: [{ category: course._id }, { unknownUsers: { $in: [user._id] } }],
+      }).lean({ defaults: true });
 
       let hasAllPrerequisites = true;
 
-      // checking if the user has all the prerequisites to access this course
       for (let i = 0; i < course.prerequisites.length; i++) {
         const prerequisite = course.prerequisites[i];
-        if (!user.coursesCompleted.includes(prerequisite)) {
+        if (!prerequisite.completedBy.includes(req.user._id)) {
           hasAllPrerequisites = false;
         }
       }
 
-      const unknownQuestionsPack = [];
-      // checking if the user has questions in his pack from this category
-      for (let i = 0; i < user.unknownQuestionsPack.length; i++) {
-        const unknownQuestion = user.unknownQuestionsPack[i];
-        if (unknownQuestion.category.toString() == courseId.toString()) {
-          unknownQuestionsPack.push(unknownQuestion);
-        }
-      }
+      // the pack of questions the user has to purchase
+      const unknownQuestionsPack = await Question.find({
+        $and: [{ category: course._id }, { packUsers: { $in: [req.user._id] } }],
+      }).lean({ defaults: true });
 
-      res
-        .status(200)
-        .json({ courseQuestions, course, hasPurchased, hasAllPrerequisites, unknownQuestionsPack });
+      res.status(200).json({ courseQuestions, course, hasAllPrerequisites, unknownQuestionsPack });
     } catch (err) {
       next(err);
     }
@@ -107,56 +90,35 @@ module.exports = {
       const { questionId } = req.body;
       const user = req.user;
 
-      // remove the question and never show it to him cause he knows the answer now
-      await User.updateOne({ _id: user._id }, { $pull: { questions: questionId } }).lean({ defaults: true });
+      const question = await Question.findOne({ _id: questionId })
+        .lean({ defaults: true })
+        .populate("category");
 
-      // add the question to known list
-      let questionExists = false;
+      // add the question to known list if the user already doesn't knows that
+      let userAlreadyKnows = question.knownUsers.includes(user._id);
+      if (!userAlreadyKnows)
+        await Question.updateOne({ $push: { knownUsers: user._id } }).lean({ defaults: true });
 
-      for (let i = 0; i < user.questionsKnown.length; i++) {
-        const question = user.questionsKnown[i];
-        if (question == questionId) {
-          questionExists = true;
-        }
-      }
-
-      if (!questionExists) {
-        const updatedUser = await User.findOneAndUpdate(
-          { _id: user._id },
-          { $push: { questionsKnown: questionId } },
-          { new: true }
-        ).lean({ defaults: true }).populate("courses questionsKnown");
-
-        // now let's see if the user has gained the knowing percentage, so he can mark this course as done
-        const question = await Question.findOne({ _id: questionId }).lean({ defaults: true }).populate("category");
+      if (!userAlreadyKnows) {
+        // let's see if the user has gained the pass percentage of knowing questions in this course
+        const knownQuestionsInTheCategory = await Question.find({
+          $and: [{ category: question.category._id }, { knownUsers: { $in: [user._id] } }],
+        }).lean({ defaults: true });
         const passPercentage = question.category.passPercentage;
         const totalQuestionsInCategory = question.category.questions.length;
 
-        let questionsUserKnowsInThisCategory = [];
-        for (let i = 0; i < updatedUser.questionsKnown.length; i++) {
-          const questionKnown = updatedUser.questionsKnown[i];
-          if (questionKnown.category.toString() == question.category._id.toString()) {
-            questionsUserKnowsInThisCategory.push(questionKnown);
-          }
-        }
+        const usersPercentage = (knownQuestionsInTheCategory * 100) / totalQuestionsInCategory;
+        const hasPassed = usersPercentage >= passPercentage;
 
-        const hasCompleted =
-          (questionsUserKnowsInThisCategory.length * 100) / totalQuestionsInCategory >=
-          passPercentage;
-
-        // if the user has completed/passed and if he already hasn't this course already finished in this DB
-        if (hasCompleted && !updatedUser.coursesCompleted.includes(question.category._id)) {
-          await User.updateOne(
-            { _id: updatedUser._id },
-            { $push: { coursesCompleted: question.category._id } }
+        if (hasPassed) {
+          await Category.updateOne(
+            { _id: question.category._id },
+            { $push: { completedBy: user._id } }
           ).lean({ defaults: true });
         }
-
-        res.status(201).json({ user: updatedUser });
-      } else {
-        const updatedUser = await User.findOne({ _id: req.user._id }).populate("courses");
-        res.status(201).json({ user: updatedUser });
       }
+
+      res.status(201).json({ msg: "done" });
     } catch (err) {
       next(err);
     }
@@ -165,24 +127,19 @@ module.exports = {
   apCorrectAnswer: async function (req, res, next) {
     try {
       const { questionId } = req.body;
+      const user = req.user;
 
-      let updatedUser = await User.findOneAndUpdate(
-        { _id: req.user._id },
-        { $pull: { questionsUnknown: questionId } }
-      ).lean({ defaults: true }).populate("courses");
-      let questionExists = false;
-      for (let i = 0; i < req.user.questionsKnown.length; i++) {
-        const questionKnown = req.user.questionsKnown[i];
-        if (questionKnown.toString() === questionId.toString()) {
-          questionExists = true;
-        }
-      }
+      const question = await Question.findOneAndUpdate(
+        { _id: questionId },
+        { $pull: { unknownUsers: user._id } }
+      );
 
-      if (!questionExists) {
-        updatedUser = await User.findOneAndUpdate(
-          { _id: req.user._id },
-          { $push: { questionsKnown: questionId } }
-        ).lean({ defaults: true }).populate("courses");
+      const questionAlreadyKnown = question.knownUsers.includes(user._id);
+
+      if (!questionAlreadyKnown) {
+        await Question.updateOne({ _id: question._id }, { $push: { knownUsers: user._id } }).lean({
+          defaults: true,
+        });
       }
 
       // for repetition phase this question will be shown again in the checking phase after several time
@@ -191,19 +148,19 @@ module.exports = {
       const after7Day = new Date().getTime() + after1Day * 7;
       const after21Day = new Date().getTime() + after1Day * 21;
       agenda.schedule(after1Day, "repetition", {
-        userId: updatedUser._id,
+        userId: user._id,
         question: questionId,
       });
       agenda.schedule(after7Day, "repetition", {
-        userId: updatedUser._id,
+        userId: user._id,
         question: questionId,
       });
       agenda.schedule(after21Day, "repetition", {
-        userId: updatedUser._id,
+        userId: user._id,
         question: questionId,
       });
 
-      res.status(201).json({ user: updatedUser });
+      res.status(201).json({ msg: "done" });
     } catch (err) {
       next(err);
     }
@@ -211,42 +168,20 @@ module.exports = {
 
   dontKnow: async function (req, res, next) {
     try {
-      const { questionId /*type*/ } = req.body;
+      const { questionId } = req.body;
       const user = req.user;
 
-      let questionExists = false;
+      const question = await Question.findOne({ _id: questionId }).lean({ defaults: true });
 
-      for (let i = 0; i < user.unknownQuestionsPack.length; i++) {
-        const question = user.unknownQuestionsPack[i];
-        if (question == questionId) {
-          questionExists = true;
-        }
+      let alreadyPacked = question.packUsers.includes(user._id);
+
+      if (!alreadyPacked) {
+        await Question.updateOne({ _id: question._id }, { $push: { packUsers: user._id } }).lean({
+          defaults: true,
+        });
       }
 
-      await User.updateOne({ _id: user._id }, { $pull: { questions: questionId } }).lean({ defaults: true });
-
-      /*// for the repetition phase
-      if (type === "checking_phase") {
-        for (let i = 0; i < updatedUser.repeatedQuestions.length; i++) {
-          const repeatedQuestion = updatedUser.repeatedQuestions[i].question;
-          const questionDay = updatedUser.repeatedQuestions[i].day;
-          if (repeatedQuestion.toString() == questionId.toString()) {
-            // it means this is a repeated question and the user has given the wrong answer
-            // now remove it from questions known and schedule for pushing it in the questions array
-            const oneDay = new Date().getTime() + 86400000;
-            const sevenDay = new Date().getTime() + oneDay * 7;
-            const twentyOneDay = new Date().getTime() +  oneDay * 21;
-            agenda.schedule();
-          }
-        }
-      }*/
-
-      if (!questionExists) {
-        await User.updateOne({ _id: user._id }, { $push: { unknownQuestionsPack: questionId } }).lean({ defaults: true });
-        res.status(200).json({ msg: "done" });
-      } else {
-        res.status(200).json({ msg: "done" });
-      }
+      res.status(200).json({ msg: "done" });
     } catch (err) {
       next(err);
     }

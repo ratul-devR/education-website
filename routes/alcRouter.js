@@ -25,9 +25,6 @@ router.get("/", authorizeAdmin, getItems);
 // for deleting a single ite
 router.delete("/:id", authorizeAdmin, deleteItem);
 
-// for getting a random item to show on the client side this one just requires regular login
-router.get("/getRandomItem", getRandomItem);
-
 // for getting item according to the id
 router.get("/getItem/:id", getItemAccordingToId)
 

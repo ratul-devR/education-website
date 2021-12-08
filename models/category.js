@@ -8,6 +8,8 @@ const dataSchema = new mongoose.Schema({
   prerequisites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   passPercentage: { type: Number, required: true },
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
+  purchasedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
+  completedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
 });
 
 dataSchema.plugin(mongooseLeanDefaults);

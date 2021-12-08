@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const mongooseLeanDefaults = require('mongoose-lean-defaults').default
+const mongooseLeanDefaults = require("mongoose-lean-defaults").default;
 
 const dataSchema = new mongoose.Schema({
   firstName: { type: String, required: true, trim: true },
@@ -13,27 +13,9 @@ const dataSchema = new mongoose.Schema({
 
   // if any org has referred him
   referer: { type: mongoose.Schema.Types.ObjectId, ref: "Org" },
-
-  // courses he has added
-  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
-  // questions he has purchased
-  coursesPurchased: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
-  // courses the user has completed
-  coursesCompleted: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
-  // questions he has got
-  questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
-  // questions that were repeated in the repetition phase
-  repeatedQuestions: [{ question: mongoose.Schema.Types.ObjectId, day: Number }],
-
-  // questions he knows
-  questionsKnown: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
-  // question he doesn't know
-  questionsUnknown: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
-  // the unknown questions pack they will be pushed in the questionsUnknown property once the user purchases this pack
-  unknownQuestionsPack: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
 });
 
-dataSchema.plugin(mongooseLeanDefaults)
+dataSchema.plugin(mongooseLeanDefaults);
 
 // for hashing the password
 dataSchema.pre("save", function (next) {

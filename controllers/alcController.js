@@ -109,28 +109,6 @@ module.exports = {
     }
   },
 
-  getRandomItem: async function (req, res, next) {
-    try {
-      const concerts = await Alc.find({});
-
-      let result = {};
-
-      for (let i = 0; i < concerts.length; i++) {
-        const concert = concerts[i];
-        if (
-          !concert.viewers.includes(req.user._id) &&
-          user.coursesPurchased.includes(concert.category)
-        ) {
-          result = concert;
-        }
-      }
-
-      res.status(200).json({ item: result });
-    } catch (err) {
-      next(err);
-    }
-  },
-
   getItemAccordingToId: async function (req, res, next) {
     try {
       const { id } = req.params;

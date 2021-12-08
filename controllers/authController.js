@@ -1,7 +1,5 @@
 const User = require("../models/people");
 const Org = require("../models/org");
-const Category = require("../models/category");
-const Question = require("../models/question");
 
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
@@ -13,7 +11,7 @@ module.exports = {
     try {
       const { email, password } = req.body;
 
-      const user = await User.findOne({ email }).populate("courses");
+      const user = await User.findOne({ email });
 
       if (user) {
         const passwordMatched = await bcrypt.compare(password, user.password);
@@ -45,29 +43,23 @@ module.exports = {
 
       let newUser;
 
+      const hasReferred =
+        (referer &&
+          mongoose.isValidObjectId(referer) &&
+          (await Org.findOne({ _id: referer }).lean({ defaults: true }))) ||
+        null;
+
       // if the user is referred
-      if (referer && mongoose.isValidObjectId(referer)) {
+      if (hasReferred) {
         newUser = new User({ firstName, lastName, email, password, referer });
       } else {
         newUser = new User({ firstName, lastName, email, password });
       }
 
       // updating the referer
-      mongoose.isValidObjectId(referer) &&
-        (await Org.updateOne({ _id: referer }, { $push: { refers: newUser._id } }));
+      hasReferred && (await Org.updateOne({ _id: referer }, { $push: { refers: newUser._id } }));
 
       await newUser.save();
-
-      const courses = await Category.find({});
-      const questions = await Question.find({});
-
-      if (courses.length > 0) {
-        // now updating the user with the questions and courses
-        await User.updateOne({ _id: newUser._id }, { $push: { courses } }).lean({ defaults: true });
-        await User.updateOne({ _id: newUser._id }, { $push: { questions } }).lean({
-          default: true,
-        });
-      }
 
       const authToken = await newUser.generateToken();
 
@@ -92,7 +84,6 @@ module.exports = {
 
       const userCreated = await User.findOne({ _id: newUser._id })
         .lean({ defaults: true })
-        .populate("courses");
 
       res.status(201).json({
         msg: "We have sent you an email for confirmation",
@@ -109,7 +100,9 @@ module.exports = {
       const { accountId } = req.params;
 
       if (mongoose.isValidObjectId(accountId)) {
-        const user = await User.findOneAndUpdate({ _id: accountId }, { verified: true });
+        const user = await User.findOneAndUpdate({ _id: accountId }, { verified: true }).lean({
+          defaults: true,
+        });
         if (!user) {
           res.status(404).json({ msg: "User not found" });
         }
@@ -163,7 +156,7 @@ module.exports = {
       await newOrg.save();
 
       const affiliateLink = `${process.env.APP_URL}/auth/register?refererId=${newOrg._id}`;
-      await Org.updateOne({ _id: newOrg._id }, { affiliateLink });
+      await Org.updateOne({ _id: newOrg._id }, { affiliateLink }).lean({ defaults: true });
 
       await transporter.sendMail({
         from: `${process.env.EMAIL}`,
@@ -186,7 +179,7 @@ module.exports = {
     try {
       const { email, password } = req.body;
 
-      const org = await Org.findOne({ email });
+      const org = await Org.findOne({ email }).lean({ defaults: true });
 
       if (!org) {
         res.status(400).json({ msg: "Invalid Credentials" });

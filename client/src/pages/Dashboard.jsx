@@ -10,15 +10,13 @@ import config from "../config";
 import Layout from "../layouts/Dashboard";
 
 // pages
-import UserCourses from "../components/Dashboard/UserCourses";
-// import Courses from "../components/Dashboard/Courses";
-import ActivationPhrase from "../components/Dashboard/ActivationPhrase";
+import Courses from "../components/Dashboard/Courses";
 import Quiz from "../components/Dashboard/Quiz/";
 import Pay from "../components/Dashboard/Pay";
 import Learn from "../components/Dashboard/Learn";
 import Alc from "../components/Dashboard/Alc";
 import PaymentSuccess from "../components/Dashboard/PaymentSuccess";
-import BuyPackage from "../components/Dashboard/BuyPackage"
+import BuyPackage from "../components/Dashboard/BuyPackage";
 
 import useLogout from "../hooks/useLogout";
 
@@ -57,9 +55,12 @@ const Dashboard = () => {
       <Elements stripe={stripePromise}>
         <Switch>
           <Route path={path} exact component={Learn} />
-          <Route path={`${path}/quiz`} exact component={UserCourses} />
-          <Route path={`${path}/activation_phase`} exact component={ActivationPhrase} />
-          {/* <Route path={`${path}/courses`} component={Courses} /> */}
+          <Route path={`${path}/quiz`} exact>
+            <Courses title="Checking Phase" />
+          </Route>
+          <Route path={`${path}/activation_phase`} exact>
+            <Courses title="Activation Phase" />
+          </Route>
           <Route path={`${path}/alc/:courseId`} component={Alc} />
           {/* "getUserQuestionsOfCourse" is the path for checking phase */}
           <Route path={`${path}/quiz/:courseId`}>
