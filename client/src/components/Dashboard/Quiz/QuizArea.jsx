@@ -10,6 +10,7 @@ import useToast from "../../../hooks/useToast";
 import reactStringReplace from "react-string-replace";
 
 import { CHANGE_SCORE, DONT_KNOW, WRONG_ANSWER } from "../../../redux/actions/quizActions";
+import { LOGIN } from "../../../redux/actions/authActions";
 
 const QuizArea = ({ path, timerInterval }) => {
   const [userKnowsAnswer, setUserKnowsAnswer] = useState(false);
@@ -77,7 +78,7 @@ const QuizArea = ({ path, timerInterval }) => {
         const body = await res.json();
         if (res.ok) {
           if (!answered) {
-            toast({ status: "error", description: "You don't know the answer", duration: 500 });
+            toast({ status: "error", description: "You don't know the answer" });
           }
         } else {
           toast({ status: "error", description: body.msg });
@@ -153,6 +154,9 @@ const QuizArea = ({ path, timerInterval }) => {
         body: JSON.stringify({ questionId }),
       })
         .then((res) => res.json())
+        .then((body) => {
+          dispatch(LOGIN(body.user));
+        })
         .catch((err) =>
           toast({
             status: "error",
@@ -162,7 +166,7 @@ const QuizArea = ({ path, timerInterval }) => {
       setClassName("option correct");
       // changing the score
       dispatch(CHANGE_SCORE());
-      toast({ status: "success", description: "Correct Answer", duration: 500 });
+      toast({ status: "success", description: "Correct Answer" });
     } else {
       setClassName("option wrong");
       dispatch(WRONG_ANSWER());
@@ -171,7 +175,6 @@ const QuizArea = ({ path, timerInterval }) => {
       toast({
         status: "warning",
         description: `Wrong Answer`,
-        duration: 500
       });
     }
   }
