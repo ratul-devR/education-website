@@ -1,66 +1,61 @@
-import { Grid, Flex, Container, SimpleGrid, GridItem, Heading, Text } from "@chakra-ui/layout";
+import { Grid, Flex, Container } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
+import { Input, InputGroup, InputLeftAddon, InputRightAddon } from "@chakra-ui/input";
+import { Table, Thead, Tbody, Tfoot, Tr, Th, Td, TableCaption } from "@chakra-ui/table";
 import useLogout from "../hooks/useLogout";
 import Logo from "../assets/logo.png";
-import { useSelector } from "react-redux";
 import CopyToClipBoard from "react-copy-to-clipboard";
 
 export default function OrgDashboard() {
-  const { org } = useSelector((state) => state.authReducer);
+  const org = JSON.parse(localStorage.getItem("org"));
   const logout = useLogout();
-  if (!org.peoples) return <div></div>;
   return (
     <Grid templateRows="60px 1fr" w="full" h="full" direction="column">
-      <Flex as="nav" boxShadow="sm" justify="space-around" align="center">
+      <Flex as="nav" boxShadow="sm" justify="space-between" px={10} align="center">
         <img style={{ display: "block", width: "150px" }} alt="check2learn logo" src={Logo} />
         <Button onClick={logout} colorScheme="blue">
           Log Out
         </Button>
       </Flex>
       <Container maxW="container.xl" py={10}>
-        <SimpleGrid columns={[1, 1, 2, 2]} spacing={3}>
-          <GridItem
-            textAlign="center"
-            border="1px solid"
-            borderColor="gray.100"
-            boxShadow="md"
-            p={10}
-          >
-            <Heading fontSize="2xl" fontWeight="normal" mb={5} color="GrayText">
-              Total Redirects
-            </Heading>
-            <Heading fontSize="5xl" color="primary">
-              {org.refers.length}
-            </Heading>
-          </GridItem>
-          <GridItem
-            textAlign="center"
-            border="1px solid"
-            borderColor="gray.100"
-            boxShadow="md"
-            p={10}
-          >
-            <Heading fontSize="2xl" fontWeight="normal" mb={5} color="GrayText">
-              Total Employyes
-            </Heading>
-            <Heading fontSize="5xl" color="primary">
-              {org.peoples.length}
-            </Heading>
-          </GridItem>
-        </SimpleGrid>
-        <Flex direction="column">
-          <Heading fontSize="1xl" fontWeight="normal" mt={10}>
-            Affiliate Link:{" "}
-            <Text display="inline-block" color="primary">
-              {org.affiliateLink}
-            </Text>
-          </Heading>
+        <InputGroup size="lg" mb={10}>
+          <InputLeftAddon>Affiliate Link</InputLeftAddon>
+          <Input readOnly value={org.affiliateLink} />
           <CopyToClipBoard text={org.affiliateLink}>
-            <Button mt={5} w="100px" display="inline-block" colorScheme="secondary" color="black">
-              Copy
+            <Button colorScheme="blue" cursor="pointer" as={InputRightAddon}>
+              Copy Link
             </Button>
           </CopyToClipBoard>
-        </Flex>
+        </InputGroup>
+        <Table variant="simple">
+          <TableCaption>Users you have referred ({org.refers.length})</TableCaption>
+          <Thead>
+            <Tr>
+              <Th>First Name</Th>
+              <Th>Last Name</Th>
+              <Th>email</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {org.refers.length > 0 ? (
+              org.refers.map((user) => {
+                return (
+                  <Tr>
+                    <Td>{user.firstName}</Td>
+                    <Td>{user.lastName}</Td>
+                    <Td>{user.email}</Td>
+                  </Tr>
+                );
+              })
+            ) : (
+              <Tr>
+                <Td textAlign="center" fontSize="2xl" p={10} color="GrayText" colSpan={3}>
+                  No Refers Yet
+                </Td>
+              </Tr>
+            )}
+          </Tbody>
+        </Table>
       </Container>
     </Grid>
   );

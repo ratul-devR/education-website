@@ -9,16 +9,19 @@ import config from "../../../config";
 import useToast from "../../../hooks/useToast";
 import reactStringReplace from "react-string-replace";
 
-import { CHANGE_SCORE, DONT_KNOW, WRONG_ANSWER } from "../../../redux/actions/quizActions";
+import { CHANGE_SCORE, NEXT_QUESTION, WRONG_ANSWER } from "../../../redux/actions/quizActions";
 
-const QuizArea = ({ path, timerInterval }) => {
+const QuizArea = ({
+  path,
+  timerInterval,
+  userDoesNotKnowTheAnswer,
+  userCommitted,
+  setUserCommitted,
+}) => {
   const [userKnowsAnswer, setUserKnowsAnswer] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [className, setClassName] = useState("option");
   const [input, setInput] = useState("");
-
-  // whenever the user clicks on I don't know or I know, it means the user has committed that
-  const [userCommitted, setUserCommitted] = useState(false);
 
   // audios
   const [positiveAudio, setPositiveAudio] = useState();
@@ -44,45 +47,6 @@ const QuizArea = ({ path, timerInterval }) => {
       }
     } catch (err) {
       toast({ status: "error", description: err.message });
-    }
-  }
-
-  // if the user doesn't knows the answer then show him the next Q
-  // and show up a toast
-  // this function will be called when the user click on I don't know and also when the user gives the wrong answer
-  async function userDoesNotKnowTheAnswer(questionId, answered) {
-    if (!answered) {
-      dispatch(DONT_KNOW());
-    }
-    setUserCommitted(true);
-    // stop the timer
-    clearInterval(timerInterval);
-    // if this is not activation phase, only then call it
-    // cause if the user doesn't knows the answer, it will be moved to the activation phase
-    // but in activation phase, if the user doesn't knows the answer,
-    // it remains as it is.
-    if (path !== "getUserUnknownQuestions") {
-      try {
-        const res = await fetch(`${config.serverURL}/get_quiz/dontKnow`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            questionId,
-            type: path === "getUserUnknownQuestions" ? "activation_phase" : "checking_phase",
-          }),
-        });
-        const body = await res.json();
-        if (res.ok) {
-          if (!answered) {
-            toast({ status: "error", description: "You don't know the answer", duration: 500 });
-          }
-        } else {
-          toast({ status: "error", description: body.msg });
-        }
-      } catch (err) {
-        toast({ status: "error", description: err.message });
-      }
     }
   }
 
@@ -114,7 +78,7 @@ const QuizArea = ({ path, timerInterval }) => {
 
   // for stopping all the audios
   function stopAllAudios() {
-    if (positiveAudio && negativeAudio ) {
+    if (positiveAudio && negativeAudio) {
       positiveAudio.pause();
       negativeAudio.pause();
     }
@@ -159,7 +123,10 @@ const QuizArea = ({ path, timerInterval }) => {
       setClassName("option correct");
       // changing the score
       dispatch(CHANGE_SCORE());
-      toast({ status: "success", description: "Correct Answer", duration: 500 });
+      toast({ status: "success", description: "Correct Answer", duration: 1000 });
+      setTimeout(() => {
+        dispatch(NEXT_QUESTION());
+      }, 2000);
     } else {
       setClassName("option wrong");
       dispatch(WRONG_ANSWER());
@@ -168,8 +135,11 @@ const QuizArea = ({ path, timerInterval }) => {
       toast({
         status: "warning",
         description: `Wrong Answer`,
-        duration: 500,
+        duration: 1000,
       });
+      setTimeout(() => {
+        dispatch(NEXT_QUESTION());
+      }, 2000);
     }
   }
 
@@ -199,14 +169,7 @@ const QuizArea = ({ path, timerInterval }) => {
 
   return (
     <Flex w="full" h="full" direction="column">
-      <Heading
-        whiteSpace="pre-wrap"
-        fontSize="4xl"
-        textAlign="center"
-        py={3}
-        fontWeight="normal"
-        mb={5}
-      >
+      <Heading whiteSpace="pre-wrap" fontSize="4xl" textAlign="center" py={3} fontWeight="normal">
         {questions[currentIndex].type === "mcq"
           ? questions[currentIndex].question
           : reactStringReplace(questions[currentIndex].question, "_", () => {
@@ -225,15 +188,15 @@ const QuizArea = ({ path, timerInterval }) => {
                   variant="flushed"
                   placeholder="Enter the answer > hit enter"
                   value={input}
-                  disabled={selectedAnswer || !userKnowsAnswer}
+                  disabled={selectedAnswer}
                   onChange={(e) => setInput(e.target.value)}
                 />
               );
             })}
       </Heading>
 
-      {!userKnowsAnswer ? (
-        <Flex w="full" direction="column">
+      {!userKnowsAnswer && questions[currentIndex].type !== "text" ? (
+        <Flex mt={5} w="full" direction="column">
           <Flex w="full" justify="center" align="center" gridColumnGap={2}>
             <Tooltip hasArrow label="Show Options">
               <Button
@@ -266,10 +229,6 @@ const QuizArea = ({ path, timerInterval }) => {
               : { base: "1fr 1fr", sm: "1fr", md: "1fr 1fr", lg: "1fr 1fr" }
           }
           gridGap={2}
-          // w="full"
-          // h="full"
-          // justify="center"
-          // direction="column"
         >
           {questions[currentIndex].type === "mcq" &&
             questions[currentIndex].options.map((option, index) => {

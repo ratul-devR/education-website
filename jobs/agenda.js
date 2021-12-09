@@ -10,7 +10,7 @@ jobTypes.forEach((type) => {
 });
 
 if (jobTypes.length) {
-	agenda.on("ready", () => agenda.start());
+	agenda.on("ready", async () => await agenda.start());
 }
 
 const graceFul = () => agenda.stop(() => process.exit(0));

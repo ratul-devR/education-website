@@ -9,7 +9,9 @@ import config from "../../config";
 import useToast from "../../hooks/useToast";
 import { Alert, AlertIcon } from "@chakra-ui/alert";
 import validator from "validator";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { ORG_LOGIN } from "../../redux/actions/authActions";
 
 const InputField = (props) => {
   return <Input {...props} mb={3} bg="#fff" />;
@@ -49,21 +51,12 @@ const CreateOrg = () => {
     subscribe: false,
   });
   const [processing, setProcessing] = useState(false);
-  const [addPeople, setAddPeople] = useState(false);
-  const [colleagues, setColleagues] = useState([]);
-  const colleagueInputInitialState = {
-    name: "",
-    position: "",
-    email: "",
-  };
-  const [colleagueInput, setColleagueInput] = useState({
-    name: "",
-    position: "",
-    email: "",
-  });
   const [affiliateLink, setAffiliateLink] = useState("");
+  const [registered, setRegistered] = useState();
 
   const toast = useToast();
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   function handleInputChange(event) {
     const { name, value } = event.target;
@@ -73,22 +66,10 @@ const CreateOrg = () => {
     }));
   }
 
-  // for handling input change under the colleague section
-  function handleColleagueInputChange(event) {
-    const { name, value } = event.target;
-    setColleagueInput((pre) => ({ ...pre, [name]: value }));
-  }
-
-  // for adding a colleague into the list
-  function AddColleague() {
-    if (colleagueInput.name && colleagueInput.position && colleagueInput.email) {
-      if (!validator.isEmail(colleagueInput.email)) {
-        toast({ status: "error", description: "Invalid Email" });
-      } else {
-        setColleagues((pre) => [...pre, colleagueInput]);
-        setColleagueInput(colleagueInputInitialState);
-      }
-    }
+  function goToDashboard() {
+    if (!registered) return;
+    dispatch(ORG_LOGIN(registered));
+    history.push("/orgDashboard");
   }
 
   async function registerOrg() {
@@ -108,7 +89,6 @@ const CreateOrg = () => {
           body: JSON.stringify({
             orgName: name,
             email,
-            colleagues,
             password,
             streetAddress,
             city,
@@ -128,6 +108,7 @@ const CreateOrg = () => {
             status: "info",
             description: body.msg,
           });
+          setRegistered(body.org);
           setProcessing(false);
           setAffiliateLink(body.affiliateLink);
         } else {
@@ -195,29 +176,32 @@ const CreateOrg = () => {
         >
           Subscribe to Newsletter
         </Checkbox>
-        <Checkbox onChange={() => setAddPeople((pre) => !pre)} mb={3} colorScheme="secondary">
-          Add Colleagues
-        </Checkbox>
-        <Button
-          disabled={
-            !name ||
-            !email ||
-            !password ||
-            !streetAddress ||
-            !postalCode ||
-            !province ||
-            !phone ||
-            !type ||
-            !yourName ||
-            !yourPosition ||
-            processing
-          }
-          onClick={registerOrg}
-          colorScheme="secondary"
-          color="black"
-        >
-          {processing ? "Processing..." : "Register Organization"}
-        </Button>
+        {!registered ? (
+          <Button
+            disabled={
+              !name ||
+              !email ||
+              !password ||
+              !streetAddress ||
+              !postalCode ||
+              !province ||
+              !phone ||
+              !type ||
+              !yourName ||
+              !yourPosition ||
+              processing
+            }
+            onClick={registerOrg}
+            colorScheme="secondary"
+            color="black"
+          >
+            {processing ? "Processing..." : "Register Organization"}
+          </Button>
+        ) : (
+          <Button colorScheme="blue" onClick={goToDashboard}>
+            Go to Dashboard
+          </Button>
+        )}
         {affiliateLink && (
           <Alert mt={5} rounded={5} status="info">
             <AlertIcon />
@@ -225,69 +209,6 @@ const CreateOrg = () => {
           </Alert>
         )}
       </Flex>
-
-      {/* for the people from organization */}
-      {addPeople && (
-        <Flex
-          mb={10}
-          w="500px"
-          justify="center"
-          direction="column"
-          bg="gray.50"
-          p={10}
-          boxShadow="md"
-        >
-          <Heading textAlign="center" mb={5} fontWeight="normal" fontSize="2xl" color="primary">
-            Add Colleagues
-          </Heading>
-          <Input
-            placeholder="Enter Colleague Name"
-            name="name"
-            value={colleagueInput.name}
-            mb={3}
-            onChange={handleColleagueInputChange}
-          />
-          <Input
-            placeholder="Enter Colleague Position"
-            name="position"
-            value={colleagueInput.position}
-            mb={3}
-            onChange={handleColleagueInputChange}
-          />
-          <Input
-            placeholder="Enter Colleague's email"
-            mb={3}
-            name="email"
-            value={colleagueInput.email}
-            onChange={handleColleagueInputChange}
-          />
-          <Button colorScheme="secondary" color="black" onClick={AddColleague} mb={5}>
-            Add Colleague
-          </Button>
-          {colleagues.length > 0 && (
-            <SimpleGrid>
-              {colleagues.map((colleague, index) => {
-                return (
-                  <GridItem
-                    _last={{ marginBottom: 0 }}
-                    mb={3}
-                    key={index}
-                    bg="white"
-                    p={5}
-                    rounded={5}
-                  >
-                    <Heading fontSize="2xl" fontWeight="normal">
-                      {colleague.name}
-                    </Heading>
-                    <Text color="GrayText">{colleague.position}</Text>
-                    <Text color="GrayText">{colleague.email}</Text>
-                  </GridItem>
-                );
-              })}
-            </SimpleGrid>
-          )}
-        </Flex>
-      )}
       <Flex>
         Already Registered?{" "}
         <ChakraLink ml={2} color="primary" as={Link} textAlign="center" to="/auth/loginorg">

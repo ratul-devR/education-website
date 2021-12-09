@@ -10,8 +10,12 @@ module.exports = async function (req, res, next) {
       const token = cookies[process.env.COOKIE_NAME];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await User.findOne({ _id: decoded._id }).lean({ defaults: true });
-      const org = await Org.findOne({ _id: decoded._id }).lean({ defaults: true });
+      const org = await Org.findOne({ _id: decoded._id })
+        .lean({ defaults: true })
+        .populate("refers");
 
+      // if this id is matching with and org, then send the data of the org cause it has more priority in this app
+      // and otherwise just send the user if exists
       if (org) {
         req.org = org;
         next();

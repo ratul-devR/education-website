@@ -49,7 +49,7 @@ app.use("/active_learning_concert", checkLogin, alcRouter);
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/dist"));
 
-  app.get("*", function (req, res) {
+  app.get("*", function (_req, res) {
     const fullPath = path.join(__dirname, "client", "dist", "index.html");
     res.sendFile(fullPath);
   });

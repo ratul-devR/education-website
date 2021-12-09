@@ -43,8 +43,8 @@ const App = () => {
       }
 
       if (res.ok) {
-        // if there is a peoples property that means it's an org object
-        if (body.peoples) {
+        // if there is a affiliateLink property that means it's an org object
+        if (body.affiliateLink) {
           dispatch(ORG_LOGIN(body));
         } else {
           dispatch(LOGIN(body));

@@ -20,11 +20,13 @@ import {
   LOAD_QUIZ,
   NEXT_QUESTION,
   RESET_QUIZ,
-  //  QUIZ_DONE,
+  DONT_KNOW,
 } from "../../../redux/actions/quizActions";
 
 const Quiz = ({ path }) => {
   const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
+  // whenever the user clicks on I don't know or I know, it means the user has committed that
+  const [userCommitted, setUserCommitted] = useState(false);
 
   const toast = useToast();
   const { courseId } = useParams();
@@ -92,9 +94,43 @@ const Quiz = ({ path }) => {
     }
   }
 
-  // for switching to the next question
-  function nextQuestion() {
-    dispatch(NEXT_QUESTION());
+  // if the user doesn't knows the answer then show him the next Q
+  // and show up a toast
+  // this function will be called when the user click on I don't know and also when the user gives the wrong answer
+  async function userDoesNotKnowTheAnswer(questionId, answered, timeOut) {
+    if (!answered && !timeOut) {
+      dispatch(DONT_KNOW());
+      dispatch(NEXT_QUESTION());
+    }
+    // stop the timer
+    clearInterval(timerInterval);
+    // if this is not activation phase, only then call it
+    // cause if the user doesn't knows the answer, it will be moved to the activation phase
+    // but in activation phase, if the user doesn't knows the answer,
+    // it remains as it is.
+    if (path !== "getUserUnknownQuestions") {
+      try {
+        const res = await fetch(`${config.serverURL}/get_quiz/dontKnow`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            questionId,
+            type: path === "getUserUnknownQuestions" ? "activation_phase" : "checking_phase",
+          }),
+        });
+        const body = await res.json();
+        if (res.ok) {
+          if (!answered && !timeOut) {
+            toast({ status: "error", description: "You don't know the answer", duration: 1000 });
+          }
+        } else {
+          toast({ status: "error", description: body.msg });
+        }
+      } catch (err) {
+        toast({ status: "error", description: err.message });
+      }
+    }
   }
 
   useEffect(() => {
@@ -137,7 +173,9 @@ const Quiz = ({ path }) => {
     ) {
       setTimer(0);
       dispatch(NEXT_QUESTION());
+      dispatch(DONT_KNOW());
       toast({ status: "warning", description: "Time up" });
+      userDoesNotKnowTheAnswer(questions[currentIndex]._id, false, true);
     }
   }, [timer, currentIndex, path]);
 
@@ -274,20 +312,18 @@ const Quiz = ({ path }) => {
         rounded={5}
         boxShadow="md"
       >
-        <QuizArea timerInterval={timerInterval} path={path} />
+        <QuizArea
+          userDoesNotKnowTheAnswer={userDoesNotKnowTheAnswer}
+          timerInterval={timerInterval}
+          path={path}
+          userCommitted={userCommitted}
+          setUserCommitted={setUserCommitted}
+        />
       </Flex>
 
       {/* the footer containing the buttons and question count */}
-      <Flex wrap="wrap" w="full" gridGap={5} justify="space-between" direction="row-reverse">
-        <Flex gridColumnGap={2}>
-          <Button onClick={nextQuestion} colorScheme="blue">
-            Next
-          </Button>
-          {/* <Button onClick={() => dispatch(QUIZ_DONE())} colorScheme="secondary" color="black">
-            Get Result
-          </Button> */}
-        </Flex>
-        <Heading fontSize="1xl" fontWeight="normal" color="blue.500">
+      <Flex wrap="wrap" w="full" justify="center" mt={5}>
+        <Heading fontSize="2xl" color="blue.500" fontWeight="normal">
           {currentIndex + 1} of {questions.length} Questions
         </Heading>
       </Flex>

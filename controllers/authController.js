@@ -82,8 +82,7 @@ module.exports = {
         `,
       });
 
-      const userCreated = await User.findOne({ _id: newUser._id })
-        .lean({ defaults: true })
+      const userCreated = await User.findOne({ _id: newUser._id }).lean({ defaults: true });
 
       res.status(201).json({
         msg: "We have sent you an email for confirmation",
@@ -126,7 +125,6 @@ module.exports = {
         email,
         password,
         streetAddress,
-        colleagues,
         city,
         postalCode,
         province,
@@ -147,7 +145,6 @@ module.exports = {
         province,
         phone,
         type,
-        peoples: colleagues,
         employeeName: orgEmployeeName,
         employeePosition: orgEmployeePosition,
         subscribed: subscribe,
@@ -156,7 +153,10 @@ module.exports = {
       await newOrg.save();
 
       const affiliateLink = `${process.env.APP_URL}/auth/register?refererId=${newOrg._id}`;
-      await Org.updateOne({ _id: newOrg._id }, { affiliateLink }).lean({ defaults: true });
+      const updatedOrg = await Org.findOneAndUpdate(
+        { _id: newOrg._id },
+        { affiliateLink }
+      ).populate("refers");
 
       await transporter.sendMail({
         from: `${process.env.EMAIL}`,
@@ -169,7 +169,17 @@ module.exports = {
         `,
       });
 
-      res.status(201).json({ affiliateLink, msg: "We just emailed you the affiliate Link" });
+      const token = await newOrg.generateToken();
+
+      res.cookie(process.env.COOKIE_NAME, token, {
+        maxAge: process.env.COOKIE_MAX_AGE,
+        httpOnly: true,
+        signed: true,
+      });
+
+      res
+        .status(201)
+        .json({ affiliateLink, msg: "We just emailed you the affiliate Link", org: updatedOrg });
     } catch (err) {
       next(err);
     }
@@ -179,7 +189,7 @@ module.exports = {
     try {
       const { email, password } = req.body;
 
-      const org = await Org.findOne({ email }).lean({ defaults: true });
+      const org = await Org.findOne({ email }).populate("refers");
 
       if (!org) {
         res.status(400).json({ msg: "Invalid Credentials" });
@@ -205,16 +215,16 @@ module.exports = {
     }
   },
 
-  getRefererInfo: async function(req, res, next) {
+  getRefererInfo: async function (req, res, next) {
     try {
-      const { orgId } = req.params
-      const org = await Org.findOne({ _id: orgId })
+      const { orgId } = req.params;
+      const org = await Org.findOne({ _id: orgId });
       if (!org) {
-        res.status(400).json({ msg: "Invalid Referer" })
+        res.status(400).json({ msg: "Invalid Referer" });
       }
-      res.status(200).json({ org })
+      res.status(200).json({ org });
     } catch (err) {
-      next(err)
+      next(err);
     }
   },
 
@@ -222,7 +232,7 @@ module.exports = {
     res.status(201).send(req.user || req.org);
   },
 
-  logout: function (req, res) {
+  logout: function (_req, res) {
     res.clearCookie(process.env.COOKIE_NAME);
     res.status(201).json({ msg: "Logged out" });
   },

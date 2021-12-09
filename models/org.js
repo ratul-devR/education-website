@@ -18,7 +18,6 @@ const dataSchema = new mongoose.Schema({
   affiliateLink: String,
   subscribed: { type: Boolean, required: true },
   refers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
-  peoples: Array,
 });
 
 dataSchema.plugin(mongooseLeanDefaults);
@@ -33,7 +32,7 @@ dataSchema.pre("save", function (next) {
   });
 });
 
-// for generting jwt
+// for generating jwt
 dataSchema.methods.generateToken = function () {
   try {
     const org = this;

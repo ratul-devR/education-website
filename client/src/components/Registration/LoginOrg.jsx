@@ -45,7 +45,7 @@ export default function LoginOrg() {
   }
   return (
     <Flex w="full" h="full" justify="center" align="center">
-      <Flex w="100%" maxW="400px" direction="column" p={10} rounded={5} boxShadow="lg">
+      <Flex w="100%" maxW="450px" direction="column" p={10} rounded={5} boxShadow="lg">
         <Heading textAlign="center" fontSize="2xl" color="primary" fontWeight="normal" mb={5}>
           Org Login
         </Heading>

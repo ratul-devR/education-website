@@ -50,13 +50,7 @@ module.exports = {
       const { subject, email } = req.body;
       const orgs = await Org.find({ subscribed: true }).lean({ defaults: true });
 
-      let listOfMails = [];
-
-      for (let i = 0; i < orgs.length; i++) {
-        const org = orgs[i];
-        listOfMails.push(org.email);
-        org.peoples.map((people) => listOfMails.push(people.email));
-      }
+      let listOfMails = orgs.map((org) => org.email);
 
       if (listOfMails.length === 0) {
         res
