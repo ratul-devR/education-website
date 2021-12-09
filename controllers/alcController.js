@@ -2,6 +2,7 @@ const { unlink } = require("fs");
 const path = require("path");
 
 const Alc = require("../models/alc");
+const Category = require("../models/category");
 
 module.exports = {
   uploadSingleAlc: async function (req, res, next) {
@@ -113,18 +114,15 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      const alcs = await Alc.find({});
+      const category = await Category.findOne({ _id: id }).lean({ defaults: true });
 
-      let item = null;
+      let item =
+        (await Alc.findOne({
+          $and: [{ category: category._id }, { viewers: { $nin: [req.user._id] } }],
+        })) || null;
 
-      for (let i = 0; i < alcs.length; i++) {
-        const alc = alcs[i];
-        if (alc.category == id && !alc.viewers.includes(req.user._id)) {
-          item = alc;
-        }
-      }
-
-      const userHasPurchased = req.user.coursesPurchased.includes(id);
+      category.purchasedBy = category.purchasedBy.map((user) => user.toString());
+      const userHasPurchased = category.purchasedBy.includes(req.user._id.toString());
 
       res.status(200).json({ hasPurchased: userHasPurchased, item });
     } catch (err) {
@@ -136,7 +134,13 @@ module.exports = {
     try {
       const { concertId } = req.body;
 
-      await Alc.updateOne({ _id: concertId }, { $push: { viewers: req.user._id } }).lean({ defaults: true });
+      const alc = await Alc.findOne({ _id: concertId });
+      alc.viewers = alc.viewers.map((viewer) => viewer.toString());
+      const alreadyViewed = alc.viewers.includes(req.user._id.toString());
+      !alreadyViewed &&
+        (await Alc.updateOne({ _id: concertId }, { $push: { viewers: req.user._id } }).lean({
+          defaults: true,
+        }));
 
       res.sendStatus(200);
     } catch (err) {

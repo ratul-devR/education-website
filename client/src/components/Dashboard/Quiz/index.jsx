@@ -132,7 +132,8 @@ const Quiz = ({ path }) => {
       questions[currentIndex].timeLimit !== 0 &&
       timer > questions[currentIndex].timeLimit &&
       !done &&
-      questions.length > 0
+      questions.length > 0 &&
+      hasAllPrerequisites
     ) {
       setTimer(0);
       dispatch(NEXT_QUESTION());

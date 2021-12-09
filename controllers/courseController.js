@@ -31,7 +31,8 @@ module.exports = {
         res.sendStatus(404);
       }
 
-      let courseExists = course.purchasedBy.includes(req.user._id);
+      course.purchasedBy = course.purchasedBy.map((user) => user.toString());
+      let courseExists = course.purchasedBy.includes(req.user._id.toString());
 
       const unknownQuestionPack = await Question.find({
         $and: [{ category: course._id }, { packUsers: { $in: [req.user._id] } }],
@@ -89,14 +90,14 @@ module.exports = {
             const courseQuestionsToPack = await Question.find({
               $and: [{ category: course._id }, { packUsers: { $in: [user._id] } }],
             });
-            // after the successfull payment add user to the unknown list and remove the user from pack list cause this package has been purchased
+            // after the successful payment add user to the unknown list and remove the user from pack list cause this package has been purchased
             await Question.updateMany(
               {
                 _id: { $in: courseQuestionsToPack.map((question) => question._id) },
               },
               {
                 $push: { unknownUsers: user._id },
-                $pull: { packUsers: user._id }
+                $pull: { packUsers: user._id },
               }
             );
           }
@@ -119,7 +120,9 @@ module.exports = {
         if (type === "course") {
           const user = await User.findOne({ _id: userId }).lean({ defaults: true });
           const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
-          const courseAlreadyPurchased = course.purchasedBy.includes(user._id);
+          course.purchasedBy = course.purchasedBy.map((user) => user.toString());
+          const courseAlreadyPurchased = course.purchasedBy.includes(userId.toString());
+          console.log(courseAlreadyPurchased);
           if (!courseAlreadyPurchased) {
             await Category.updateOne({ _id: course._id }, { $push: { purchasedBy: user._id } });
           }

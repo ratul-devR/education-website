@@ -21,7 +21,6 @@ const QuizArea = ({ path, timerInterval }) => {
   const [userCommitted, setUserCommitted] = useState(false);
 
   // audios
-  const [backgroundAudio, setBackgroundAudio] = useState();
   const [positiveAudio, setPositiveAudio] = useState();
   const [negativeAudio, setNegativeAudio] = useState();
 
@@ -40,7 +39,6 @@ const QuizArea = ({ path, timerInterval }) => {
       });
       const body = await res.json();
       if (res.ok && body.asset) {
-        setBackgroundAudio(new Audio(body.asset.background_sound.url));
         setPositiveAudio(new Audio(body.asset.positive_sound.url));
         setNegativeAudio(new Audio(body.asset.negative_sound.url));
       }
@@ -116,8 +114,7 @@ const QuizArea = ({ path, timerInterval }) => {
 
   // for stopping all the audios
   function stopAllAudios() {
-    if (positiveAudio && negativeAudio && backgroundAudio) {
-      backgroundAudio.pause();
+    if (positiveAudio && negativeAudio ) {
       positiveAudio.pause();
       negativeAudio.pause();
     }
@@ -184,16 +181,10 @@ const QuizArea = ({ path, timerInterval }) => {
 
   // play the background sound when it is ready
   useEffect(() => {
-    if (backgroundAudio) {
-      backgroundAudio.currentTime = 0;
-      backgroundAudio.volume = 0.3;
-      backgroundAudio.loop = true;
-      backgroundAudio.play();
-    }
     return () => {
       stopAllAudios();
     };
-  }, [backgroundAudio, positiveAudio, negativeAudio]);
+  }, [positiveAudio, negativeAudio]);
 
   useEffect(() => {
     setUserKnowsAnswer(false);

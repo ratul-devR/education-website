@@ -82,7 +82,7 @@ const Login = () => {
 
   return (
     <Flex h="full" justify="center" align="center">
-      <Flex maxW="95%" w="400px" direction="column" p={10} bg="white" boxShadow="lg">
+      <Flex maxW="95%" w="450px" direction="column" p={10} bg="white" boxShadow="lg">
         <Heading textAlign="center" color="primary" fontWeight="normal" mb={5}>
           Sign in
         </Heading>

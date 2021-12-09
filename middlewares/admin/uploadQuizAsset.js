@@ -13,7 +13,6 @@ module.exports = function (req, res, next) {
   const upload = uploader("quiz-assets");
 
   upload.fields([
-    { name: "background_sound" },
     { name: "positive_sound" },
     { name: "negative_sound" },
   ])(req, res, (err) => {

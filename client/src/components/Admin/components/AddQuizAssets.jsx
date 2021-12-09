@@ -20,8 +20,7 @@ import { MdDeleteOutline } from "react-icons/md";
 
 export default function AddQuizAssets({ quizAsset, loading, setQuizAsset }) {
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const [{ background_sound, positive_sound, negative_sound }, setFiles] = useState({
-    background_sound: "",
+  const [{ positive_sound, negative_sound }, setFiles] = useState({
     positive_sound: "",
     negative_sound: "",
   });
@@ -36,7 +35,6 @@ export default function AddQuizAssets({ quizAsset, loading, setQuizAsset }) {
   async function uploadAndSaveAssets() {
     setProcessing(true);
     const formData = new FormData();
-    formData.append("background_sound", background_sound);
     formData.append("positive_sound", positive_sound);
     formData.append("negative_sound", negative_sound);
     try {
@@ -97,18 +95,12 @@ export default function AddQuizAssets({ quizAsset, loading, setQuizAsset }) {
       {quizAsset ? (
         <Table>
           <Thead>
-            <Th>Background-Audio</Th>
             <Th>Positive Sound</Th>
             <Th>Negative Sound</Th>
             <Th>Action</Th>
           </Thead>
           <Tbody>
             <Tr>
-              <Td>
-                <Link as="a" target="_blank" href={quizAsset.background_sound.url}>
-                  {quizAsset.background_sound.name}
-                </Link>
-              </Td>
               <Td>
                 <Link as="a" target="_blank" href={quizAsset.positive_sound.url}>
                   {quizAsset.positive_sound.name}
@@ -151,18 +143,6 @@ export default function AddQuizAssets({ quizAsset, loading, setQuizAsset }) {
                   border="1px solid"
                   borderColor="gray.100"
                 >
-                  <Text mb={3}>Quiz Background sound</Text>
-                  <input onChange={handleInputChange} name="background_sound" type="file" />
-                </Flex>
-                <Flex
-                  w="full"
-                  p={5}
-                  direction="column"
-                  rounded={5}
-                  mb={3}
-                  border="1px solid"
-                  borderColor="gray.100"
-                >
                   <Text mb={3}>Quiz Positive sound</Text>
                   <input onChange={handleInputChange} name="positive_sound" type="file" />
                 </Flex>
@@ -183,7 +163,7 @@ export default function AddQuizAssets({ quizAsset, loading, setQuizAsset }) {
                   Close
                 </Button>
                 <Button
-                  disabled={!background_sound || !positive_sound || !negative_sound || processing}
+                  disabled={ !positive_sound || !negative_sound || processing}
                   colorScheme="secondary"
                   color="black"
                   onClick={uploadAndSaveAssets}

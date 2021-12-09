@@ -19,9 +19,14 @@ module.exports = {
         res.status(404).json({ msg: "Course Not Found! Please stop navigating with URL's" });
       }
 
-      // questions the doesn't knows
+      // questions the user hasn't checked yet will be shown in the checking phase
       const courseQuestions = await Question.find({
-        $and: [{ category: course._id }, { knownUsers: { $nin: [req.user._id] } }],
+        $and: [
+          { category: course._id },
+          { knownUsers: { $nin: [req.user._id] } },
+          { unknownUsers: { $nin: [req.user._id] } },
+          { packUsers: { $nin: [req.user._id] } },
+        ],
       }).lean({ defaults: true });
 
       let hasAllPrerequisites = true;
@@ -29,7 +34,8 @@ module.exports = {
       // checking if the user has all the prerequisites to access this course
       for (let i = 0; i < course.prerequisites.length; i++) {
         const prerequisite = course.prerequisites[i];
-        if (!prerequisite.completedBy.includes(user._id)) {
+        prerequisite.completedBy = prerequisite.completedBy.map((user) => user.toString());
+        if (!prerequisite.completedBy.includes(user._id.toString())) {
           hasAllPrerequisites = false;
         }
       }
@@ -60,7 +66,8 @@ module.exports = {
 
       for (let i = 0; i < course.prerequisites.length; i++) {
         const prerequisite = course.prerequisites[i];
-        if (!prerequisite.completedBy.includes(req.user._id)) {
+        prerequisite.completedBy = prerequisite.completedBy.map((user) => user.toString());
+        if (!prerequisite.completedBy.includes(req.user._id.toString())) {
           hasAllPrerequisites = false;
         }
       }
@@ -95,9 +102,12 @@ module.exports = {
         .populate("category");
 
       // add the question to known list if the user already doesn't knows that
-      let userAlreadyKnows = question.knownUsers.includes(user._id);
+      question.knownUsers = question.knownUsers.map((user) => user.toString());
+      let userAlreadyKnows = question.knownUsers.includes(user._id.toString());
       if (!userAlreadyKnows) {
-        await Question.updateOne({ $push: { knownUsers: user._id } }).lean({ defaults: true });
+        await Question.updateOne({ _id: question._id }, { $push: { knownUsers: user._id } }).lean({
+          defaults: true,
+        });
       }
 
       if (!userAlreadyKnows) {
@@ -108,9 +118,11 @@ module.exports = {
         const passPercentage = question.category.passPercentage;
         const totalQuestionsInCategory = question.category.questions.length;
 
-        const usersPercentage = (knownQuestionsInTheCategory * 100) / totalQuestionsInCategory;
+        const usersPercentage =
+          (knownQuestionsInTheCategory.length * 100) / totalQuestionsInCategory;
         const hasPassed = usersPercentage >= passPercentage;
 
+        // if the user has passed and has earned the percentage, then push his is under the category list
         if (hasPassed) {
           await Category.updateOne(
             { _id: question.category._id },
@@ -135,7 +147,8 @@ module.exports = {
         { $pull: { unknownUsers: user._id } }
       );
 
-      const questionAlreadyKnown = question.knownUsers.includes(user._id);
+      question.knownUsers = question.knownUsers.map((user) => user.toString());
+      const questionAlreadyKnown = question.knownUsers.includes(user._id.toString());
 
       if (!questionAlreadyKnown) {
         await Question.updateOne({ _id: question._id }, { $push: { knownUsers: user._id } }).lean({
@@ -144,7 +157,6 @@ module.exports = {
       }
 
       // for repetition phase this question will be shown again in the checking phase after several time
-      // fix the rejection error in agenda
       const after1Day = new Date().getTime() + 86400000;
       const after7Day = new Date().getTime() + after1Day * 7;
       const after21Day = new Date().getTime() + after1Day * 21;
@@ -174,7 +186,8 @@ module.exports = {
 
       const question = await Question.findOne({ _id: questionId }).lean({ defaults: true });
 
-      let alreadyPacked = question.packUsers.includes(user._id);
+      question.packUsers = question.packUsers.map((user) => user.toString());
+      let alreadyPacked = question.packUsers.includes(user._id.toString());
 
       if (!alreadyPacked) {
         await Question.updateOne({ _id: question._id }, { $push: { packUsers: user._id } }).lean({

@@ -199,9 +199,22 @@ module.exports = {
         signed: true,
       });
 
-      res.status(200).json({ msg: "Login Successfull", org });
+      res.status(200).json({ msg: "Login Successful", org });
     } catch (err) {
       next(err);
+    }
+  },
+
+  getRefererInfo: async function(req, res, next) {
+    try {
+      const { orgId } = req.params
+      const org = await Org.findOne({ _id: orgId })
+      if (!org) {
+        res.status(400).json({ msg: "Invalid Referer" })
+      }
+      res.status(200).json({ org })
+    } catch (err) {
+      next(err)
     }
   },
 

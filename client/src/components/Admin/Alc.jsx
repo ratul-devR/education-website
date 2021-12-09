@@ -344,7 +344,7 @@ const Alc = () => {
       </Modal>
 
       {items && items.length > 0 ? (
-        <Table minW="2150px">
+        <Table minW="2150px" size="sm">
           <Thead>
             <Th>
               <Tooltip hasArrow label="Active Learning Audio">
@@ -376,7 +376,6 @@ const Alc = () => {
                 PS bg sound
               </Tooltip>
             </Th>
-            <Th>Timeout</Th>
             <Th>views</Th>
             <Th>Action</Th>
           </Thead>
@@ -387,15 +386,15 @@ const Alc = () => {
                   <Td>
                     <Tooltip hasArrow label={item.audio.name}>
                       <Link noOfLines={1} as="a" href={item.audio.url} target="_blank">
-                        {item.audio.name.slice(0, 25)}
+                        {item.audio.name}
                       </Link>
                     </Tooltip>
                   </Td>
                   <Td>
-                    {item.background_music ? (
+                    {item.background_music.name ? (
                       <Tooltip hasArrow label={item.background_music.name}>
                         <Link noOfLines={1} as="a" href={item.background_music.url} target="_blank">
-                          {item.background_music.name.slice(0, 25)}
+                          {item.background_music.name}
                         </Link>
                       </Tooltip>
                     ) : (
@@ -405,20 +404,20 @@ const Alc = () => {
                   <Td>
                     <Tooltip hasArrow label={item.video.name}>
                       <Link noOfLines={1} as="a" href={item.video.url} target="_blank">
-                        {item.video.name.slice(0, 25)}
+                        {item.video.name}
                       </Link>
                     </Tooltip>
                   </Td>
                   <Td>
                     <Tooltip hasArrow label={item.passive_audio.name}>
                       <Link as="a" noOfLines={1} href={item.passive_audio.url} target="_blank">
-                        {item.passive_audio.name.slice(0, 25)}
+                        {item.passive_audio.name}
                       </Link>
                     </Tooltip>
                   </Td>
                   <Td>{item.passive_images.length} Files</Td>
                   <Td>
-                    {item.passive_background_sound ? (
+                    {item.passive_background_sound.name ? (
                       <Tooltip hasArrow label={item.passive_background_sound.name}>
                         <Link
                           as="a"
@@ -426,14 +425,13 @@ const Alc = () => {
                           href={item.passive_background_sound.url}
                           target="_blank"
                         >
-                          {item.passive_background_sound.name.slice(0, 25)}
+                          {item.passive_background_sound.name}
                         </Link>
                       </Tooltip>
                     ) : (
                       "Default"
                     )}
                   </Td>
-                  <Td>{item.timeout} s</Td>
                   <Td>{item.viewers.length}</Td>
                   <Td>
                     <IconButton

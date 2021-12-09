@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import validator from "validator";
 import { useDispatch } from "react-redux";
+import { Alert, AlertIcon } from "@chakra-ui/alert";
 
 import config from "../../config";
 
@@ -37,6 +38,7 @@ const Register = () => {
     password: "",
     conPass: "",
   });
+  const [org, setOrg] = useState()
   const [processing, setProcessing] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [showConPass, setShowConPass] = useState(false);
@@ -111,13 +113,41 @@ const Register = () => {
     }
   }
 
+  // for fetching the details of the referer organization
+  async function fetchOrgInfo(abortController) {
+    try {
+      const res = await fetch(`${config.serverURL}/get_auth/getRefererInfo/org/${refererId}`, {
+        method: "GET",
+        headers: {"Content-Type": "application/json"},
+        credentials: "include",
+        signal: abortController.signal
+      })
+      const body = await res.json()
+      if (res.ok) {
+        setOrg(body.org)
+      } else {
+        toast({ status: "error", description: body.msg })
+      }
+    } catch (err) {
+      toast({ status: "error", description: err.message })
+    }
+  }
+
   useEffect(() => {
     document.title = `${config.appName} - Register Account`;
   }, []);
 
+  useEffect(() => {
+    const abortController = new AbortController()
+    if (refererId) {
+      fetchOrgInfo(abortController)
+    }
+    return () => abortController.abort()
+  }, [refererId])
+
   return (
     <Flex h="full" justify="center" align="center">
-      <Flex maxW="95%" w="400px" direction="column" p={10} bg="white" boxShadow="lg">
+      <Flex maxW="95%" w="450px" direction="column" p={10} bg="white" boxShadow="lg">
         <Heading textAlign="center" color="primary" fontWeight="normal" mb={5}>
           Sign up
         </Heading>
@@ -176,11 +206,16 @@ const Register = () => {
           onClick={ValidateInputInfo}
           colorScheme="secondary"
           color="black"
-          mb={3}
         >
           {processing ? "Processing..." : "Sign Up"}
         </Button>
-        <Text fontSize="md" textAlign="center">
+        {org && refererId && (
+          <Alert mt={3} rounded={5} status="info">
+            <AlertIcon />
+            You are being referred by {org.name}
+          </Alert>
+        )}
+        <Text fontSize="md" mt={3} textAlign="center">
           Already have an account?{" "}
           <Link color="primary" as={RouterLink} to="/auth">
             Login

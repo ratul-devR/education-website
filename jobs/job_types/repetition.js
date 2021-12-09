@@ -35,12 +35,6 @@ module.exports = function (agenda) {
 							}
 						);
 					}
-					/*await db
-						.collection("peoples")
-						.updateOne(
-							{ _id: userId },
-							{ $push: { repeatedQuestions: { question: ObjectId(questionId), day: 1 } } }
-						);*/
 					client.close();
 					done();
 				} catch (err) {

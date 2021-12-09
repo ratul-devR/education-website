@@ -14,7 +14,7 @@ const Registration = () => {
 
   return (
     <VStack h="100vh" overflow="hidden" spacing={0}>
-      <Flex py={2} as="nav" boxShadow="sm" w="100%" justify="space-around" align="center">
+      <Flex py={2} px={10} as="nav" boxShadow="sm" w="100%" justify="space-between" align="center">
         <img
           style={{ display: "block", width: "200px" }}
           src={Logo}

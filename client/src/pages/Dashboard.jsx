@@ -56,12 +56,15 @@ const Dashboard = () => {
         <Switch>
           <Route path={path} exact component={Learn} />
           <Route path={`${path}/quiz`} exact>
-            <Courses title="Checking Phase" />
+            <Courses title="Checking Phase" path="quiz" />
           </Route>
           <Route path={`${path}/activation_phase`} exact>
-            <Courses title="Activation Phase" />
+            <Courses title="Activation Phase" path="activation_phase" />
           </Route>
           <Route path={`${path}/alc/:courseId`} component={Alc} />
+          <Route path={`${path}/alc`}>
+            <Courses title="Active and Passive Learning Concert" path="alc" />
+          </Route>
           {/* "getUserQuestionsOfCourse" is the path for checking phase */}
           <Route path={`${path}/quiz/:courseId`}>
             <Quiz path={"getUserQuestionsOfCourse"} />

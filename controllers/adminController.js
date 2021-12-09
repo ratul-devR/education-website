@@ -123,14 +123,10 @@ module.exports = {
 
   uploadQuizAssets: async function (req, res, next) {
     try {
-      const { background_sound, positive_sound, negative_sound } = req.files;
+      const { positive_sound, negative_sound } = req.files;
       const domain = req.protocol + "://" + req.get("host") + "/";
 
       const asset = new QuizAsset({
-        background_sound: {
-          name: background_sound[0].filename,
-          url: domain + "uploads/quiz-assets/" + background_sound[0].filename,
-        },
         positive_sound: {
           name: positive_sound[0].filename,
           url: domain + "uploads/quiz-assets/" + positive_sound[0].filename,
@@ -161,10 +157,6 @@ module.exports = {
   deleteQuizAssets: async function (req, res, next) {
     try {
       const asset = (await QuizAsset.find({}))[0];
-      unlink(
-        path.join(__dirname, `../public/uploads/quiz-assets/${asset.background_sound.name}`),
-        (err) => (err ? err : null)
-      );
       unlink(
         path.join(__dirname, `../public/uploads/quiz-assets/${asset.positive_sound.name}`),
         (err) => (err ? err : null)

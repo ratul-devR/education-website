@@ -8,7 +8,8 @@ const {
   logout,
   registerOrg,
   confirmEmail,
-  loginOrg
+  loginOrg,
+  getRefererInfo
 } = require("../controllers/authController");
 
 const checkEmailExistence = require("../middlewares/auth/checkEmailExistence");
@@ -34,6 +35,9 @@ router.get("/confirmEmail/:accountId", confirmEmail);
 
 // for checking if the user is authenticated or not
 router.get("/checkLogin", checkLogin, sendResponseIfLoggedIn);
+
+// for fetching the referer info
+router.get("/getRefererInfo/org/:orgId", getRefererInfo)
 
 // for logging out the authenticated user
 router.get("/logout", logout);

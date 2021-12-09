@@ -8,7 +8,7 @@ import useToast from "../../hooks/useToast";
 
 import NoMessage from "../global/NoMessage";
 
-const UserCourses = ({ title }) => {
+const UserCourses = ({ title, path }) => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const toast = useToast();
@@ -75,11 +75,7 @@ const UserCourses = ({ title }) => {
                   </Heading>
                   <Button
                     as={Link}
-                    to={
-                      title === "Checking Phase"
-                        ? `/dashboard/quiz/${course._id}`
-                        : `/dashboard/activation_phase/${course._id}`
-                    }
+                    to={`/dashboard/${path}/${course._id}`}
                     colorScheme="secondary"
                     color="black"
                   >

@@ -39,7 +39,7 @@ const Dashboard = ({ children }) => {
             icon={<MdQuiz />}
           />
         </Tooltip>{" "}
-        {/* <Tooltip label="Active and Passive Learning Concert" placement="right" hasArrow>
+        <Tooltip label="Concerts" placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"
@@ -49,7 +49,7 @@ const Dashboard = ({ children }) => {
             activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<FaAssistiveListeningSystems />}
           />
-        </Tooltip> */}
+        </Tooltip>
         <Tooltip label="Activation Phase" placement="right" hasArrow>
           <IconButton
             rounded={0}
