@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/button";
-import { Text, Spinner, Link, Divider } from "@chakra-ui/react";
+import { Text, Spinner, Divider } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/hooks";
 import {
   Modal,
@@ -11,7 +11,6 @@ import {
   ModalBody,
 } from "@chakra-ui/modal";
 import { Flex } from "@chakra-ui/layout";
-import { Tooltip } from "@chakra-ui/tooltip";
 import { IconButton } from "@chakra-ui/button";
 import { MdDeleteOutline } from "react-icons/md";
 import { useEffect, useState } from "react";
@@ -38,6 +37,7 @@ const Alc = () => {
     passive_background_sound: null,
   });
   const [timeout, setTimeout] = useState();
+  const [title, setTitle] = useState();
   const [category, setCategory] = useState();
 
   const [categories, setCategories] = useState();
@@ -90,6 +90,7 @@ const Alc = () => {
     }
     formData.append("timeout", timeout);
     formData.append("category", category);
+    formData.append("title", title)
     formData.append("passive_audio", passive_audio);
     if (passive_background_sound) {
       formData.append("passive_background_sound", passive_background_sound);
@@ -198,6 +199,12 @@ const Alc = () => {
           <ModalHeader>Add new item</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            <Input
+              onChange={(e) => setTitle(e.target.value)}
+              value={title}
+              placeholder="Enter a name to identify this Item"
+              mb={5}
+            />
             <Flex
               border="1px solid"
               p={3}
@@ -344,38 +351,10 @@ const Alc = () => {
       </Modal>
 
       {items && items.length > 0 ? (
-        <Table minW="2150px" size="sm">
+        <Table minW="700px" size="sm">
           <Thead>
-            <Th>
-              <Tooltip hasArrow label="Active Learning Audio">
-                Audio
-              </Tooltip>
-            </Th>
-            <Th>
-              <Tooltip hasArrow label="Active Learning Background-sound">
-                Bg Sound
-              </Tooltip>
-            </Th>
-            <Th>
-              <Tooltip hasArrow label="Active Learning Video">
-                Video
-              </Tooltip>
-            </Th>
-            <Th>
-              <Tooltip hasArrow label="Passive Learning Audio">
-                PS Audio
-              </Tooltip>
-            </Th>
-            <Th>
-              <Tooltip hasArrow label="Passive Learning Images">
-                PS Images
-              </Tooltip>
-            </Th>
-            <Th>
-              <Tooltip hasArrow label="Passive Learning Background-sound">
-                PS bg sound
-              </Tooltip>
-            </Th>
+            <Th>Name</Th>
+            <Th>Category</Th>
             <Th>views</Th>
             <Th>Action</Th>
           </Thead>
@@ -383,55 +362,8 @@ const Alc = () => {
             {items.map((item) => {
               return (
                 <Tr key={item._id}>
-                  <Td>
-                    <Tooltip hasArrow label={item.audio.name}>
-                      <Link noOfLines={1} as="a" href={item.audio.url} target="_blank">
-                        {item.audio.name}
-                      </Link>
-                    </Tooltip>
-                  </Td>
-                  <Td>
-                    {item.background_music.name ? (
-                      <Tooltip hasArrow label={item.background_music.name}>
-                        <Link noOfLines={1} as="a" href={item.background_music.url} target="_blank">
-                          {item.background_music.name}
-                        </Link>
-                      </Tooltip>
-                    ) : (
-                      "Default"
-                    )}
-                  </Td>
-                  <Td>
-                    <Tooltip hasArrow label={item.video.name}>
-                      <Link noOfLines={1} as="a" href={item.video.url} target="_blank">
-                        {item.video.name}
-                      </Link>
-                    </Tooltip>
-                  </Td>
-                  <Td>
-                    <Tooltip hasArrow label={item.passive_audio.name}>
-                      <Link as="a" noOfLines={1} href={item.passive_audio.url} target="_blank">
-                        {item.passive_audio.name}
-                      </Link>
-                    </Tooltip>
-                  </Td>
-                  <Td>{item.passive_images.length} Files</Td>
-                  <Td>
-                    {item.passive_background_sound.name ? (
-                      <Tooltip hasArrow label={item.passive_background_sound.name}>
-                        <Link
-                          as="a"
-                          noOfLines={1}
-                          href={item.passive_background_sound.url}
-                          target="_blank"
-                        >
-                          {item.passive_background_sound.name}
-                        </Link>
-                      </Tooltip>
-                    ) : (
-                      "Default"
-                    )}
-                  </Td>
+                  <Td>{item.title}</Td>
+                  <Td>{item.category.name}</Td>
                   <Td>{item.viewers.length}</Td>
                   <Td>
                     <IconButton

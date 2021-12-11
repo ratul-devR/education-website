@@ -89,7 +89,9 @@ module.exports = {
           prerequisites,
           passPercentage,
         });
+
         await newCategory.save();
+        await newCategory.populate("prerequisites");
 
         res
           .status(201)

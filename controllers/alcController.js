@@ -15,7 +15,7 @@ module.exports = {
         passive_audio,
         passive_background_sound,
       } = req.files;
-      const { timeout, category } = req.body;
+      const { timeout, category, title } = req.body;
 
       const domain = req.protocol + "://" + req.get("host") + "/uploads/alc";
 
@@ -43,6 +43,7 @@ module.exports = {
             }
           : {},
         timeout,
+        title,
         category,
       });
 
@@ -56,7 +57,7 @@ module.exports = {
     }
   },
 
-  getItems: async function (req, res, next) {
+  getItems: async function (_req, res, next) {
     try {
       const items = await Alc.find({}).lean({ defaults: true }).populate("category");
 
@@ -114,7 +115,9 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      const category = await Category.findOne({ _id: id }).lean({ defaults: true });
+      const category = await Category.findOne({ _id: id })
+        .lean({ defaults: true })
+        .populate("prerequisites");
 
       let item =
         (await Alc.findOne({
@@ -124,7 +127,15 @@ module.exports = {
       category.purchasedBy = category.purchasedBy.map((user) => user.toString());
       const userHasPurchased = category.purchasedBy.includes(req.user._id.toString());
 
-      res.status(200).json({ hasPurchased: userHasPurchased, item });
+      let hasAllPrerequisites = true;
+      for (let i = 0; i < category.prerequisites.length; i++) {
+        const prerequisite = category.prerequisites[i];
+        prerequisite.completedBy = prerequisite.completedBy.map((user) => user.toString());
+        if (!prerequisite.completedBy.includes(req.user._id.toString()))
+          hasAllPrerequisites = false;
+      }
+
+      res.status(200).json({ hasPurchased: userHasPurchased, item, hasAllPrerequisites });
     } catch (err) {
       next(err);
     }

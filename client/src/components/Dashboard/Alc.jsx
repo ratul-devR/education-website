@@ -7,14 +7,13 @@ import { Button } from "@chakra-ui/button";
 import { Link } from "react-router-dom";
 import { useParams, useHistory } from "react-router-dom";
 
-import NoMessage from "../global/NoMessage";
-
 // audios
 import PassiveLearningBgSound from "../../assets/audios/passive-learning.mp3";
 import ActiveLearningBgSound from "../../assets/audios/active-learning.mp3";
 
 const Alc = () => {
   const [item, setItem] = useState({});
+  const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
   const [loading, setLoading] = useState(true);
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -39,7 +38,9 @@ const Alc = () => {
       const body = await res.json();
 
       if (res.ok) {
-        if (!body.hasPurchased) {
+        if (!body.hasAllPrerequisites) {
+          setHasAllPrerequisites(false);
+        } else if (!body.hasPurchased) {
           history.push(`/dashboard/pay/${courseId}`);
         }
         setItem(body.item || null);
@@ -66,7 +67,7 @@ const Alc = () => {
 
   useEffect(() => {
     const abortController = new AbortController();
-    document.title = `${config.appName} - Active Learning Concert`;
+    document.title = `${config.appName} - Active and Passive Learning Concert`;
     fetchItem(abortController);
     return () => {
       setLoading(true);
@@ -114,6 +115,22 @@ const Alc = () => {
     return (
       <Flex w="full" h="full" justify="center" align="center">
         <Spinner />
+      </Flex>
+    );
+  }
+
+  if (!hasAllPrerequisites) {
+    return (
+      <Flex w="full" h="full" justify="center" align="center" direction="column">
+        <Heading fontSize="9xl" mb={5}>
+          😶
+        </Heading>
+        <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
+          You Don't have all the prerequisites to access this course.
+        </Heading>
+        <Button onClick={() => history.goBack()} colorScheme="secondary" color="black">
+          Go Back
+        </Button>
       </Flex>
     );
   }

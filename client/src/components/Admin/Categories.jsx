@@ -10,7 +10,7 @@ import {
   ModalCloseButton,
   ModalBody,
 } from "@chakra-ui/modal";
-import { useDisclosure, Link as ChakraLink, Select } from "@chakra-ui/react";
+import { useDisclosure, Link as ChakraLink, Badge } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Input } from "@chakra-ui/input";
 import { MdDeleteOutline } from "react-icons/md";
@@ -306,13 +306,13 @@ const Categories = () => {
                     </Td>
                     <Td>{category.price}</Td>
                     <Td>{category.questions.length}</Td>
-                    <Td>
+                    <Td display="flex" gridGap={3} wrap="wrap">
                       {category.prerequisites.length > 0
                         ? category.prerequisites.map((prerequisite, index) => {
                             return (
-                              <span key={index} style={{ paddingRight: "10px" }}>
+                              <Badge textTransform="none" colorScheme="purple" key={index}>
                                 {prerequisite.name}
-                              </span>
+                              </Badge>
                             );
                           })
                         : "No Prerequisites"}
