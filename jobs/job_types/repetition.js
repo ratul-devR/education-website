@@ -1,6 +1,9 @@
 const MongoClient = require("mongodb").MongoClient;
 const { ObjectId } = require("mongoose").Types;
 
+const Question = require("../../models/question")
+const Alc = require("../../models/alc")
+
 module.exports = function (agenda) {
 	agenda.define("repetition", (job, done) => {
 		const client = new MongoClient(process.env.MONGO_URL);
@@ -17,6 +20,10 @@ module.exports = function (agenda) {
 
 				try {
 					const user = await db.collection("peoples").findOne({ _id: userId });
+					const learningConcert = (await Question.findOne({ _id: questionId }).populate("concert")).concert
+
+					// the user will also have to learn them again in the learning concerts
+					await Alc.updateOne({ _id: learningConcert._id }, { $pull: { viewers: userId } })
 
 					// let's check if the question already exists in his questions list
 					let questionExists = false;

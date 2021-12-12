@@ -14,7 +14,7 @@ const QuizAsset = require("../models/quizAsset");
 const transporter = require("../utils/emailTransporter");
 
 module.exports = {
-  getCategories: async function (req, res, next) {
+  getCategories: async function (_req, res, next) {
     try {
       const categories =
         (await Category.find({}).lean({ defaults: true }).populate("questions prerequisites")) ||
@@ -26,7 +26,7 @@ module.exports = {
     }
   },
 
-  getUsers: async function (req, res, next) {
+  getUsers: async function (_req, res, next) {
     try {
       const users = await User.find({}).lean({ defaults: true }).populate("referer");
       res.status(200).json({ users });
@@ -35,7 +35,7 @@ module.exports = {
     }
   },
 
-  getOrganizations: async function (req, res, next) {
+  getOrganizations: async function (_req, res, next) {
     try {
       const organizations = await Org.find({}).lean({ defaults: true });
 
@@ -109,6 +109,28 @@ module.exports = {
       const deletedDoc = await Category.findByIdAndDelete({ _id: id });
 
       await Question.deleteMany({ category: id });
+
+      // delete the files in the alc
+      const alcsInThisCategory = await Alc.find({ category: id });
+      const filesToDelete = alcsInThisCategory.map((alc) => [
+        alc.passive_audio.name,
+        ...alc.passive_images.map((image) => image.name),
+        alc.background_music.name,
+        alc.passive_background_sound.name,
+        alc.audio.name,
+        alc.video.name,
+      ]);
+
+      filesToDelete.map((file) => {
+        unlink(path.join(__dirname, `../public/uploads/alc/${file}`), (err) => {
+          if (err) {
+            res.status(400).json({ msg: err.message });
+          } else {
+            console.log(file)
+          }
+        });
+      })
+
       await Alc.deleteMany({ category: id });
 
       res.status(201).json({ msg: `"${deletedDoc.name}" has been deleted`, category: deletedDoc });
@@ -141,7 +163,7 @@ module.exports = {
     }
   },
 
-  getQuizAssets: async function (req, res, next) {
+  getQuizAssets: async function (_req, res, next) {
     try {
       const asset = (await QuizAsset.find({}))[0] || null;
       res.status(200).json({ asset });
@@ -150,7 +172,7 @@ module.exports = {
     }
   },
 
-  deleteQuizAssets: async function (req, res, next) {
+  deleteQuizAssets: async function (_req, res, next) {
     try {
       const asset = (await QuizAsset.find({}))[0];
       unlink(
@@ -171,7 +193,7 @@ module.exports = {
   addQuestion: async function (req, res, next) {
     try {
       const { categoryId } = req.params;
-      const { question, options, answer, type, timeLimit, answers } = req.body;
+      const { question, options, answer, type, concert, timeLimit, answers } = req.body;
 
       let newQuestion;
 
@@ -179,11 +201,14 @@ module.exports = {
         newQuestion = new Question({
           question,
           options,
+          concert,
           answers: [answer],
           category: categoryId,
           type,
           timeLimit,
         });
+
+        await newQuestion.populate("concert");
       } else {
         newQuestion = new Question({ question, answers, category: categoryId, type, timeLimit });
       }
@@ -213,6 +238,23 @@ module.exports = {
       for (let i = 0; i < jsonData.length; i++) {
         const question = jsonData[i];
         question.category = category;
+        // if the admin hasn't added a concert
+        question.concert = question.concert
+          ? await Alc.findOne({ name: { $regex: question.concert, $options: "gi" } })
+          : res.status(400).json({
+              msg: `Please add a concert where this question will be taught, check Q no: [${
+                i + 1
+              }]`,
+            });
+        // if the concert doesn't exists
+        if (!question.concert)
+          res.status(400).json({
+            msg: `${
+              question.concert
+            } was not found please make sure you have entered the correct name. Check Q no: [${
+              i + 1
+            }]`,
+          });
         if (question.type === "mcq") {
           question.options = question.options.split("/ ");
           question.answers = question.answers.split(" ");
@@ -274,7 +316,8 @@ module.exports = {
         const category =
           (await Category.findOne({ _id: categoryId })
             .lean({ defaults: true })
-            .populate("questions")) || null;
+            .populate("questions")
+            .populate({ path: "questions", populate: "concert" })) || null;
 
         if (category) {
           res.status(200).json({ questions: category.questions, category });

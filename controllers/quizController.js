@@ -16,7 +16,7 @@ module.exports = {
         .populate("questions prerequisites");
 
       if (!course) {
-        res.status(404).json({ msg: "Course Not Found! Please stop navigating with URL's" });
+        res.status(404).json({ msg: "Course Not Found! Please stop navigating with Urls" });
       }
 
       // questions the user hasn't checked yet will be shown in the checking phase
@@ -157,18 +157,10 @@ module.exports = {
       }
 
       // for repetition phase this question will be shown again in the checking phase after several time
-      const after1Day = new Date().getTime() + 86400000;
-      const after7Day = new Date().getTime() + after1Day * 7;
-      const after21Day = new Date().getTime() + after1Day * 21;
-      agenda.schedule(after1Day, "repetition", {
-        userId: user._id,
-        question: questionId,
-      });
-      agenda.schedule(after7Day, "repetition", {
-        userId: user._id,
-        question: questionId,
-      });
-      agenda.schedule(after21Day, "repetition", {
+      // const after1Day = new Date().getTime() + 86400000;
+      // const after7Day = new Date().getTime() + after1Day * 7;
+      // const after21Day = new Date().getTime() + after1Day * 21;
+      agenda.schedule(new Date().getTime() + 10000, "repetition", {
         userId: user._id,
         question: questionId,
       });

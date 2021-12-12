@@ -15,21 +15,25 @@ import { Button } from "@chakra-ui/button";
 import { Select } from "@chakra-ui/select";
 import { Textarea } from "@chakra-ui/textarea";
 import { Tag, TagLabel, TagCloseButton } from "@chakra-ui/tag";
+import { useEffect } from "react";
 
 // internal
 import useToast from "../../../hooks/useToast";
 import config from "../../../config";
 
 const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
-  const [{ question, answer, type, timeLimit }, setInput] = useState({
+  const [{ question, answer, type, timeLimit, concert }, setInput] = useState({
     question: "",
     answer: "",
     type: "",
     timeLimit: "",
+    concert: "",
   });
 
   const [optionInput, setOptionInput] = useState("");
   const [options, setOptions] = useState([]);
+
+  const [alcs, setAlcs] = useState();
 
   const [answersInput, setAnswersInput] = useState("");
   const [answers, setAnswers] = useState([]);
@@ -87,6 +91,7 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
           answer,
           options: optionsToSend,
           type,
+          concert,
           timeLimit,
           answers: answersToSend,
         }),
@@ -111,6 +116,24 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
     }
   }
 
+  // for fetching alcs
+  async function fetchAlcs(abortController) {
+    try {
+      const res = await fetch(`${config.serverURL}/active_learning_concert`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        signal: abortController.signal,
+        credentials: "include",
+      });
+      const body = await res.json();
+      if (res.ok) {
+        setAlcs(body.items.length > 0 ? body.items : null);
+      }
+    } catch (err) {
+      toast({ status: "error", description: err.message });
+    }
+  }
+
   // for closing up the modal and resetting the values
   function closeModal() {
     setInput({ answer: "", question: "" });
@@ -118,6 +141,12 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
     setOptions([]);
     onClose();
   }
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    fetchAlcs(abortController);
+    return () => abortController.abort();
+  }, []);
 
   return (
     <Modal onClose={closeModal} isOpen={isOpen} scrollBehavior="inside">
@@ -214,7 +243,25 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
               value={timeLimit}
               onChange={HandleInputChange}
               placeholder="Time limit for this question"
+              mb={3}
             />
+            <Select
+              disabled={!alcs}
+              value={concert}
+              onChange={HandleInputChange}
+              name="concert"
+              placeholder={alcs ? "Where it will be taught? (concert)" : "No Concerts found"}
+            >
+              {alcs &&
+                alcs.length > 0 &&
+                alcs.map((alc) => {
+                  return (
+                    <option key={alc._id} value={alc._id}>
+                      {alc.title}
+                    </option>
+                  );
+                })}
+            </Select>
           </Flex>
         </ModalBody>
         <ModalFooter>
@@ -229,7 +276,8 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
               (type === "mcq" && !answer) ||
               !question ||
               !type ||
-              !timeLimit
+              !timeLimit ||
+              !concert
             }
             onClick={addQuestionToCategory}
             mr={3}

@@ -111,11 +111,11 @@ const Questions = () => {
                 <Th>Question</Th>
                 <Th>Options</Th>
                 <Th>Answer</Th>
-                <Th>TimeLimit</Th>
+                <Th>Concert</Th>
                 <Th>Actions</Th>
               </Thead>
               <Tbody>
-                {currentQuestions.map(({ question, answers, type, options, _id, timeLimit }) => {
+                {currentQuestions.map(({ question, answers, type, options, _id, concert }) => {
                   return (
                     <Tr key={_id}>
                       <Td>{question}</Td>
@@ -151,7 +151,7 @@ const Questions = () => {
                           ))}
                         </Stack>
                       </Td>
-                      <Td>{timeLimit}</Td>
+                      <Td>{concert.title}</Td>
                       <Td>
                         <IconButton
                           onClick={() => deleteQuestion(_id)}
