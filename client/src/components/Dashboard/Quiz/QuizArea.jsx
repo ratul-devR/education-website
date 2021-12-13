@@ -184,6 +184,7 @@ const QuizArea = ({
                   mx={3}
                   fontSize="2xl"
                   width="auto"
+                  autoFocus
                   display="inline"
                   variant="flushed"
                   placeholder="Enter the answer > hit enter"

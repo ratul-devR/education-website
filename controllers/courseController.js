@@ -122,7 +122,6 @@ module.exports = {
           const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
           course.purchasedBy = course.purchasedBy.map((user) => user.toString());
           const courseAlreadyPurchased = course.purchasedBy.includes(userId.toString());
-          console.log(courseAlreadyPurchased);
           if (!courseAlreadyPurchased) {
             await Category.updateOne({ _id: course._id }, { $push: { purchasedBy: user._id } });
           }

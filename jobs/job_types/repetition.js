@@ -1,8 +1,6 @@
 const MongoClient = require("mongodb").MongoClient;
-const { ObjectId } = require("mongoose").Types;
 
-const Question = require("../../models/question")
-const Alc = require("../../models/alc")
+const Question = require("../../models/question");
 
 module.exports = function (agenda) {
 	agenda.define("repetition", (job, done) => {
@@ -20,28 +18,21 @@ module.exports = function (agenda) {
 
 				try {
 					const user = await db.collection("peoples").findOne({ _id: userId });
-					const learningConcert = (await Question.findOne({ _id: questionId }).populate("concert")).concert
+					const question = await Question.findOne({ _id: questionId });
 
-					// the user will also have to learn them again in the learning concerts
-					await Alc.updateOne({ _id: learningConcert._id }, { $pull: { viewers: userId } })
+					// show the question to the user again in the checking phase
+					await Question.updateOne({ _id: questionId }, { $pull: { knownUsers: user._id } });
+					await Question.updateOne({ _id: questionId }, { $pull: { unknownUsers: user._id } });
+					await Question.updateOne({ _id: questionId }, { $pull: { packUsers: user._id } });
 
-					// let's check if the question already exists in his questions list
-					let questionExists = false;
-					for (let i = 0; i < user.questions.length; i++) {
-						const question = user.questions[i];
-						if (question.toString() == questionId.toString()) {
-							questionExists = true;
-						}
-					}
+					// mark the user has he has repeated this question
+					// so I can see if the user has given wrong answer of a repeated question
+					// the user will have to learn them again in the learning phase
+					question.repeatedUsers = question.repeatedUsers.map((user) => user.toString());
+					const alreadyRepeated = question.repeatedUsers.includes(user._id.toString());
+					if (!alreadyRepeated)
+						await Question.updateOne({ _id: questionId }, { $push: { repeatedUsers: user._id } });
 
-					if (!questionExists) {
-						await db.collection("peoples").updateOne(
-							{ _id: userId },
-							{
-								$push: { questions: ObjectId(questionId) },
-							}
-						);
-					}
 					client.close();
 					done();
 				} catch (err) {

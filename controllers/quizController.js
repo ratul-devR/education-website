@@ -2,6 +2,7 @@ const Category = require("../models/category");
 const User = require("../models/people");
 const QuizAsset = require("../models/quizAsset");
 const Question = require("../models/question");
+const Alc = require("../models/alc");
 
 const agenda = require("../jobs/agenda");
 
@@ -83,7 +84,7 @@ module.exports = {
     }
   },
 
-  getQuizAssets: async function (req, res, next) {
+  getQuizAssets: async function (_req, res, next) {
     try {
       const asset = (await QuizAsset.find({}).lean({ defaults: true }))[0] || null;
       res.status(200).json({ asset });
@@ -157,10 +158,24 @@ module.exports = {
       }
 
       // for repetition phase this question will be shown again in the checking phase after several time
-      // const after1Day = new Date().getTime() + 86400000;
-      // const after7Day = new Date().getTime() + after1Day * 7;
-      // const after21Day = new Date().getTime() + after1Day * 21;
-      agenda.schedule(new Date().getTime() + 10000, "repetition", {
+      const after1Day = new Date().getTime() + 86400000;
+      const after7Day = new Date().getTime() + after1Day * 7;
+      const after16Day = new Date().getTime() + after1Day * 16;
+      const after35Day = new Date().getTime() + after1Day * 35;
+
+      agenda.schedule(after1Day, "repetition", {
+        userId: user._id,
+        question: questionId,
+      });
+      agenda.schedule(after7Day, "repetition", {
+        userId: user._id,
+        question: questionId,
+      });
+      agenda.schedule(after16Day, "repetition", {
+        userId: user._id,
+        question: questionId,
+      });
+      agenda.schedule(after35Day, "repetition", {
         userId: user._id,
         question: questionId,
       });
@@ -177,6 +192,14 @@ module.exports = {
       const user = req.user;
 
       const question = await Question.findOne({ _id: questionId }).lean({ defaults: true });
+
+      // if he is a repeated user and if because he has not given the right answer,
+      // so he will have to learn it again in the specified learning phase
+      question.repeatedUsers = question.repeatedUsers.map((user) => user.toString());
+      const repeatedUser = question.repeatedUsers.includes(user._id.toString());
+      if (repeatedUser) {
+        await Alc.updateOne({ _id: question.concert }, { $pull: { viewers: user._id } });
+      }
 
       question.packUsers = question.packUsers.map((user) => user.toString());
       let alreadyPacked = question.packUsers.includes(user._id.toString());

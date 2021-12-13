@@ -110,27 +110,6 @@ module.exports = {
 
       await Question.deleteMany({ category: id });
 
-      // delete the files in the alc
-      const alcsInThisCategory = await Alc.find({ category: id });
-      const filesToDelete = alcsInThisCategory.map((alc) => [
-        alc.passive_audio.name,
-        ...alc.passive_images.map((image) => image.name),
-        alc.background_music.name,
-        alc.passive_background_sound.name,
-        alc.audio.name,
-        alc.video.name,
-      ]);
-
-      filesToDelete.map((file) => {
-        unlink(path.join(__dirname, `../public/uploads/alc/${file}`), (err) => {
-          if (err) {
-            res.status(400).json({ msg: err.message });
-          } else {
-            console.log(file)
-          }
-        });
-      })
-
       await Alc.deleteMany({ category: id });
 
       res.status(201).json({ msg: `"${deletedDoc.name}" has been deleted`, category: deletedDoc });

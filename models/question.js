@@ -13,6 +13,7 @@ const dataSchema = new mongoose.Schema({
   knownUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
   unknownUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
   packUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
+  repeatedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }]
 });
 
 dataSchema.plugin(mongooseLeanDefaults);
