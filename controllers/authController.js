@@ -150,13 +150,12 @@ module.exports = {
         subscribed: subscribe,
       });
 
-      await newOrg.save();
-
       const affiliateLink = `${process.env.APP_URL}/auth/register?refererId=${newOrg._id}`;
-      const updatedOrg = await Org.findOneAndUpdate(
-        { _id: newOrg._id },
-        { affiliateLink }
-      ).populate("refers");
+
+      newOrg.affiliateLink = affiliateLink;
+
+      await newOrg.save();
+      await newOrg.populate("refers");
 
       await transporter.sendMail({
         from: `${process.env.EMAIL}`,
@@ -179,7 +178,7 @@ module.exports = {
 
       res
         .status(201)
-        .json({ affiliateLink, msg: "We just emailed you the affiliate Link", org: updatedOrg });
+        .json({ affiliateLink, msg: "We just emailed you the affiliate Link", org: newOrg });
     } catch (err) {
       next(err);
     }

@@ -3,6 +3,7 @@ const path = require("path");
 
 const Alc = require("../models/alc");
 const Category = require("../models/category");
+const Question = require("../models/question");
 
 module.exports = {
   uploadSingleAlc: async function (req, res, next) {
@@ -17,41 +18,50 @@ module.exports = {
       } = req.files;
       const { timeout, category, title } = req.body;
 
-      const domain = req.protocol + "://" + req.get("host") + "/uploads/alc";
+      // see if the name is the alc is already existing
+      const alreadyExists = await Alc.findOne({ title });
 
-      const newAlc = new Alc({
-        audio: { name: audio[0].filename, url: domain + "/" + audio[0].filename },
-        video: { name: video[0].filename, url: domain + "/" + video[0].filename },
-        background_music: background_music
-          ? {
-              name: background_music[0].filename,
-              url: domain + "/" + background_music[0].filename,
-            }
-          : {},
-        passive_images: passive_images.map((passive_image) => ({
-          name: passive_image.filename,
-          url: domain + "/" + passive_image.filename,
-        })),
-        passive_audio: {
-          name: passive_audio[0].filename,
-          url: domain + "/" + passive_audio[0].filename,
-        },
-        passive_background_sound: passive_background_sound
-          ? {
-              name: passive_background_sound[0].filename,
-              url: domain + "/" + passive_background_sound[0].filename,
-            }
-          : {},
-        timeout,
-        title,
-        category,
-      });
+      if (alreadyExists) {
+        res
+          .status(400)
+          .json({ msg: `"${title}" this name already exists. Please try something else.` });
+      } else {
+        const domain = req.protocol + "://" + req.get("host") + "/uploads/alc";
 
-      await newAlc.save();
+        const newAlc = new Alc({
+          audio: { name: audio[0].filename, url: domain + "/" + audio[0].filename },
+          video: { name: video[0].filename, url: domain + "/" + video[0].filename },
+          background_music: background_music
+            ? {
+                name: background_music[0].filename,
+                url: domain + "/" + background_music[0].filename,
+              }
+            : {},
+          passive_images: passive_images.map((passive_image) => ({
+            name: passive_image.filename,
+            url: domain + "/" + passive_image.filename,
+          })),
+          passive_audio: {
+            name: passive_audio[0].filename,
+            url: domain + "/" + passive_audio[0].filename,
+          },
+          passive_background_sound: passive_background_sound
+            ? {
+                name: passive_background_sound[0].filename,
+                url: domain + "/" + passive_background_sound[0].filename,
+              }
+            : {},
+          timeout,
+          title,
+          category,
+        });
 
-      const updatedItemList = await Alc.find({}).lean({ defaults: true }).populate("category");
+        await newAlc.save();
 
-      res.status(201).json({ msg: "New Item was uploaded successfully", items: updatedItemList });
+        const updatedItemList = await Alc.find({}).lean({ defaults: true }).populate("category");
+
+        res.status(201).json({ msg: "New Item was uploaded successfully", items: updatedItemList });
+      }
     } catch (err) {
       next(err);
     }
@@ -71,41 +81,49 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      // delete the doc
-      const item = await Alc.findByIdAndDelete({ _id: id });
+      const questionsInThisAlc = await Question.find({ concert: id });
 
-      // delete all the files
-      unlink(path.join(__dirname, `/../public/uploads/alc/${item.audio.name}`), (err) =>
-        err ? err : null
-      );
-      unlink(path.join(__dirname, `/../public/uploads/alc/${item.video.name}`), (err) =>
-        err ? err : null
-      );
-      if (item.background_music) {
-        unlink(
-          path.join(__dirname, `/../public/uploads/alc/${item.background_music.name}`),
-          (err) => (err ? err : null)
-        );
-      }
-      unlink(path.join(__dirname, `/../public/uploads/alc/${item.passive_audio.name}`), (err) =>
-        err ? err : null
-      );
-      item.passive_images.map((passive_image) => {
-        unlink(path.join(__dirname, `/../public/uploads/alc/${passive_image.name}`), (err) =>
+      if (questionsInThisAlc.length > 0) {
+        res.status(400).json({
+          msg: `${questionsInThisAlc.length} questions are taught in this concert, please delete them first and try again`,
+        });
+      } else {
+        // delete the doc
+        const item = await Alc.findByIdAndDelete({ _id: id });
+
+        // delete all the files
+        unlink(path.join(__dirname, `/../public/uploads/alc/${item.audio.name}`), (err) =>
           err ? err : null
         );
-      });
-      if (item.passive_background_sound) {
-        unlink(
-          path.join(__dirname, `/../public/uploads/alc/${item.passive_background_sound.name}`),
-          (err) => (err ? err : null)
+        unlink(path.join(__dirname, `/../public/uploads/alc/${item.video.name}`), (err) =>
+          err ? err : null
         );
+        if (item.background_music) {
+          unlink(
+            path.join(__dirname, `/../public/uploads/alc/${item.background_music.name}`),
+            (err) => (err ? err : null)
+          );
+        }
+        unlink(path.join(__dirname, `/../public/uploads/alc/${item.passive_audio.name}`), (err) =>
+          err ? err : null
+        );
+        item.passive_images.map((passive_image) => {
+          unlink(path.join(__dirname, `/../public/uploads/alc/${passive_image.name}`), (err) =>
+            err ? err : null
+          );
+        });
+        if (item.passive_background_sound) {
+          unlink(
+            path.join(__dirname, `/../public/uploads/alc/${item.passive_background_sound.name}`),
+            (err) => (err ? err : null)
+          );
+        }
+
+        // send the updated list
+        const updatedList = await Alc.find({}).lean({ defaults: true }).populate("category");
+
+        res.status(200).json({ items: updatedList, msg: "Deleted Successfully" });
       }
-
-      // send the updated list
-      const updatedList = await Alc.find({}).lean({ defaults: true }).populate("category");
-
-      res.status(200).json({ items: updatedList, msg: "Deleted Successfully" });
     } catch (err) {
       next(err);
     }

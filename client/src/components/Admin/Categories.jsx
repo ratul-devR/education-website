@@ -144,11 +144,11 @@ const Categories = () => {
         });
         const body = await res.json();
 
-        if (res.ok) {
+        if (res.status === 201) {
           toast({ status: "success", description: body.msg });
           setCategories((pre) => pre.filter((category) => category._id !== body.category._id));
         } else if (res.status === 400) {
-          toast({ status: "error", description: body.msg });
+          toast({ status: "warning", description: body.msg });
         } else if (res.status === 401) {
           toast({ status: "error", description: body.msg });
         }
@@ -286,7 +286,7 @@ const Categories = () => {
         />
 
         {categories && categories.length > 0 ? (
-          <Table colorScheme="gray" minW="700px">
+          <Table colorScheme="gray" minW="1000px">
             <Thead>
               <Th>Category name</Th>
               <Th>Price</Th>
@@ -306,16 +306,20 @@ const Categories = () => {
                     </Td>
                     <Td>{category.price}</Td>
                     <Td>{category.questions.length}</Td>
-                    <Td display="flex" gridGap={3} wrap="wrap">
-                      {category.prerequisites.length > 0
-                        ? category.prerequisites.map((prerequisite, index) => {
+                    <Td>
+                      {category.prerequisites.length > 0 ? (
+                        <Flex gridGap={3} wrap="wrap">
+                          {category.prerequisites.map((prerequisite, index) => {
                             return (
                               <Badge textTransform="none" colorScheme="purple" key={index}>
                                 {prerequisite.name}
                               </Badge>
                             );
-                          })
-                        : "No Prerequisites"}
+                          })}
+                        </Flex>
+                      ) : (
+                        <span>No Prerequisites</span>
+                      )}
                     </Td>
                     <Td>
                       <IconButton

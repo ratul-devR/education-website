@@ -90,7 +90,7 @@ const Alc = () => {
     }
     formData.append("timeout", timeout);
     formData.append("category", category);
-    formData.append("title", title)
+    formData.append("title", title);
     formData.append("passive_audio", passive_audio);
     if (passive_background_sound) {
       formData.append("passive_background_sound", passive_background_sound);
@@ -109,6 +109,9 @@ const Alc = () => {
         setItems(body.items);
         setProcessing(false);
         onClose();
+      } else if (res.status === 400) {
+        toast({ status: "warning", description: body.msg });
+        setProcessing(false);
       } else {
         toast({ status: "error", description: body.msg });
         setProcessing(false);
@@ -156,6 +159,8 @@ const Alc = () => {
         if (res.ok) {
           setItems(body.items);
           toast({ status: "success", description: body.msg });
+        } else if (res.status === 400) {
+          toast({ status: "warning", description: body.msg });
         } else {
           toast({ status: "error", description: body.msg });
         }

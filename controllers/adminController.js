@@ -50,13 +50,14 @@ module.exports = {
       const { subject, email } = req.body;
       const orgs = await Org.find({ subscribed: true }).lean({ defaults: true });
 
+      // list all the emails of subscribed organizations
       let listOfMails = orgs.map((org) => org.email);
 
       if (listOfMails.length === 0) {
-        res
-          .status(400)
-          .json({ msg: "There are no organizations/colleagues or they are not subscribed" });
+        res.status(400).json({ msg: "There are no subscribed organizations" });
       }
+
+      // send the mail
       await transporter.sendMail({
         from: `${process.env.EMAIL}`,
         to: listOfMails,
@@ -66,7 +67,7 @@ module.exports = {
 
       res
         .status(200)
-        .json({ msg: `Message sent to all ${listOfMails.length} organizations/colleagues` });
+        .json({ msg: `The message was successfully sent to ${listOfMails.length} organizations` });
     } catch (err) {
       next(err);
     }
@@ -106,13 +107,22 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      const deletedDoc = await Category.findByIdAndDelete({ _id: id });
+      const doc = await Category.findOne({ _id: id });
 
-      await Question.deleteMany({ category: id });
+      // if any alc is existing in this category,
+      // the admin will have to delete them first
+      const alcsInThisCategory = await Alc.find({ category: doc._id });
 
-      await Alc.deleteMany({ category: id });
+      if (alcsInThisCategory.length > 0) {
+        res.status(400).json({
+          msg: `This Category is containing learning concerts. Please delete ${alcsInThisCategory.length} learning concerts in this category first and try again.`,
+        });
+      } else {
+        await Category.deleteOne({ _id: doc._id });
+        await Question.deleteMany({ category: id });
 
-      res.status(201).json({ msg: `"${deletedDoc.name}" has been deleted`, category: deletedDoc });
+        res.status(201).json({ msg: `"${doc.name}" has been deleted`, category: doc });
+      }
     } catch (err) {
       next(err);
     }
