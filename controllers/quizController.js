@@ -4,7 +4,7 @@ const QuizAsset = require("../models/quizAsset");
 const Question = require("../models/question");
 const Alc = require("../models/alc");
 
-import agenda from "../jobs/agenda"
+const agenda = require("../jobs/agenda");
 
 module.exports = {
   getUserQuestionsOfQuiz: async function (req, res, next) {
