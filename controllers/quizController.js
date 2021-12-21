@@ -4,7 +4,7 @@ const QuizAsset = require("../models/quizAsset");
 const Question = require("../models/question");
 const Alc = require("../models/alc");
 
-const agenda = require("../jobs/agenda");
+// import agenda from "../jobs/agenda"
 
 module.exports = {
   getUserQuestionsOfQuiz: async function (req, res, next) {
@@ -163,7 +163,7 @@ module.exports = {
       const after16Day = new Date().getTime() + after1Day * 16;
       const after35Day = new Date().getTime() + after1Day * 35;
 
-      agenda.schedule(after1Day, "repetition", {
+      /* agenda.schedule(after1Day, "repetition", {
         userId: user._id,
         question: questionId,
       });
@@ -178,7 +178,7 @@ module.exports = {
       agenda.schedule(after35Day, "repetition", {
         userId: user._id,
         question: questionId,
-      });
+      }); */
 
       res.status(201).json({ msg: "done" });
     } catch (err) {
