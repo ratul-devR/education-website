@@ -6,30 +6,36 @@ import config from "../../config";
 import { Button } from "@chakra-ui/button";
 import { Link } from "react-router-dom";
 import { useParams, useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 // audios
 import PassiveLearningBgSound from "../../assets/audios/passive-learning.mp3";
 import ActiveLearningBgSound from "../../assets/audios/active-learning.mp3";
 
-const Alc = () => {
+const Alc = (props) => {
   const [item, setItem] = useState({});
   const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
   const [loading, setLoading] = useState(true);
+  const { user } = useSelector((state) => state.authReducer);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const [timer, setTimer] = useState(0);
 
   const [videoEnded, setVideoEnded] = useState(false);
+  const [videoPlayedCount, setVideoPlayedCount] = useState(0);
   const [concertEnded, setConcertEnded] = useState(false);
 
   const toast = useToast();
   const history = useHistory();
-  const { courseId } = useParams();
+  const { courseId: id } = useParams();
+
+  const { id: itemId } = props.location.state;
+  const path = itemId ? "id" : "getItem";
 
   async function fetchItem(abortController) {
     try {
-      const res = await fetch(`${config.serverURL}/active_learning_concert/getItem/${courseId}`, {
+      const res = await fetch(`${config.serverURL}/active_learning_concert/${path}/${id}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -38,9 +44,9 @@ const Alc = () => {
       const body = await res.json();
 
       if (res.ok) {
-        if (!body.hasAllPrerequisites) {
+        if (!body.hasAllPrerequisites && user.role !== "admin") {
           setHasAllPrerequisites(false);
-        } else if (!body.hasPurchased) {
+        } else if (!body.hasPurchased && user.role !== "admin") {
           history.push(`/dashboard/pay/${courseId}`);
         }
         setItem(body.item || null);
@@ -98,14 +104,14 @@ const Alc = () => {
       if (currentIndex + 1 < item.passive_images.length) {
         setCurrentIndex((pre) => pre + 1);
       } else {
-        setConcertEnded(true);
+        setVideoEnded(false);
       }
     }
   }, [timer]);
 
   useEffect(() => {
     const abortController = new AbortController();
-    if (concertEnded) {
+    if (concertEnded && user.role !== "admin") {
       handleConcertView(abortController);
     }
     return () => abortController.abort();
@@ -119,7 +125,7 @@ const Alc = () => {
     );
   }
 
-  if (!hasAllPrerequisites) {
+  if (!hasAllPrerequisites && user.role !== "admin") {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
         <Heading fontSize="9xl" mb={5}>
@@ -216,7 +222,14 @@ const Alc = () => {
               style={{ width: "100%", height: "100%" }}
               src={item.video.url}
               autoPlay
-              onEnded={() => setVideoEnded(true)}
+              onEnded={() => {
+                if (videoPlayedCount + 1 === 2) {
+                  setConcertEnded(true);
+                } else {
+                  setVideoEnded(true);
+                  setVideoPlayedCount((pre) => (pre += 1));
+                }
+              }}
               muted
             ></video>
           </Flex>

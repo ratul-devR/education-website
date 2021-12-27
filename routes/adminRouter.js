@@ -18,6 +18,7 @@ const {
   uploadQuizAssets,
   getQuizAssets,
   deleteQuizAssets,
+  updateQuestion,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -47,6 +48,9 @@ router.delete("/delete_quiz_assets", deleteQuizAssets);
 router.get("/organizations", getOrganizations);
 // for sending emails to organizations
 router.post("/sendMails", sendMails);
+
+// for updating question details
+router.put("/updateQuestion/:questionId", updateQuestion);
 
 // for adding a question to the category
 router.post("/add_question/:categoryId", addQuestion);

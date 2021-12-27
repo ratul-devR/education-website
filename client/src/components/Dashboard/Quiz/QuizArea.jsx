@@ -11,13 +11,7 @@ import reactStringReplace from "react-string-replace";
 
 import { CHANGE_SCORE, NEXT_QUESTION, WRONG_ANSWER } from "../../../redux/actions/quizActions";
 
-const QuizArea = ({
-  path,
-  timerInterval,
-  userDoesNotKnowTheAnswer,
-  userCommitted,
-  setUserCommitted,
-}) => {
+const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommitted }) => {
   const [userKnowsAnswer, setUserKnowsAnswer] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [className, setClassName] = useState("option");
@@ -53,6 +47,7 @@ const QuizArea = ({
   // if the user knows the answer
   function useKnowsTheAnswer() {
     setUserKnowsAnswer(true);
+    setUserCommitted(true)
   }
 
   // play the feedback sound according to the answer
@@ -137,9 +132,13 @@ const QuizArea = ({
         description: `Wrong Answer`,
         duration: 1000,
       });
-      setTimeout(() => {
+      if (questions[currentIndex].type === "text") {
         dispatch(NEXT_QUESTION());
-      }, 2000);
+      } else {
+        setTimeout(() => {
+          dispatch(NEXT_QUESTION());
+        }, 2000);
+      }
     }
   }
 
@@ -161,9 +160,9 @@ const QuizArea = ({
     setClassName("option");
     setSelectedAnswer();
     setInput("");
-    setUserCommitted(false);
     return () => {
       stopFeedBackSounds();
+      setUserCommitted(false)
     };
   }, [currentIndex]);
 
@@ -200,18 +199,12 @@ const QuizArea = ({
         <Flex mt={5} w="full" direction="column">
           <Flex w="full" justify="center" align="center" gridColumnGap={2}>
             <Tooltip hasArrow label="Show Options">
-              <Button
-                disabled={userCommitted}
-                flex={1}
-                onClick={useKnowsTheAnswer}
-                colorScheme="blue"
-              >
+              <Button flex={1} onClick={useKnowsTheAnswer} colorScheme="blue">
                 I know
               </Button>
             </Tooltip>
             <Tooltip hasArrow label="Try the next one">
               <Button
-                disabled={userCommitted}
                 flex={1}
                 onClick={() => userDoesNotKnowTheAnswer(questions[currentIndex]._id, false)}
                 colorScheme="red"

@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/button";
-import { Text, Spinner, Divider } from "@chakra-ui/react";
+import { Text, Spinner, Divider, Link as ChakraLink } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/hooks";
 import {
   Modal,
@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@chakra-ui/input";
 import { Select } from "@chakra-ui/select";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
+import { useHistory } from "react-router-dom";
 
 import NoMessage from "../global/NoMessage";
 
@@ -49,6 +50,7 @@ const Alc = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const history = useHistory();
 
   function handleInputChange(event) {
     const { name, files } = event.target;
@@ -367,7 +369,17 @@ const Alc = () => {
             {items.map((item) => {
               return (
                 <Tr key={item._id}>
-                  <Td>{item.title}</Td>
+                  <Td>
+                    <ChakraLink
+                      onClick={() =>
+                        history.push(`/dashboard/alc/${item._id}`, {
+                          id: item._id,
+                        })
+                      }
+                    >
+                      {item.title}
+                    </ChakraLink>
+                  </Td>
                   <Td>{item.category.name}</Td>
                   <Td>{item.viewers.length}</Td>
                   <Td>

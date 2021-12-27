@@ -30,16 +30,17 @@ const Admin = () => {
     return (
       <Flex w="full" h="100vh" justify="center" align="center" direction="column">
         <Heading fontSize="2xl" color="red.400" mb={3}>
-          You are not verified
+          Sign Up
         </Heading>
-        <Heading fontSize="md" textAlign="center" fontWeight="normal" mb={3}>
-          Please check your mail inbox
+        <Heading w="full" maxW="400px" fontSize="md" textAlign="center" fontWeight="normal" mb={3}>
+          Please check your emails to confirm your registration. If you do not find an email from us
+          please look into your spam.
         </Heading>
         <Heading mb={3} fontSize="md" color="GrayText" fontWeight="normal">
           {user.email}
         </Heading>
         <Button colorScheme="blue" onClick={logout}>
-          Log into another account
+          Log Out
         </Button>
       </Flex>
     );

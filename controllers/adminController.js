@@ -214,6 +214,22 @@ module.exports = {
     }
   },
 
+  updateQuestion: async function (req, res, next) {
+    try {
+      const { questionId } = req.params;
+      const { question, options, answers, type, category, timeLimit, concert } = req.body;
+
+      await Question.updateOne(
+        { _id: questionId },
+        { question, options, answers, type, category, timeLimit, concert }
+      );
+
+      res.status(201).json({ msg: "Question Updated Successfully" });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   addQuestionsFromCsv: async function (req, res, next) {
     try {
       const file = req.file;
@@ -238,9 +254,7 @@ module.exports = {
         // if the concert doesn't exists
         if (!question.concert)
           res.status(400).json({
-            msg: `${
-              question.concert
-            } was not found please make sure you have entered the correct name. Check Q no: [${
+            msg: `The concert was not found. please make sure you have entered the correct name. Check Q no: [${
               i + 1
             }]`,
           });

@@ -5,9 +5,9 @@ const {
   uploadSingleAlc,
   getItems,
   deleteItem,
-  getRandomItem,
   userViewedConcert,
-  getItemAccordingToId
+  getItemAccordingToId,
+  getItemAccordingToItemId,
 } = require("../controllers/alcController");
 
 // middlewares
@@ -22,11 +22,14 @@ router.post("/", authorizeAdmin, uploadAlcFiles, uploadSingleAlc);
 // for getting all the items
 router.get("/", authorizeAdmin, getItems);
 
+// for getting a specific item according to item id
+router.get("/id/:id", authorizeAdmin, getItemAccordingToItemId);
+
 // for deleting a single ite
 router.delete("/:id", authorizeAdmin, deleteItem);
 
-// for getting item according to the id
-router.get("/getItem/:id", getItemAccordingToId)
+// for getting item according to the category id
+router.get("/getItem/:id", getItemAccordingToId);
 
 // after the user has watched the concert, it should not be shown to the user again
 router.post("/userViewedConcert", userViewedConcert);

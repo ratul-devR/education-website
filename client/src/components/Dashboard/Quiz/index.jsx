@@ -25,8 +25,6 @@ import {
 
 const Quiz = ({ path }) => {
   const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
-  // whenever the user clicks on I don't know or I know, it means the user has committed that
-  const [userCommitted, setUserCommitted] = useState(false);
 
   const toast = useToast();
   const { courseId } = useParams();
@@ -46,6 +44,7 @@ const Quiz = ({ path }) => {
   const dispatch = useDispatch();
 
   const [timer, setTimer] = useState(0);
+  const [userCommitted, setUserCommitted] = useState(false)
   const [timerInterval, setTimerInterval] = useState();
 
   // for fetching all the Quiz details
@@ -147,7 +146,7 @@ const Quiz = ({ path }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!loading) {
+      if (!loading && userCommitted && questions[currentIndex].type === "mcq") {
         setTimer((pre) => pre + 1);
       }
     }, 1000);
@@ -158,7 +157,7 @@ const Quiz = ({ path }) => {
       setTimer(0);
       setTimerInterval(null);
     };
-  }, [currentIndex, currentIndex, path, loading]);
+  }, [currentIndex, currentIndex, path, loading, userCommitted]);
 
   useEffect(() => {
     if (
@@ -316,7 +315,6 @@ const Quiz = ({ path }) => {
           userDoesNotKnowTheAnswer={userDoesNotKnowTheAnswer}
           timerInterval={timerInterval}
           path={path}
-          userCommitted={userCommitted}
           setUserCommitted={setUserCommitted}
         />
       </Flex>

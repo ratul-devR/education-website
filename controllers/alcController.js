@@ -77,6 +77,26 @@ module.exports = {
     }
   },
 
+  getItemAccordingToItemId: async function (req, res, next) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        res.status(400).json({ msg: "The Id param is required" });
+      }
+
+      const item = await Alc.findOne({ _id: id });
+
+      if (!item) {
+        res.status(404).json({ msg: "The item was not found" });
+      }
+
+      res.status(200).json({ item });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   deleteItem: async function (req, res, next) {
     try {
       const { id } = req.params;

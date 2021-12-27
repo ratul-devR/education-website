@@ -164,7 +164,7 @@ const Pay = () => {
           mt={5}
           p="auto"
         >
-          {processing ? "Processing..." : `Purchase by paying (${course.price}$}`}
+          {processing ? "Processing..." : `Purchase by paying (${course.price}$)`}
         </Button>
         {checkoutError && (
           <Badge

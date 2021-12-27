@@ -12,6 +12,7 @@ import { Table, Thead, Tbody, Tr, Th, Td, Tfoot } from "@chakra-ui/table";
 
 import AddQuestionCsvModal from "./components/AddQuestionCsvModal";
 import NoMessage from "../global/NoMessage";
+import EditQuestionModal from "./components/EditQuestionModal";
 
 const Questions = () => {
   const [category, setCategory] = useState({});
@@ -26,9 +27,9 @@ const Questions = () => {
   const indexOfLastQuestion = currentPage * questionsPerPage;
   const indexOfFirstQuestion = indexOfLastQuestion - questionsPerPage;
   const currentQuestions = questions.slice(indexOfFirstQuestion, indexOfLastQuestion);
-  const totalPages = Math.ceil(questions.length / questionsPerPage)
+  const totalPages = Math.ceil(questions.length / questionsPerPage);
 
-  const paginate = (number) => number >= 1 && number <= totalPages && setCurrentPage(number)
+  const paginate = (number) => number >= 1 && number <= totalPages && setCurrentPage(number);
 
   // for fetching all the questions
   async function fetchQuestions(abortController) {
@@ -157,6 +158,10 @@ const Questions = () => {
                           onClick={() => deleteQuestion(_id)}
                           icon={<MdDeleteOutline />}
                           colorScheme="red"
+                          mr={3}
+                        />
+                        <EditQuestionModal
+                          currentQuestion={{ _id, question, answers, type, options, concert }}
                         />
                       </Td>
                     </Tr>
@@ -171,8 +176,17 @@ const Questions = () => {
                     </Heading>
                   </Td>
                   <Td display="flex">
-                    <IconButton onClick={() => paginate(currentPage - 1)} colorScheme="blue" mr={3} icon={<AiOutlineLeft/>} />
-                    <IconButton onClick={() => paginate(currentPage + 1)} colorScheme="blue" icon={<AiOutlineRight/>} />
+                    <IconButton
+                      onClick={() => paginate(currentPage - 1)}
+                      colorScheme="blue"
+                      mr={3}
+                      icon={<AiOutlineLeft />}
+                    />
+                    <IconButton
+                      onClick={() => paginate(currentPage + 1)}
+                      colorScheme="blue"
+                      icon={<AiOutlineRight />}
+                    />
                   </Td>
                 </Tr>
               </Tfoot>
