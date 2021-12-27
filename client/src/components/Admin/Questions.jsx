@@ -116,7 +116,7 @@ const Questions = () => {
                 <Th>Actions</Th>
               </Thead>
               <Tbody>
-                {currentQuestions.map(({ question, answers, type, options, _id, concert }) => {
+                {currentQuestions.map(({ question, answers, type, options, _id, concert, timeLimit }) => {
                   return (
                     <Tr key={_id}>
                       <Td>{question}</Td>
@@ -161,7 +161,9 @@ const Questions = () => {
                           mr={3}
                         />
                         <EditQuestionModal
-                          currentQuestion={{ _id, question, answers, type, options, concert }}
+                          currentQuestion={{ _id, question, answers, type, options, concert, timeLimit }}
+                          setQuestions={setQuestions}
+                          questions={questions}
                         />
                       </Td>
                     </Tr>

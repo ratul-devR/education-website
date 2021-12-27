@@ -12,7 +12,6 @@ const Org = require("../models/org");
 const QuizAsset = require("../models/quizAsset");
 
 const transporter = require("../utils/emailTransporter");
-
 module.exports = {
   getCategories: async function (_req, res, next) {
     try {
@@ -217,14 +216,15 @@ module.exports = {
   updateQuestion: async function (req, res, next) {
     try {
       const { questionId } = req.params;
-      const { question, options, answers, type, category, timeLimit, concert } = req.body;
+      const { question, options, answers, timeLimit } = req.body;
 
-      await Question.updateOne(
+      const updatedQuestion = await Question.findOneAndUpdate(
         { _id: questionId },
-        { question, options, answers, type, category, timeLimit, concert }
+        { question, options, answers, timeLimit },
+        { new: true }
       );
 
-      res.status(201).json({ msg: "Question Updated Successfully" });
+      res.status(201).json({ msg: "Question Updated Successfully", question: updatedQuestion });
     } catch (err) {
       next(err);
     }
