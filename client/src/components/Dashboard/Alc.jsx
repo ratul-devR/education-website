@@ -28,10 +28,10 @@ const Alc = (props) => {
 
   const toast = useToast();
   const history = useHistory();
+  // it can be the course id or the item/concert id
   const { courseId: id } = useParams();
 
-  const { id: itemId } = props.location.state;
-  const path = itemId ? "id" : "getItem";
+  const path = props.location.state && props.location.state.id ? "id" : "getItem";
 
   async function fetchItem(abortController) {
     try {
@@ -47,7 +47,7 @@ const Alc = (props) => {
         if (!body.hasAllPrerequisites && user.role !== "admin") {
           setHasAllPrerequisites(false);
         } else if (!body.hasPurchased && user.role !== "admin") {
-          history.push(`/dashboard/pay/${courseId}`);
+          history.push(`/dashboard/pay/${id}`);
         }
         setItem(body.item || null);
         setLoading(false);
@@ -151,7 +151,7 @@ const Alc = (props) => {
           colorScheme="secondary"
           color="black"
           as={Link}
-          to={`/dashboard/activation_phase/${courseId}`}
+          to={`/dashboard/activation_phase/${id}`}
         >
           Start Activation Phase
         </Button>

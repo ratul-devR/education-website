@@ -47,7 +47,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
   // if the user knows the answer
   function useKnowsTheAnswer() {
     setUserKnowsAnswer(true);
-    setUserCommitted(true)
+    setUserCommitted(true);
   }
 
   // play the feedback sound according to the answer
@@ -162,7 +162,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
     setInput("");
     return () => {
       stopFeedBackSounds();
-      setUserCommitted(false)
+      setUserCommitted(false);
     };
   }, [currentIndex]);
 
@@ -183,7 +183,6 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
                   mx={3}
                   fontSize="2xl"
                   width="auto"
-                  autoFocus
                   display="inline"
                   variant="flushed"
                   placeholder="Enter the answer > hit enter"

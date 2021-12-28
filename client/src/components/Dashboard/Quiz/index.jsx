@@ -44,7 +44,7 @@ const Quiz = ({ path }) => {
   const dispatch = useDispatch();
 
   const [timer, setTimer] = useState(0);
-  const [userCommitted, setUserCommitted] = useState(false)
+  const [userCommitted, setUserCommitted] = useState(false);
   const [timerInterval, setTimerInterval] = useState();
 
   // for fetching all the Quiz details
@@ -147,6 +147,8 @@ const Quiz = ({ path }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (!loading && userCommitted && questions[currentIndex].type === "mcq") {
+        setTimer((pre) => pre + 1);
+      } else if (questions[currentIndex].type === "text") {
         setTimer((pre) => pre + 1);
       }
     }, 1000);
