@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 
 module.exports = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST,
   port: 587,
   secure: false,
   auth: {
