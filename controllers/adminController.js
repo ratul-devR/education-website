@@ -195,10 +195,17 @@ module.exports = {
           type,
           timeLimit,
         });
-
         await newQuestion.populate("concert");
       } else {
-        newQuestion = new Question({ question, answers, category: categoryId, type, timeLimit });
+        newQuestion = new Question({
+          question,
+          answers,
+          category: categoryId,
+          type,
+          timeLimit,
+          concert,
+        });
+        await newQuestion.populate("concert");
       }
 
       await newQuestion.save();
@@ -225,6 +232,19 @@ module.exports = {
       );
 
       res.status(201).json({ msg: "Question Updated Successfully", question: updatedQuestion });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  updateQuestions: async function (req, res, next) {
+    try {
+      const { categoryId } = req.params;
+      const body = req.body;
+
+      await Question.updateMany({ category: categoryId }, { ...body });
+
+      res.status(201).json({ msg: "Updated Successfully" });
     } catch (err) {
       next(err);
     }

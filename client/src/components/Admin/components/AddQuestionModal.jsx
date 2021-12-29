@@ -15,13 +15,15 @@ import { Button } from "@chakra-ui/button";
 import { Select } from "@chakra-ui/select";
 import { Textarea } from "@chakra-ui/textarea";
 import { Tag, TagLabel, TagCloseButton } from "@chakra-ui/tag";
+import { useDisclosure } from "@chakra-ui/hooks";
 import { useEffect } from "react";
+import validator from "validator";
 
 // internal
 import useToast from "../../../hooks/useToast";
 import config from "../../../config";
 
-const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
+const AddQuestionModal = ({ modalValue, setQuestions }) => {
   const [{ question, answer, type, timeLimit, concert }, setInput] = useState({
     question: "",
     answer: "",
@@ -29,6 +31,7 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
     timeLimit: "",
     concert: "",
   });
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [optionInput, setOptionInput] = useState("");
   const [options, setOptions] = useState([]);
@@ -49,12 +52,12 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
   // for adding an option
   function AddOption(e) {
     e.preventDefault();
-    if (optionInput !== "") {
-      setOptionInput("");
+    if (!validator.isEmpty(optionInput, { ignore_whitespace: true })) {
       setOptions((pre) => [
         ...pre,
         { _id: Date.now() + Math.floor(Math.random() * 100), option: optionInput },
       ]);
+      setOptionInput("");
     }
   }
 
@@ -66,11 +69,13 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
   // for adding an answer
   function addAnswers(e) {
     e.preventDefault();
-    setAnswers((pre) => [
-      ...pre,
-      { _id: Date.now() + Math.floor(Math.random() * 100), answer: answersInput },
-    ]);
-    setAnswersInput("");
+    if (!validator.isEmpty(answersInput, { ignore_whitespace: true })) {
+      setAnswers((pre) => [
+        ...pre,
+        { _id: Date.now() + Math.floor(Math.random() * 100), answer: answersInput },
+      ]);
+      setAnswersInput("");
+    }
   }
 
   // for removing an answer
@@ -100,15 +105,8 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
       const body = await res.json();
 
       if (res.ok) {
+        setQuestions((pre) => [...pre, body.question]);
         toast({ status: "success", description: body.msg });
-        setCategories((pre) =>
-          pre.map((category) => {
-            if (category._id == modalValue._id) {
-              category.questions.push(body.question);
-            }
-            return category;
-          })
-        );
         closeModal();
       }
     } catch (err) {
@@ -149,144 +147,149 @@ const AddQuestionModal = ({ modalValue, isOpen, onClose, setCategories }) => {
   }, []);
 
   return (
-    <Modal onClose={closeModal} isOpen={isOpen} scrollBehavior="inside">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Add Question to: "{modalValue.name}"</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Flex direction="column" w="100%" maxW="400px" margin="auto">
-            <Textarea
-              mb={3}
-              placeholder="Enter the question"
-              name="question"
-              value={question}
-              onChange={HandleInputChange}
-            />
-            <Select
-              placeholder="Type of this question"
-              name="type"
-              value={type}
-              onChange={HandleInputChange}
-              mb={3}
-            >
-              <option value="mcq">MCQ</option>
-              <option value="text">Text</option>
-            </Select>
-            {type === "text" && (
-              <form onSubmit={addAnswers}>
-                <Input
-                  onChange={(event) => setAnswersInput(event.target.value)}
-                  placeholder="Enter the possible answers"
-                  value={answersInput}
-                  mb={3}
-                />
-                {answers && answers.length > 0 && (
-                  <HStack mb={3} wrap="wrap" gridGap={1}>
-                    {answers.map(({ answer, _id }) => {
-                      return (
-                        <Tag variant="solid" size="md" key={_id}>
-                          <TagLabel>{answer}</TagLabel>
-                          <TagCloseButton onClick={() => removeAnswer(_id)} />
-                        </Tag>
-                      );
-                    })}
-                  </HStack>
-                )}
-              </form>
-            )}
-            {/* only if the type is mcq, then let the user to add options */}
-            {type === "mcq" && (
-              <form onSubmit={AddOption}>
-                <Input
-                  onChange={(event) => setOptionInput(event.target.value)}
-                  value={optionInput}
-                  mb={3}
-                  colorScheme="red"
-                  placeholder="Enter the options > hit enter"
-                />
-              </form>
-            )}
-            {options && options.length > 0 && (
-              <HStack mb={3} wrap="wrap" gridGap={1}>
-                {options.map(({ option, _id }) => {
-                  return (
-                    <Tag variant="solid" size="md" key={_id}>
-                      <TagLabel>{option}</TagLabel>
-                      <TagCloseButton onClick={() => removeOption(_id)} />
-                    </Tag>
-                  );
-                })}
-              </HStack>
-            )}
-            {options && options.length > 0 && type === "mcq" && (
-              <Select
-                placeholder="Correct answer"
-                name="answer"
+    <Flex>
+      <Button colorScheme="secondary" color="black" onClick={onOpen}>
+        Add Question
+      </Button>
+      <Modal onClose={closeModal} isOpen={isOpen} scrollBehavior="inside">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add Question to: "{modalValue.name}"</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Flex direction="column" w="100%" maxW="400px" margin="auto">
+              <Textarea
+                mb={3}
+                placeholder="Enter the question"
+                name="question"
+                value={question}
                 onChange={HandleInputChange}
-                value={answer}
+              />
+              <Select
+                placeholder="Type of this question"
+                name="type"
+                value={type}
+                onChange={HandleInputChange}
                 mb={3}
               >
-                {options &&
-                  options.length &&
-                  options.map(({ _id, option }) => {
+                <option value="mcq">MCQ</option>
+                <option value="text">Text</option>
+              </Select>
+              {type === "text" && (
+                <form onSubmit={addAnswers}>
+                  <Input
+                    onChange={(event) => setAnswersInput(event.target.value)}
+                    placeholder="Enter the possible answers"
+                    value={answersInput}
+                    mb={3}
+                  />
+                  {answers && answers.length > 0 && (
+                    <HStack mb={3} wrap="wrap" gridGap={1}>
+                      {answers.map(({ answer, _id }) => {
+                        return (
+                          <Tag size="md" colorScheme="purple" key={_id}>
+                            <TagLabel>{answer}</TagLabel>
+                            <TagCloseButton onClick={() => removeAnswer(_id)} />
+                          </Tag>
+                        );
+                      })}
+                    </HStack>
+                  )}
+                </form>
+              )}
+              {/* only if the type is mcq, then let the user to add options */}
+              {type === "mcq" && (
+                <form onSubmit={AddOption}>
+                  <Input
+                    onChange={(event) => setOptionInput(event.target.value)}
+                    value={optionInput}
+                    mb={3}
+                    colorScheme="red"
+                    placeholder="Enter the options > hit enter"
+                  />
+                </form>
+              )}
+              {options && options.length > 0 && type === "mcq" && (
+                <HStack mb={3} wrap="wrap" gridGap={1}>
+                  {options.map(({ option, _id }) => {
                     return (
-                      <option key={_id} value={option}>
-                        {option}
+                      <Tag colorScheme="purple" key={_id}>
+                        <TagLabel>{option}</TagLabel>
+                        <TagCloseButton onClick={() => removeOption(_id)} />
+                      </Tag>
+                    );
+                  })}
+                </HStack>
+              )}
+              {options && options.length > 0 && type === "mcq" && (
+                <Select
+                  placeholder="Correct answer"
+                  name="answer"
+                  onChange={HandleInputChange}
+                  value={answer}
+                  mb={3}
+                >
+                  {options &&
+                    options.length &&
+                    options.map(({ _id, option }) => {
+                      return (
+                        <option key={_id} value={option}>
+                          {option}
+                        </option>
+                      );
+                    })}
+                </Select>
+              )}
+              <Input
+                name="timeLimit"
+                value={timeLimit}
+                onChange={HandleInputChange}
+                placeholder="Time limit for this question"
+                mb={3}
+              />
+              <Select
+                disabled={!alcs}
+                value={concert}
+                onChange={HandleInputChange}
+                name="concert"
+                placeholder={alcs ? "Where it will be taught? (concert)" : "No Concerts found"}
+              >
+                {alcs &&
+                  alcs.length > 0 &&
+                  alcs.map((alc) => {
+                    return (
+                      <option key={alc._id} value={alc._id}>
+                        {alc.title}
                       </option>
                     );
                   })}
               </Select>
-            )}
-            <Input
-              name="timeLimit"
-              value={timeLimit}
-              onChange={HandleInputChange}
-              placeholder="Time limit for this question"
-              mb={3}
-            />
-            <Select
-              disabled={!alcs}
-              value={concert}
-              onChange={HandleInputChange}
-              name="concert"
-              placeholder={alcs ? "Where it will be taught? (concert)" : "No Concerts found"}
+            </Flex>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={closeModal} colorScheme="blue" mr={3}>
+              Cancel
+            </Button>
+            <Button
+              colorScheme="secondary"
+              color="black"
+              disabled={
+                (type === "text" && !answers.length) ||
+                (type === "mcq" && !answer) ||
+                !question ||
+                !type ||
+                !timeLimit ||
+                !concert
+              }
+              onClick={addQuestionToCategory}
+              mr={3}
             >
-              {alcs &&
-                alcs.length > 0 &&
-                alcs.map((alc) => {
-                  return (
-                    <option key={alc._id} value={alc._id}>
-                      {alc.title}
-                    </option>
-                  );
-                })}
-            </Select>
-          </Flex>
-        </ModalBody>
-        <ModalFooter>
-          <Button onClick={closeModal} colorScheme="blue" mr={3}>
-            Cancel
-          </Button>
-          <Button
-            colorScheme="secondary"
-            color="black"
-            disabled={
-              (type === "text" && !answers.length) ||
-              (type === "mcq" && !answer) ||
-              !question ||
-              !type ||
-              !timeLimit ||
-              !concert
-            }
-            onClick={addQuestionToCategory}
-            mr={3}
-          >
-            Save
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+              Save
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </Flex>
   );
 };
 

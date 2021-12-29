@@ -19,6 +19,7 @@ const {
   getQuizAssets,
   deleteQuizAssets,
   updateQuestion,
+  updateQuestions,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -51,6 +52,8 @@ router.post("/sendMails", sendMails);
 
 // for updating question details
 router.put("/updateQuestion/:questionId", updateQuestion);
+// for updating question details globally under a category
+router.put("/updateQuestions/:categoryId", updateQuestions);
 
 // for adding a question to the category
 router.post("/add_question/:categoryId", addQuestion);

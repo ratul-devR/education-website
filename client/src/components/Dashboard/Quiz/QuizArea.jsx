@@ -3,7 +3,7 @@ import { Button } from "@chakra-ui/button";
 import { Flex, Heading, Grid } from "@chakra-ui/layout";
 import { Input } from "@chakra-ui/input";
 import { Tooltip } from "@chakra-ui/tooltip";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import config from "../../../config";
 import useToast from "../../../hooks/useToast";
@@ -24,6 +24,8 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
   const { currentIndex, questions } = useSelector((state) => state.quizReducer);
   const dispatch = useDispatch();
   const toast = useToast();
+
+  const inputRef = useRef();
 
   // fetch all the audio assets for the quiz
   async function fetchAudioAssets(abortController) {
@@ -148,6 +150,17 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
     return () => abortController.abort();
   }, []);
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+    return () => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    };
+  }, [selectedAnswer]);
+
   // play the background sound when it is ready
   useEffect(() => {
     return () => {
@@ -187,6 +200,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
                   variant="flushed"
                   placeholder="Enter the answer > hit enter"
                   value={input}
+                  ref={inputRef}
                   disabled={selectedAnswer}
                   onChange={(e) => setInput(e.target.value)}
                 />

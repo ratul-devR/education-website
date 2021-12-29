@@ -216,7 +216,7 @@ export default function EditQuestionModal({ currentQuestion, setQuestions, quest
               disabled={
                 !state.question ||
                 !state.timeLimit ||
-                !state.options.length ||
+                (state.type === "mcq" && !state.options.length) ||
                 !state.answers.length
               }
               colorScheme="blue"

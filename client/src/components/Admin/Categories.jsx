@@ -14,7 +14,6 @@ import { useDisclosure, Link as ChakraLink, Badge } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Input } from "@chakra-ui/input";
 import { MdDeleteOutline } from "react-icons/md";
-import { GrAdd } from "react-icons/gr";
 import { Link, useRouteMatch } from "react-router-dom";
 import { Textarea } from "@chakra-ui/textarea";
 import { Spinner } from "@chakra-ui/spinner";
@@ -23,10 +22,9 @@ import config from "../../config";
 
 import useToast from "../../hooks/useToast";
 
-// components
-import AddQuestionModal from "./components/AddQuestionModal";
 import NoMessage from "../global/NoMessage";
 import AddQuizAssets from "./components/AddQuizAssets";
+import EditQuestionsModal from "./components/EditQuestionsModal";
 
 const Categories = () => {
   const [{ title, description, price, passPercentage }, setInput] = useState({
@@ -39,17 +37,10 @@ const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [modalValue, setModalValue] = useState({ _id: "", name: "" });
-
   const [quizAsset, setQuizAsset] = useState();
   const [quizAssetLoading, setQuizAssetLoading] = useState(true);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    isOpen: isAddQuestionModalOpen,
-    onOpen: isAddQuestionModalOnOpen,
-    onClose: isAddQuestionModalOnClose,
-  } = useDisclosure();
 
   const toast = useToast();
   const { url } = useRouteMatch();
@@ -156,12 +147,6 @@ const Categories = () => {
         toast({ status: "error", description: err.message || "We have an error" });
       }
     }
-  }
-
-  // for opening the add question modal
-  function openAddQuestionModal(category) {
-    setModalValue(category);
-    isAddQuestionModalOnOpen();
   }
 
   useEffect(() => {
@@ -278,13 +263,6 @@ const Categories = () => {
           </ModalContent>
         </Modal>
 
-        <AddQuestionModal
-          isOpen={isAddQuestionModalOpen}
-          onClose={isAddQuestionModalOnClose}
-          modalValue={modalValue}
-          setCategories={setCategories}
-        />
-
         {categories && categories.length > 0 ? (
           <Table colorScheme="gray" minW="1000px">
             <Thead>
@@ -329,13 +307,7 @@ const Categories = () => {
                         onClick={() => deleteCategory(category._id)}
                         icon={<MdDeleteOutline />}
                       />
-                      {/* after clicking on the button the user should be redirected to the /admin/addQuestion/:categoryId page */}
-                      <IconButton
-                        onClick={() => openAddQuestionModal(category)}
-                        colorScheme="blue"
-                        icon={<GrAdd />}
-                        mr={3}
-                      />
+                      <EditQuestionsModal currentCategory={category} />
                     </Td>
                   </Tr>
                 );

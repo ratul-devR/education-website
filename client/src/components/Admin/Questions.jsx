@@ -11,6 +11,7 @@ import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { Table, Thead, Tbody, Tr, Th, Td, Tfoot } from "@chakra-ui/table";
 
 import AddQuestionCsvModal from "./components/AddQuestionCsvModal";
+import AddQuestionModal from "./components/AddQuestionModal";
 import NoMessage from "../global/NoMessage";
 import EditQuestionModal from "./components/EditQuestionModal";
 
@@ -102,8 +103,10 @@ const Questions = () => {
         <Heading fontWeight="normal" fontSize="2xl" color="primary" mb={10}>
           Questions in: "{category.name}"
         </Heading>
-        {/* the modal for uploading questions using csv file to the current category */}
-        <AddQuestionCsvModal category={category} setQuestions={setQuestions} />
+        <Flex justify="space-between" align="center">
+          <AddQuestionCsvModal category={category} setQuestions={setQuestions} />
+          <AddQuestionModal modalValue={category} setQuestions={setQuestions} />
+        </Flex>
         {/* the table containing all the questions */}
         <Flex direction="column" w="full" h="full">
           {currentQuestions && currentQuestions.length > 0 ? (
@@ -116,59 +119,69 @@ const Questions = () => {
                 <Th>Actions</Th>
               </Thead>
               <Tbody>
-                {currentQuestions.map(({ question, answers, type, options, _id, concert, timeLimit }) => {
-                  return (
-                    <Tr key={_id}>
-                      <Td>{question}</Td>
-                      <Td>
-                        {type === "mcq" ? (
+                {currentQuestions.map(
+                  ({ question, answers, type, options, _id, concert, timeLimit }) => {
+                    return (
+                      <Tr key={_id}>
+                        <Td>{question}</Td>
+                        <Td>
+                          {type === "mcq" ? (
+                            <Stack direction="row" wrap="wrap" display="flex" gridGap={2}>
+                              {options.map((option, index) => (
+                                <Badge
+                                  key={index}
+                                  textTransform="none"
+                                  colorScheme="purple"
+                                  variant="subtle"
+                                >
+                                  {option}
+                                </Badge>
+                              ))}
+                            </Stack>
+                          ) : (
+                            "No Options"
+                          )}
+                        </Td>
+                        <Td>
                           <Stack direction="row" wrap="wrap" display="flex" gridGap={2}>
-                            {options.map((option, index) => (
+                            {answers.map((answer, index) => (
                               <Badge
                                 key={index}
                                 textTransform="none"
                                 colorScheme="purple"
                                 variant="subtle"
                               >
-                                {option}
+                                {answer}
                               </Badge>
                             ))}
                           </Stack>
-                        ) : (
-                          "No Options"
-                        )}
-                      </Td>
-                      <Td>
-                        <Stack direction="row" wrap="wrap" display="flex" gridGap={2}>
-                          {answers.map((answer, index) => (
-                            <Badge
-                              key={index}
-                              textTransform="none"
-                              colorScheme="purple"
-                              variant="subtle"
-                            >
-                              {answer}
-                            </Badge>
-                          ))}
-                        </Stack>
-                      </Td>
-                      <Td>{concert.title}</Td>
-                      <Td>
-                        <IconButton
-                          onClick={() => deleteQuestion(_id)}
-                          icon={<MdDeleteOutline />}
-                          colorScheme="red"
-                          mr={3}
-                        />
-                        <EditQuestionModal
-                          currentQuestion={{ _id, question, answers, type, options, concert, timeLimit }}
-                          setQuestions={setQuestions}
-                          questions={questions}
-                        />
-                      </Td>
-                    </Tr>
-                  );
-                })}
+                        </Td>
+                        <Td>{concert.title}</Td>
+                        <Td>
+                          <IconButton
+                            onClick={() => deleteQuestion(_id)}
+                            icon={<MdDeleteOutline />}
+                            colorScheme="red"
+                            mr={3}
+                          />
+                          <EditQuestionModal
+                            currentQuestion={{
+                              _id,
+                              question,
+                              answers,
+                              type,
+                              options,
+                              concert,
+                              timeLimit,
+                            }}
+                            setQuestions={setQuestions}
+                            questions={questions}
+                          />
+                        </Td>
+                      </Tr>
+                    );
+                  }
+                )}
               </Tbody>
               <Tfoot>
                 <Tr textAlign="center">
