@@ -1,7 +1,7 @@
 import { Flex, Heading } from "@chakra-ui/layout";
 import { Text } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import useToast from "../../hooks/useToast";
 import config from "../../config";
 import { useDispatch } from "react-redux";
@@ -12,6 +12,7 @@ export default function PaymentSuccess({ location }) {
   const toast = useToast();
   const dispatch = useDispatch();
   const { course, type } = location.state;
+
   async function startLearning() {
     try {
       const res = await fetch(`${config.serverURL}/get_auth/checkLogin`, {
@@ -22,7 +23,11 @@ export default function PaymentSuccess({ location }) {
       const body = await res.json();
       if (res.ok) {
         dispatch(LOGIN(body));
-        let pushPath = type === "course" ? `alc/${course._id}` : `activation_phase/${course._id}`;
+        let pushPath = location.state.checking
+          ? `quiz/${course._id}`
+          : type === "course"
+          ? `alc/${course._id}`
+          : `activation_phase/${course._id}`;
         history.push(`/dashboard/${pushPath}`);
       } else {
         toast({ status: "error", description: body.msg });

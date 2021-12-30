@@ -61,6 +61,8 @@ const Quiz = ({ path }) => {
       if (res.ok) {
         if (!body.hasAllPrerequisites) {
           setHasAllPrerequisites(false);
+        } else if (path === "getUserQuestionsOfCourse" && !body.userHasPaid && body.userHasToPay) {
+          history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true });
         } else if (
           path === "getUserUnknownQuestions" &&
           body.unknownQuestionsPack.length > 0 &&
@@ -72,9 +74,11 @@ const Quiz = ({ path }) => {
             description: "You need to purchase this pack in order to learn the unknown questions",
           });
         }
+
         document.title = `${config.appName} - ${
           path === "getUserUnknownQuestions" ? "Activation Phase" : "Checking Phase"
         }: ${body.course.name}`;
+
         dispatch(
           LOAD_QUIZ({
             // shuffle the question options

@@ -101,49 +101,48 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      const questionsInThisAlc = await Question.find({ concert: id });
+      // delete the doc
+      const item = await Alc.findByIdAndDelete({ _id: id });
+      // delete all questions
+      await Question.deleteMany({ concert: id });
 
-      if (questionsInThisAlc.length > 0) {
-        res.status(400).json({
-          msg: `${questionsInThisAlc.length} questions are taught in this concert, please delete them first and try again`,
-        });
-      } else {
-        // delete the doc
-        const item = await Alc.findByIdAndDelete({ _id: id });
-
-        // delete all the files
-        unlink(path.join(__dirname, `/../public/uploads/alc/${item.audio.name}`), (err) =>
-          err ? err : null
+      // delete all the files
+      unlink(path.join(__dirname, `/../public/uploads/alc/${item.audio.name}`), (err) =>
+        err ? err : null
+      );
+      unlink(path.join(__dirname, `/../public/uploads/alc/${item.video.name}`), (err) =>
+        err ? err : null
+      );
+      if (item.background_music) {
+        unlink(
+          path.join(__dirname, `/../public/uploads/alc/${item.background_music.name}`),
+          (err) => (err ? err : null)
         );
-        unlink(path.join(__dirname, `/../public/uploads/alc/${item.video.name}`), (err) =>
-          err ? err : null
-        );
-        if (item.background_music) {
-          unlink(
-            path.join(__dirname, `/../public/uploads/alc/${item.background_music.name}`),
-            (err) => (err ? err : null)
-          );
-        }
-        unlink(path.join(__dirname, `/../public/uploads/alc/${item.passive_audio.name}`), (err) =>
-          err ? err : null
-        );
-        item.passive_images.map((passive_image) => {
-          unlink(path.join(__dirname, `/../public/uploads/alc/${passive_image.name}`), (err) =>
-            err ? err : null
-          );
-        });
-        if (item.passive_background_sound) {
-          unlink(
-            path.join(__dirname, `/../public/uploads/alc/${item.passive_background_sound.name}`),
-            (err) => (err ? err : null)
-          );
-        }
-
-        // send the updated list
-        const updatedList = await Alc.find({}).lean({ defaults: true }).populate("category");
-
-        res.status(200).json({ items: updatedList, msg: "Deleted Successfully" });
       }
+      unlink(path.join(__dirname, `/../public/uploads/alc/${item.passive_audio.name}`), (err) =>
+        err ? err : null
+      );
+      item.passive_images.map((passive_image) => {
+        unlink(path.join(__dirname, `/../public/uploads/alc/${passive_image.name}`), (err) =>
+          err ? err : null
+        );
+      });
+      if (item.passive_background_sound) {
+        unlink(
+          path.join(__dirname, `/../public/uploads/alc/${item.passive_background_sound.name}`),
+          (err) => (err ? err : null)
+        );
+      }
+
+      // send the updated list
+      const updatedList = await Alc.find({}).lean({ defaults: true }).populate("category");
+
+      res
+        .status(200)
+        .json({
+          items: updatedList,
+          msg: "Deleted Successfully. And also deleted all the questions which were taught in this concert",
+        });
     } catch (err) {
       next(err);
     }

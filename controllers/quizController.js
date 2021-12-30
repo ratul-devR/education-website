@@ -20,6 +20,10 @@ module.exports = {
         res.status(404).json({ msg: "Course Not Found! Please stop navigating with Urls" });
       }
 
+      // if the admin has determined that the user has to pay before checking-phase,
+      // then the user has to pay before checking phase
+      let userHasToPay = course.askForPaymentIn === "checking-phase";
+
       // questions the user hasn't checked yet will be shown in the checking phase
       const courseQuestions = await Question.find({
         $and: [
@@ -41,7 +45,20 @@ module.exports = {
         }
       }
 
-      res.status(200).json({ courseQuestions, course, hasAllPrerequisites });
+      // if the user has to pay in checking-phase, then check if the user has paid or not
+      let userHasPaid = false;
+
+      if (userHasToPay) {
+        course.purchasedBy = course.purchasedBy.map((user) => user.toString());
+        for (let i = 0; i < course.purchasedBy.length; i++) {
+          const purchasedBy = course.purchasedBy[i];
+          if (purchasedBy === req.user._id.toString()) {
+            userHasPaid = true;
+          }
+        }
+      }
+
+      res.status(200).json({ courseQuestions, course, hasAllPrerequisites, userHasPaid, userHasToPay });
     } catch (err) {
       next(err);
     }

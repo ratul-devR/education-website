@@ -13,6 +13,7 @@ import {
 import { useDisclosure, Link as ChakraLink, Badge } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Input } from "@chakra-ui/input";
+import { Select } from "@chakra-ui/select";
 import { MdDeleteOutline } from "react-icons/md";
 import { Link, useRouteMatch } from "react-router-dom";
 import { Textarea } from "@chakra-ui/textarea";
@@ -27,11 +28,12 @@ import AddQuizAssets from "./components/AddQuizAssets";
 import EditQuestionsModal from "./components/EditQuestionsModal";
 
 const Categories = () => {
-  const [{ title, description, price, passPercentage }, setInput] = useState({
+  const [{ title, description, price, passPercentage, askForPaymentIn }, setInput] = useState({
     title: "",
     description: "",
     price: "",
     passPercentage: "",
+    askForPaymentIn: "",
   });
   const [prerequisites, setPrerequisites] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -103,7 +105,14 @@ const Categories = () => {
       const res = await fetch(`${config.serverURL}/get_admin/post_category`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, price, passPercentage, prerequisites }),
+        body: JSON.stringify({
+          title,
+          description,
+          price,
+          passPercentage,
+          prerequisites,
+          askForPaymentIn,
+        }),
         credentials: "include",
       });
       const body = await res.json();
@@ -245,7 +254,17 @@ const Categories = () => {
                 onChange={HandleInputChange}
                 name="passPercentage"
                 value={passPercentage}
+                mb={3}
               />
+              <Select
+                placeholder="Where to ask for payment"
+                onChange={HandleInputChange}
+                name="askForPaymentIn"
+                value={askForPaymentIn}
+              >
+                <option value="checking-phase">Checking Phase</option>
+                <option value="learning-phase">Learning Phase</option>
+              </Select>
             </ModalBody>
             <ModalFooter>
               <Button mr={3} onClick={onClose} colorScheme="blue">

@@ -10,7 +10,7 @@ import { Button } from "@chakra-ui/button";
 import { Text, Badge } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 
-const Pay = () => {
+const Pay = ({ location }) => {
   const [course, setCourse] = useState();
   const [loading, setLoading] = useState(true);
   const [checkoutError, setCheckoutError] = useState();
@@ -106,7 +106,11 @@ const Pay = () => {
       } else {
         if (result.paymentIntent.status === "succeeded") {
           setProcessing(false);
-          history.push("/dashboard/paymentSuccess", { course, type: "course" });
+          history.push("/dashboard/paymentSuccess", {
+            course,
+            type: "course",
+            checking: location.state ? location.state.fromCheckingPhase : false,
+          });
           toast({
             status: "success",
             title: "Congratulations",
