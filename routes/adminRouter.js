@@ -2,6 +2,8 @@ const express = require("express");
 
 const uploadCsvFile = require("../middlewares/admin/uploadCsvFile");
 const quizAssetUpload = require("../middlewares/admin/uploadQuizAsset");
+const uploadQuestionAssets = require("../middlewares/admin/uploadQuestionAssets");
+const uploadFilesMiddleware = require("../middlewares/admin/uploadFiles");
 
 // controllers
 const {
@@ -20,6 +22,8 @@ const {
   deleteQuizAssets,
   updateQuestion,
   updateQuestions,
+  uploadFiles,
+  getFiles,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -37,6 +41,11 @@ router.delete("/delete_category/:id", deleteCategory);
 
 // for getting all the user information's
 router.get("/users", getUsers);
+
+// for uploading files
+router.post("/uploadFiles", uploadFilesMiddleware, uploadFiles);
+// for getting uploaded files
+router.get("/getFiles", getFiles);
 
 // for uploading quiz assets
 router.post("/upload_assets", quizAssetUpload, uploadQuizAssets);
@@ -56,7 +65,7 @@ router.put("/updateQuestion/:questionId", updateQuestion);
 router.put("/updateQuestions/:categoryId", updateQuestions);
 
 // for adding a question to the category
-router.post("/add_question/:categoryId", addQuestion);
+router.post("/add_question/:categoryId", uploadQuestionAssets, addQuestion);
 // for adding multiple questions using a .csv file only
 router.post("/add_questions_from_csv", uploadCsvFile, addQuestionsFromCsv);
 // deleting a question

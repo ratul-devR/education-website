@@ -10,6 +10,7 @@ const User = require("../models/people");
 const Alc = require("../models/alc");
 const Org = require("../models/org");
 const QuizAsset = require("../models/quizAsset");
+const File = require("../models/files");
 
 const transporter = require("../utils/emailTransporter");
 module.exports = {
@@ -74,7 +75,8 @@ module.exports = {
 
   postCategory: async function (req, res, next) {
     try {
-      const { title, description, price, passPercentage, prerequisites, askForPaymentIn } = req.body;
+      const { title, description, price, passPercentage, prerequisites, askForPaymentIn } =
+        req.body;
 
       const categoryExist =
         (await Category.findOne({ name: title }).lean({ defaults: true })) || null;
@@ -88,7 +90,7 @@ module.exports = {
           price,
           prerequisites,
           passPercentage,
-          askForPaymentIn
+          askForPaymentIn,
         });
 
         await newCategory.save();
@@ -152,6 +154,32 @@ module.exports = {
     }
   },
 
+  uploadFiles: async function (req, res, next) {
+    try {
+      const files = req.files;
+
+      const fileData = files.map((file) => ({
+        name: file.filename,
+        url: req.protocol + "://" + req.get("host") + "/" + "uploads/" + "files/" + file.filename,
+      }));
+
+      const uploadedFiles = await File.insertMany(fileData);
+
+      res.status(201).json({ msg: "Files were uploaded successfully", files: uploadedFiles });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getFiles: async function (req, res, next) {
+    try {
+      const files = await File.find({});
+      res.status(200).json({ files });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   getQuizAssets: async function (_req, res, next) {
     try {
       const asset = (await QuizAsset.find({}))[0] || null;
@@ -183,6 +211,7 @@ module.exports = {
     try {
       const { categoryId } = req.params;
       const { question, options, answer, type, concert, timeLimit, answers } = req.body;
+      const { activeLearningVoice, passiveLearningVoice, passiveLearningMaleVoice } = req.files;
 
       let newQuestion;
 
@@ -196,7 +225,6 @@ module.exports = {
           type,
           timeLimit,
         });
-        await newQuestion.populate("concert");
       } else {
         newQuestion = new Question({
           question,
@@ -206,9 +234,15 @@ module.exports = {
           timeLimit,
           concert,
         });
-        await newQuestion.populate("concert");
       }
 
+      const url = req.protocol + "://" + req.get("host") + "/uploads/question-audios/";
+
+      newQuestion.activeLearningVoice = url + activeLearningVoice[0].filename;
+      newQuestion.passiveLearningVoice = url + passiveLearningVoice[0].filename;
+      newQuestion.passiveLearningMaleVoice = url + passiveLearningMaleVoice[0].filename;
+
+      await newQuestion.populate("concert");
       await newQuestion.save();
 
       await Category.updateOne({ _id: categoryId }, { $push: { questions: newQuestion } });
@@ -361,6 +395,33 @@ module.exports = {
       const { questionId, categoryId } = req.params;
 
       const deletedQuestion = await Question.findByIdAndDelete({ _id: questionId });
+
+      deletedQuestion.activeLearningVoice =
+        deletedQuestion.activeLearningVoice.split("question-audios/")[1];
+      deletedQuestion.passiveLearningVoice =
+        deletedQuestion.passiveLearningVoice.split("question-audios/")[1];
+      deletedQuestion.passiveLearningMaleVoice =
+        deletedQuestion.passiveLearningMaleVoice.split("question-audios/")[1];
+
+      unlink(
+        __dirname + `/../public/uploads/question-audios/${deletedQuestion.activeLearningVoice}`,
+        (err) => {
+          if (err) console.log(err);
+        }
+      );
+      unlink(
+        __dirname + `/../public/uploads/question-audios/${deletedQuestion.passiveLearningVoice}`,
+        (err) => {
+          if (err) console.log(err);
+        }
+      );
+      unlink(
+        __dirname +
+          `/../public/uploads/question-audios/${deletedQuestion.passiveLearningMaleVoice}`,
+        (err) => {
+          if (err) console.log(err);
+        }
+      );
 
       await Category.findOneAndUpdate({ _id: categoryId }, { $pull: { questions: questionId } });
 

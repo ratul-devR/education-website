@@ -9,11 +9,14 @@ const dataSchema = new mongoose.Schema({
   category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
   timeLimit: { type: Number, required: true },
   concert: { type: mongoose.Schema.Types.ObjectId, ref: "Alc", required: true },
+  activeLearningVoice: { type: String, required: true },
+  passiveLearningVoice: { type: String, required: true },
+  passiveLearningMaleVoice: { type: String, required: true },
 
   knownUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
   unknownUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
   packUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
-  repeatedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }]
+  repeatedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
 });
 
 dataSchema.plugin(mongooseLeanDefaults);

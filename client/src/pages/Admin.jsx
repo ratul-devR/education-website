@@ -16,6 +16,7 @@ import Organizations from "../components/Admin/Organizations";
 import Questions from "../components/Admin/Questions";
 import Alc from "../components/Admin/Alc";
 import SendMails from "../components/Admin/SendMails";
+import UploadFiles from "../components/Admin/UploadFiles";
 
 const Admin = () => {
   const { user } = useSelector((state) => state.authReducer);
@@ -53,6 +54,7 @@ const Admin = () => {
         <Route path={`${path}/users`} component={Users} />
         <Route path={`${path}/organizations`} component={Organizations} />
         <Route path={`${path}/alc`} component={Alc} />
+        <Route path={`${path}/uploadFiles`} component={UploadFiles} />
         <Route path={`${path}/:categoryId/questions`} component={Questions} />
         <Route path={`${path}/sendMails`} component={SendMails} />
       </Switch>

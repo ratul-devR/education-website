@@ -1,19 +1,19 @@
 import { Grid, Flex, Container } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { Input, InputGroup, InputLeftAddon, InputRightAddon } from "@chakra-ui/input";
-import { Table, Thead, Tbody,  Tr, Th, Td, TableCaption } from "@chakra-ui/table";
+import { Table, Thead, Tbody, Tr, Th, Td, TableCaption } from "@chakra-ui/table";
 import useLogout from "../hooks/useLogout";
 import Logo from "../assets/logo.png";
 import CopyToClipBoard from "react-copy-to-clipboard";
-import { useEffect } from "react"
-import config from "../config"
+import { useEffect } from "react";
+import config from "../config";
 
 export default function OrgDashboard() {
   const org = JSON.parse(localStorage.getItem("org"));
   const logout = useLogout();
   useEffect(() => {
-    document.title = `${config.appName} - Organization Dashboard`
-  }, [])
+    document.title = `${config.appName} - Organization Dashboard`;
+  }, []);
   return (
     <Grid templateRows="60px 1fr" w="full" h="full" direction="column">
       <Flex as="nav" boxShadow="sm" justify="space-between" px={10} align="center">

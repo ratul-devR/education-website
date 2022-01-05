@@ -2,6 +2,7 @@ import { Button, IconButton } from "@chakra-ui/button";
 import { Flex, HStack, VStack } from "@chakra-ui/layout";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { FaChartPie, FaUserFriends, FaAssistiveListeningSystems } from "react-icons/fa";
+import { AiOutlineCloudUpload } from "react-icons/ai";
 import { GrOrganization } from "react-icons/gr";
 import { GoMail } from "react-icons/go";
 import { NavLink, useRouteMatch } from "react-router-dom";
@@ -46,6 +47,16 @@ const Admin = ({ children }) => {
             to={`${url}/alc`}
             activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<FaAssistiveListeningSystems />}
+          />
+        </Tooltip>
+        <Tooltip label="Upload Files" placement="right" hasArrow>
+          <IconButton
+            rounded={0}
+            bg="white"
+            as={NavLink}
+            to={`${url}/uploadFiles`}
+            activeStyle={{ background: "#FF218D", color: "#fff" }}
+            icon={<AiOutlineCloudUpload />}
           />
         </Tooltip>
         <Tooltip label="Users" placement="right" hasArrow>

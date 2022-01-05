@@ -250,7 +250,9 @@ const Categories = () => {
               </select>
               <Input
                 type="number"
-                placeholder="Pass mark/percentage"
+                max={100}
+                min={0}
+                placeholder="Pass percentage"
                 onChange={HandleInputChange}
                 name="passPercentage"
                 value={passPercentage}
