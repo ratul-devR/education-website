@@ -24,6 +24,7 @@ const {
   updateQuestions,
   uploadFiles,
   getFiles,
+  deleteFile,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -46,6 +47,8 @@ router.get("/users", getUsers);
 router.post("/uploadFiles", uploadFilesMiddleware, uploadFiles);
 // for getting uploaded files
 router.get("/getFiles", getFiles);
+// for deleting a file
+router.delete("/deleteFile/:fileId", deleteFile);
 
 // for uploading quiz assets
 router.post("/upload_assets", quizAssetUpload, uploadQuizAssets);

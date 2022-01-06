@@ -171,12 +171,28 @@ module.exports = {
     }
   },
 
-  getFiles: async function (req, res, next) {
+  getFiles: async function (_, res, next) {
     try {
       const files = await File.find({});
       res.status(200).json({ files });
     } catch (err) {
       next(err);
+    }
+  },
+
+  deleteFile: async function (req, res, next) {
+    try {
+      const { fileId } = req.params
+
+      const deletedFile = await File.findByIdAndRemove(fileId)
+
+      unlink(__dirname + "/../public/uploads/files/" + deletedFile.name, (err) => {
+        if (err) console.log(err)
+      })
+
+      res.status(201).json({ msg: "The file was deleted", file: deletedFile })
+    } catch (err) {
+      next(err)
     }
   },
 
