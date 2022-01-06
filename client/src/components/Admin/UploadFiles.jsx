@@ -11,9 +11,9 @@ import {
   ModalCloseButton,
   ModalBody,
 } from "@chakra-ui/modal";
-import {useDisclosure} from "@chakra-ui/hooks";
-import {Button, IconButton} from "@chakra-ui/button";
-import { Spinner } from "@chakra-ui/spinner"
+import { useDisclosure } from "@chakra-ui/hooks";
+import { Button, IconButton } from "@chakra-ui/button";
+import { Spinner } from "@chakra-ui/spinner";
 import useToast from "../../hooks/useToast";
 import config from "../../config";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -27,7 +27,7 @@ export default function UploadFiles() {
   const [files, setFiles] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [processing, setProcessing] = useState(false);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [questionsPerPage] = useState(30);
 
@@ -87,7 +87,7 @@ export default function UploadFiles() {
       const body = await res.json();
       if (res.ok) {
         setUploadedFiles(body.files);
-        setLoading(false)
+        setLoading(false);
       } else {
         toast({ status: "error", description: body.msg });
       }
@@ -131,7 +131,7 @@ export default function UploadFiles() {
       <Flex w="full" h="full" justify="center" align="center">
         <Spinner />
       </Flex>
-    )
+    );
   }
 
   return (
@@ -198,7 +198,7 @@ export default function UploadFiles() {
                           color="black"
                           icon={<BiExpandAlt />}
                         />
-                        <CopyToClipboard text={uploadedFile.name}>
+                        <CopyToClipboard text={uploadedFile.url}>
                           <IconButton colorScheme="blue" icon={<MdContentCopy />} />
                         </CopyToClipboard>
                         <IconButton
@@ -215,7 +215,9 @@ export default function UploadFiles() {
           <Tfoot>
             <Tr>
               <Td>
-                <Text color="GrayText">({currentPage} / {totalPages}) Pages</Text>
+                <Text color="GrayText">
+                  ({currentPage} / {totalPages}) Pages
+                </Text>
               </Td>
               <Td display="flex">
                 <IconButton

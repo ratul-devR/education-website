@@ -115,7 +115,6 @@ const Questions = () => {
                 <Th>Question</Th>
                 <Th>Options</Th>
                 <Th>Answer</Th>
-                <Th>Concert</Th>
                 <Th>Actions</Th>
               </Thead>
               <Tbody>
@@ -156,7 +155,6 @@ const Questions = () => {
                             ))}
                           </Stack>
                         </Td>
-                        <Td>{concert.title}</Td>
                         <Td>
                           <IconButton
                             onClick={() => deleteQuestion(_id)}
@@ -185,7 +183,7 @@ const Questions = () => {
               </Tbody>
               <Tfoot>
                 <Tr textAlign="center">
-                  <Td colSpan={4}>
+                  <Td colSpan={3}>
                     <Heading fontSize="xl" fontWeight="normal" color="GrayText">
                       {currentPage} / {totalPages}
                     </Heading>

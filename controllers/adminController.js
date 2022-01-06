@@ -182,17 +182,17 @@ module.exports = {
 
   deleteFile: async function (req, res, next) {
     try {
-      const { fileId } = req.params
+      const { fileId } = req.params;
 
-      const deletedFile = await File.findByIdAndRemove(fileId)
+      const deletedFile = await File.findByIdAndRemove(fileId);
 
       unlink(__dirname + "/../public/uploads/files/" + deletedFile.name, (err) => {
-        if (err) console.log(err)
-      })
+        if (err) console.log(err);
+      });
 
-      res.status(201).json({ msg: "The file was deleted", file: deletedFile })
+      res.status(201).json({ msg: "The file was deleted", file: deletedFile });
     } catch (err) {
-      next(err)
+      next(err);
     }
   },
 
@@ -310,59 +310,110 @@ module.exports = {
       // all the json data parsed from the csv file is here (parsed)
       const jsonData = await csvJson().fromStream(request.get(filePath));
 
-      // now let's convert the options field from string to array, if it exists
+      // time to parse them so we can insert them in the DB
       for (let i = 0; i < jsonData.length; i++) {
         const question = jsonData[i];
-        question.category = category;
-        // if the admin hasn't added a concert
-        question.concert = question.concert
-          ? await Alc.findOne({ name: { $regex: question.concert, $options: "gi" } })
-          : res.status(400).json({
-              msg: `Please add a concert where this question will be taught, check Q no: [${
-                i + 1
-              }]`,
-            });
-        // if the concert doesn't exists
-        if (!question.concert)
-          res.status(400).json({
-            msg: `The concert was not found. please make sure you have entered the correct name. Check Q no: [${
-              i + 1
-            }]`,
-          });
-        if (question.type === "mcq") {
-          question.options = question.options.split("/ ");
-          question.answers = question.answers.split(" ");
-        } else {
-          question.options = [];
-          question.answers = question.answers.split("/ ");
-        }
-      }
 
-      // now let's see if valid or required properties are added in the json data
-      // if it isn't then throw error! and also delete the previous file
-      for (let i = 0; i < jsonData.length; i++) {
-        const question = jsonData[i];
-        if (
-          !question.question ||
-          !question.type ||
-          !question.timeLimit ||
-          (question.type === "mcq" && question.options.length === 0) ||
-          (question.type === "text" && question.answers.length === 0)
-        ) {
-          res.status(400).json({
-            msg: "Some required properties are missing in your csv file! or some of the values may be invalid",
-          });
-          unlink(
-            path.join(__dirname, `/../public/uploads/question-csv-files/${file.filename}`),
-            (err) => (err ? err : null)
+        if (!question.type) {
+          res.status(400).json({ msg: "Please add a type" });
+        }
+
+        if (question.type === "mcq") {
+          const questionConcert = await Alc.findOne({ title: question.concert });
+
+          if (
+            !question.question ||
+            !question.option1_answer ||
+            !question.option2 ||
+            !question.option3 ||
+            !question.option4 ||
+            !question.option5 ||
+            !question.timeLimit ||
+            !question.concert ||
+            !question.activeLearningVoice ||
+            !question.passiveLearningVoice ||
+            !question.passiveLearningMaleVoice
+          ) {
+            unlink(
+              path.join(__dirname, `/../public/uploads/question-csv-files/${file.filename}`),
+              (err) => (err ? err : null)
+            );
+            res.status(400).json({
+              msg: `A required field is missing in the doc. On row/line number: [${i + 1}]`,
+            });
+          } else if (!questionConcert) {
+            unlink(
+              path.join(__dirname, `/../public/uploads/question-csv-files/${file.filename}`),
+              (err) => (err ? err : null)
+            );
+            res.status(400).json({
+              msg: `This concert named "${
+                question.concert
+              }" was not found. Check line/row number [${i + 1}]`,
+            });
+          }
+
+          question.options = [];
+
+          question.options.push(
+            question.option1_answer,
+            question.option2,
+            question.option3,
+            question.option4,
+            question.option5
           );
+          question.answers = [question.option1_answer];
+          question.concert = questionConcert._id;
+          question.category = category;
+
+          // delete the raw dummy fields
+          delete question.option1_answer;
+          delete question.option2;
+          delete question.option3;
+          delete question.option4;
+          delete question.option5;
+        } else if (question.type === "text") {
+          if (
+            !question.question ||
+            !question.answers ||
+            !question.timeLimit ||
+            !question.concert ||
+            !question.activeLearningVoice ||
+            !question.passiveLearningVoice ||
+            !question.passiveLearningMaleVoice
+          ) {
+            unlink(
+              path.join(__dirname, `/../public/uploads/question-csv-files/${file.filename}`),
+              (err) => (err ? err : null)
+            );
+            res.status(400).json({
+              msg: `A required field is missing in the doc. On row/line number: [${i + 1}]`,
+            });
+          }
+
+          const questionConcert = await Alc.findOne({ title: question.concert });
+
+          if (!questionConcert) {
+            unlink(
+              path.join(__dirname, `/../public/uploads/question-csv-files/${file.filename}`),
+              (err) => (err ? err : null)
+            );
+            res.status(400).json({
+              msg: `This concert named "${
+                question.concert
+              }" was not found. Check line/row number [${i + 1}]`,
+            });
+          }
+
+          question.answers = question.answers.split("/ ");
+          question.concert = questionConcert._id;
+          question.category = category;
         }
       }
 
       // now time to save them!
-      const uploadedDocs = await Question.insertMany(jsonData);
+      const uploadedDocs = await Question.insertMany(jsonData); // now update the fields of the category
 
-      // now update the fields of the category
       await Category.updateOne({ _id: category }, { $push: { questions: uploadedDocs } }).lean({
         defaults: true,
       });
@@ -419,25 +470,31 @@ module.exports = {
       deletedQuestion.passiveLearningMaleVoice =
         deletedQuestion.passiveLearningMaleVoice.split("question-audios/")[1];
 
-      unlink(
-        __dirname + `/../public/uploads/question-audios/${deletedQuestion.activeLearningVoice}`,
-        (err) => {
-          if (err) console.log(err);
-        }
-      );
-      unlink(
-        __dirname + `/../public/uploads/question-audios/${deletedQuestion.passiveLearningVoice}`,
-        (err) => {
-          if (err) console.log(err);
-        }
-      );
-      unlink(
-        __dirname +
-          `/../public/uploads/question-audios/${deletedQuestion.passiveLearningMaleVoice}`,
-        (err) => {
-          if (err) console.log(err);
-        }
-      );
+      if (
+        deletedQuestion.activeLearningVoice &&
+        deletedQuestion.passiveLearningVoice &&
+        deletedQuestion.passiveLearningMaleVoice
+      ) {
+        unlink(
+          __dirname + `/../public/uploads/question-audios/${deletedQuestion.activeLearningVoice}`,
+          (err) => {
+            if (err) console.log(err);
+          }
+        );
+        unlink(
+          __dirname + `/../public/uploads/question-audios/${deletedQuestion.passiveLearningVoice}`,
+          (err) => {
+            if (err) console.log(err);
+          }
+        );
+        unlink(
+          __dirname +
+            `/../public/uploads/question-audios/${deletedQuestion.passiveLearningMaleVoice}`,
+          (err) => {
+            if (err) console.log(err);
+          }
+        );
+      }
 
       await Category.findOneAndUpdate({ _id: categoryId }, { $pull: { questions: questionId } });
 
