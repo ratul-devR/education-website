@@ -17,6 +17,7 @@ import Learn from "../components/Dashboard/Learn";
 import Alc from "../components/Dashboard/Alc";
 import PaymentSuccess from "../components/Dashboard/PaymentSuccess";
 import BuyPackage from "../components/Dashboard/BuyPackage";
+import AllAlcItems from "../components/Dashboard/AllAlcItems";
 
 import useLogout from "../hooks/useLogout";
 
@@ -62,10 +63,13 @@ const Dashboard = () => {
           <Route path={`${path}/activation_phase`} exact>
             <Courses title="Activation Phase" path="activation_phase" />
           </Route>
-          <Route path={`${path}/alc/:courseId`} component={Alc} />
+
+          <Route path={`${path}/alc/:alcId/:courseId`} component={Alc} />
           <Route path={`${path}/alc`}>
-            <Courses title="Active and Passive Learning Concert" path="alc" />
+            <Courses title="Active and Passive Learning Concert" path="alcs" />
           </Route>
+          <Route path={`${path}/alcs/:courseId`} component={AllAlcItems} />
+
           {/* "getUserQuestionsOfCourse" is the path for checking phase */}
           <Route path={`${path}/quiz/:courseId`}>
             <Quiz path={"getUserQuestionsOfCourse"} />

@@ -11,6 +11,7 @@ import {
   ModalBody,
 } from "@chakra-ui/modal";
 import { Flex } from "@chakra-ui/layout";
+import { Input } from "@chakra-ui/input";
 import { IconButton } from "@chakra-ui/button";
 import { MdDeleteOutline } from "react-icons/md";
 import { useEffect, useState } from "react";
@@ -24,13 +25,12 @@ import config from "../../config";
 
 // active learning concert and passive learning concert
 const Alc = () => {
-  const [{ background_music, passive_background_sound, passive_image }, setState] =
-    useState({
-      background_music: null,
-      passive_image: null,
-      timeout: "",
-      passive_background_sound: null,
-    });
+  const [{ background_music, passive_background_sound, passive_image, name }, setState] = useState({
+    name: "",
+    background_music: null,
+    passive_image: null,
+    passive_background_sound: null,
+  });
   const [category, setCategory] = useState();
 
   const [categories, setCategories] = useState();
@@ -44,8 +44,12 @@ const Alc = () => {
   const toast = useToast();
 
   function handleInputChange(event) {
-    const { name, files } = event.target;
+    const { name, files, value } = event.target;
+    if (name === "name") {
+      setState((pre) => ({ ...pre, [name]: value }));
+    } else {
       setState((pre) => ({ ...pre, [name]: files[0] }));
+    }
   }
 
   // for fetching all the categories
@@ -72,14 +76,11 @@ const Alc = () => {
     setProcessing(true);
     const formData = new FormData();
 
-    if (background_music) {
-      formData.append("background_music", background_music);
-    }
+    formData.append("name", name);
+    formData.append("background_music", background_music);
     formData.append("category", category);
-    if (passive_background_sound) {
-      formData.append("passive_background_sound", passive_background_sound);
-    }
-    formData.append("passive_image", passive_image)
+    formData.append("passive_background_sound", passive_background_sound);
+    formData.append("passive_image", passive_image);
 
     try {
       const res = await fetch(`${config.serverURL}/active_learning_concert`, {
@@ -189,6 +190,13 @@ const Alc = () => {
           <ModalHeader>Add new item</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            <Input
+              placeholder="Enter the name of this item"
+              onChange={handleInputChange}
+              name="name"
+              value={name}
+              mb={5}
+            />
             <Flex
               border="1px solid"
               p={3}
@@ -264,7 +272,14 @@ const Alc = () => {
               Close
             </Button>
             <Button
-              disabled={processing || !passive_image || !category}
+              disabled={
+                processing ||
+                !passive_image ||
+                !category ||
+                !background_music ||
+                !passive_background_sound ||
+                !name
+              }
               onClick={uploadItem}
               colorScheme="secondary"
               color="black"
@@ -278,6 +293,7 @@ const Alc = () => {
       {items && items.length > 0 ? (
         <Table minW="700px" size="sm">
           <Thead>
+            <Th>Name</Th>
             <Th>Category</Th>
             <Th>Action</Th>
           </Thead>
@@ -285,6 +301,7 @@ const Alc = () => {
             {items.map((item) => {
               return (
                 <Tr key={item._id}>
+                  <Td>{item.name}</Td>
                   <Td>{item.category.name}</Td>
                   <Td>
                     <IconButton

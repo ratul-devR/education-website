@@ -7,16 +7,17 @@ import { Spinner } from "@chakra-ui/spinner";
 
 export default function Alc() {
   const [assets, setAssets] = useState();
+  const [useDefaultAsset, setUseDefaultAsset] = useState(false)
   const [questions, setQuestions] = useState();
   const [loading, setLoading] = useState(true);
   const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
 
-  const { courseId } = useParams();
+  const {courseId, alcId} = useParams();
   const toast = useToast();
 
   async function fetchItem(abortController) {
     try {
-      const res = await fetch(`${config.serverURL}/active_learning_concert/getItem/${courseId}`, {
+      const res = await fetch(`${config.serverURL}/active_learning_concert/getItem/${alcId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         signal: abortController.signal,
@@ -25,6 +26,7 @@ export default function Alc() {
       const body = await res.json();
       if (res.ok) {
         setAssets(body.item || {});
+        setUseDefaultAsset(body.default ? true : false)
       } else {
         toast({ status: "error", description: body.msg });
       }
@@ -70,7 +72,7 @@ export default function Alc() {
     <Flex w="full" h="full" justify="center" align="center">
       <Spinner />
     </Flex>;
-  } else if (!loading && !hasAllPrerequisites) {
+  } else if (!hasAllPrerequisites) {
     return (
       <Flex justify="center" align="center">
         <Heading color="GrayText" fontSize="2xl" fontWeight="normal">

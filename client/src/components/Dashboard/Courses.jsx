@@ -8,6 +8,8 @@ import useToast from "../../hooks/useToast";
 
 import NoMessage from "../global/NoMessage";
 
+// this page will be used for multiple products
+// on active and checking phase, concerts etc.
 const UserCourses = ({ title, path }) => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
