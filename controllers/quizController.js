@@ -58,7 +58,9 @@ module.exports = {
         }
       }
 
-      res.status(200).json({ courseQuestions, course, hasAllPrerequisites, userHasPaid, userHasToPay });
+      res
+        .status(200)
+        .json({ courseQuestions, course, hasAllPrerequisites, userHasPaid, userHasToPay });
     } catch (err) {
       next(err);
     }
@@ -210,7 +212,7 @@ module.exports = {
 
       const question = await Question.findOne({ _id: questionId }).lean({ defaults: true });
 
-      // if he is a repeated user and if because he has not given the right answer,
+      /*// if he is a repeated user and if because he has not given the right answer,
       // so he will have to learn it again in the specified learning phase
       question.repeatedUsers = question.repeatedUsers.map((user) => user.toString());
       const repeatedUser = question.repeatedUsers.includes(user._id.toString());
@@ -225,6 +227,19 @@ module.exports = {
         await Question.updateOne({ _id: question._id }, { $push: { packUsers: user._id } }).lean({
           defaults: true,
         });
+      }*/
+
+      question.unknownUsers = question.unknownUsers.map((user) => user.toString());
+      const alreadyUnknown = question.unknownUsers.includes(user._id.toString());
+      if (!alreadyUnknown) {
+        await Question.updateOne(
+          { _id: question._id },
+          {
+            $push: {
+              unknownUsers: user._id,
+            },
+          }
+        );
       }
 
       res.status(200).json({ msg: "done" });

@@ -1,71 +1,53 @@
 import { useEffect, useState } from "react";
 import { Flex, Heading } from "@chakra-ui/layout";
-import { Spinner } from "@chakra-ui/spinner";
 import useToast from "../../hooks/useToast";
 import config from "../../config";
-import { Button } from "@chakra-ui/button";
-import { Link } from "react-router-dom";
-import { useParams, useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { Spinner } from "@chakra-ui/spinner";
 
-// audios
-import PassiveLearningBgSound from "../../assets/audios/passive-learning.mp3";
-import ActiveLearningBgSound from "../../assets/audios/active-learning.mp3";
-
-const Alc = (props) => {
-  const [item, setItem] = useState({});
-  const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
+export default function Alc() {
+  const [assets, setAssets] = useState();
+  const [questions, setQuestions] = useState();
   const [loading, setLoading] = useState(true);
-  const { user } = useSelector((state) => state.authReducer);
+  const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const [timer, setTimer] = useState(0);
-
-  const [videoEnded, setVideoEnded] = useState(false);
-  const [videoPlayedCount, setVideoPlayedCount] = useState(0);
-  const [concertEnded, setConcertEnded] = useState(false);
-
+  const { courseId } = useParams();
   const toast = useToast();
-  const history = useHistory();
-  // it can be the course id or the item/concert id
-  const { courseId: id } = useParams();
-
-  const path = props.location.state && props.location.state.id ? "id" : "getItem";
 
   async function fetchItem(abortController) {
     try {
-      const res = await fetch(`${config.serverURL}/active_learning_concert/${path}/${id}`, {
+      const res = await fetch(`${config.serverURL}/active_learning_concert/getItem/${courseId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         signal: abortController.signal,
+        credentials: "include",
       });
       const body = await res.json();
-
       if (res.ok) {
-        if (!body.hasAllPrerequisites && user.role !== "admin") {
-          setHasAllPrerequisites(false);
-        } else if (!body.hasPurchased && user.role !== "admin") {
-          history.push(`/dashboard/pay/${id}`);
-        }
-        setItem(body.item || null);
-        setLoading(false);
+        setAssets(body.item || {});
+      } else {
+        toast({ status: "error", description: body.msg });
       }
     } catch (err) {
       toast({ status: "error", description: err.message });
     }
   }
 
-  async function handleConcertView(abortController) {
+  async function fetchQuestions(abortController) {
     try {
-      await fetch(`${config.serverURL}/active_learning_concert/userViewedConcert`, {
-        method: "POST",
+      const res = await fetch(`${config.serverURL}/get_quiz/getUserUnknownQuestions/${courseId}`, {
+        method: "GET",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ concertId: item._id }),
-        credentials: "include",
         signal: abortController.signal,
+        credentials: "include",
       });
+      const body = await res.json();
+      if (res.ok) {
+        setQuestions(body.courseQuestions);
+        setHasAllPrerequisites(body.hasAllPrerequisites);
+      } else {
+        toast({ status: "error", description: body.msg });
+      }
     } catch (err) {
       toast({ status: "error", description: err.message });
     }
@@ -73,177 +55,34 @@ const Alc = (props) => {
 
   useEffect(() => {
     const abortController = new AbortController();
-    document.title = `${config.appName} - Active and Passive Learning Concert`;
     fetchItem(abortController);
-    return () => {
-      setLoading(true);
-      abortController.abort();
-    };
+    fetchQuestions(abortController);
+    return () => abortController.abort();
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTimer((pre) => pre + 1);
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-      setTimer(0);
-    };
-  }, [currentIndex, videoEnded]);
-
-  useEffect(() => {
-    if (
-      item &&
-      timer !== 0 &&
-      item.timeout !== 0 &&
-      timer === item.timeout &&
-      !concertEnded &&
-      videoEnded
-    ) {
-      setTimer(0);
-      if (currentIndex + 1 < item.passive_images.length) {
-        setCurrentIndex((pre) => pre + 1);
-      } else {
-        setVideoEnded(false);
-      }
+    if (assets && questions) {
+      setLoading(false);
     }
-  }, [timer]);
-
-  useEffect(() => {
-    const abortController = new AbortController();
-    if (concertEnded && user.role !== "admin") {
-      handleConcertView(abortController);
-    }
-    return () => abortController.abort();
-  }, [concertEnded]);
+  }, [assets, questions]);
 
   if (loading) {
+    <Flex w="full" h="full" justify="center" align="center">
+      <Spinner />
+    </Flex>;
+  } else if (!loading && !hasAllPrerequisites) {
     return (
-      <Flex w="full" h="full" justify="center" align="center">
-        <Spinner />
-      </Flex>
-    );
-  }
-
-  if (!hasAllPrerequisites && user.role !== "admin") {
-    return (
-      <Flex w="full" h="full" justify="center" align="center" direction="column">
-        <Heading fontSize="9xl" mb={5}>
-          😶
+      <Flex justify="center" align="center">
+        <Heading color="GrayText" fontSize="2xl" fontWeight="normal">
+          You don't have all requirements to access this course
         </Heading>
-        <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
-          You Don't have all the prerequisites to access this course.
-        </Heading>
-        <Button onClick={() => history.goBack()} colorScheme="secondary" color="black">
-          Go Back
-        </Button>
-      </Flex>
-    );
-  }
-
-  if (!item || !item.video) {
-    return (
-      <Flex w="full" h="full" justify="center" align="center" direction="column">
-        <Heading mb={3} fontSize="2xl" color="GrayText" fontWeight="normal">
-          No New Concerts Were Found
-        </Heading>
-        <Button
-          colorScheme="secondary"
-          color="black"
-          as={Link}
-          to={`/dashboard/activation_phase/${id}`}
-        >
-          Start Activation Phase
-        </Button>
-      </Flex>
-    );
-  }
-
-  if (concertEnded) {
-    return (
-      <Flex w="full" h="full" justify="center" align="center" direction="column">
-        <Heading fontSize="9xl" mb={5}>
-          😄
-        </Heading>
-        <Heading mb={5} textAlign="center">
-          The Concert has been ended
-        </Heading>
-        <Button
-          colorScheme="secondary"
-          color="black"
-          as={Link}
-          to={`/dashboard/activation_phase/${item.category}`}
-        >
-          Start Activation Phase
-        </Button>
       </Flex>
     );
   }
 
   return (
-    <Flex w="full" h="full" justify="center" align="center" direction="column">
-      {videoEnded ? (
-        <Flex
-          w="full"
-          justify="center"
-          align="center"
-          h="full"
-          bg="gray.100"
-          rounded={5}
-          boxShadow="lg"
-        >
-          <img
-            src={item.passive_images[currentIndex].url}
-            alt={item.passive_images[currentIndex].name}
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
-          />
-          <audio src={item.passive_audio.url} autoPlay></audio>
-          <audio
-            src={
-              (item.passive_background_sound && item.passive_background_sound.url) ||
-              PassiveLearningBgSound
-            }
-            autoPlay
-            onCanPlay={(e) => (e.target.volume = 0.3)}
-          ></audio>
-        </Flex>
-      ) : (
-        <Flex w="full" h="full" direction="column">
-          <Flex
-            w="full"
-            justify="center"
-            align="center"
-            h="full"
-            bg="gray.100"
-            rounded={5}
-            boxShadow="lg"
-          >
-            <video
-              style={{ width: "100%", height: "100%" }}
-              src={item.video.url}
-              autoPlay
-              onEnded={() => {
-                if (videoPlayedCount + 1 === 2) {
-                  setConcertEnded(true);
-                } else {
-                  setVideoEnded(true);
-                  setVideoPlayedCount((pre) => (pre += 1));
-                }
-              }}
-              muted
-            ></video>
-          </Flex>
-          <audio loop src={item.audio.url} autoPlay />
-          <audio
-            loop
-            src={(item.background_music && item.background_music.url) || ActiveLearningBgSound}
-            onCanPlay={(e) => (e.target.volume = 0.3)}
-            autoPlay
-          />
-        </Flex>
-      )}
+    <Flex direction="column">
+      <Heading>Alc!</Heading>
     </Flex>
   );
-};
-
-export default Alc;
+}

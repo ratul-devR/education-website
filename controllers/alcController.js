@@ -1,66 +1,61 @@
 const { unlink } = require("fs");
-const path = require("path");
 
 const Alc = require("../models/alc");
-const Category = require("../models/category");
-const Question = require("../models/question");
 
 module.exports = {
   uploadSingleAlc: async function (req, res, next) {
     try {
-      const {
-        audio,
-        video,
-        background_music,
-        passive_images,
-        passive_audio,
-        passive_background_sound,
-      } = req.files;
-      const { timeout, category, title } = req.body;
+      const { background_music, passive_image, passive_background_sound } = req.files;
+      const { category } = req.body;
 
-      // see if the name is the alc is already existing
-      const alreadyExists = await Alc.findOne({ title });
+      const domain = req.protocol + "://" + req.get("host") + "/uploads/alc/";
 
-      if (alreadyExists) {
-        res
-          .status(400)
-          .json({ msg: `"${title}" this name already exists. Please try something else.` });
+      const alreadyHaveAConcertInCategory = await Alc.findOne({ category });
+
+      if (alreadyHaveAConcertInCategory) {
+        background_music &&
+          unlink(
+            __dirname + "/../" + "public/uploads/alc/" + background_music[0].filename,
+            (err) => {
+              if (err) console.log(err);
+            }
+          );
+        unlink(__dirname + "/../" + "public/uploads/alc/" + passive_image[0].filename, (err) => {
+          if (err) console.log(err);
+        });
+        passive_background_sound &&
+          unlink(
+            __dirname + "/../" + "public/uploads/alc/" + passive_background_sound[0].filename,
+            (err) => {
+              if (err) console.log(err);
+            }
+          );
+        res.status(400).json({ msg: "Already have a concert in this category. If you want to re-upload, please delete the previous one first" });
       } else {
-        const domain = req.protocol + "://" + req.get("host") + "/uploads/alc";
-
-        const newAlc = new Alc({
-          audio: { name: audio[0].filename, url: domain + "/" + audio[0].filename },
-          video: { name: video[0].filename, url: domain + "/" + video[0].filename },
-          background_music: background_music
+        const newItem = new Alc({
+          background_sound: background_music
             ? {
                 name: background_music[0].filename,
-                url: domain + "/" + background_music[0].filename,
+                url: domain + background_music[0].filename,
               }
             : {},
-          passive_images: passive_images.map((passive_image) => ({
-            name: passive_image.filename,
-            url: domain + "/" + passive_image.filename,
-          })),
-          passive_audio: {
-            name: passive_audio[0].filename,
-            url: domain + "/" + passive_audio[0].filename,
+          passive_image: {
+            name: passive_image[0].filename,
+            url: domain + passive_image[0].filename,
           },
           passive_background_sound: passive_background_sound
             ? {
                 name: passive_background_sound[0].filename,
-                url: domain + "/" + passive_background_sound[0].filename,
+                url: domain + passive_background_sound[0].filename,
               }
             : {},
-          timeout,
-          title,
           category,
         });
 
-        await newAlc.save();
+        await newItem.save();
+        await newItem.populate("category");
 
-        const updatedItemList = await Alc.find({}).lean({ defaults: true }).populate("category");
-
-        res.status(201).json({ msg: "New Item was uploaded successfully", items: updatedItemList });
+        res.status(201).json({ msg: "The Item was uploaded successfully", item: newItem });
       }
     } catch (err) {
       next(err);
@@ -77,72 +72,29 @@ module.exports = {
     }
   },
 
-  getItemAccordingToItemId: async function (req, res, next) {
-    try {
-      const { id } = req.params;
-
-      if (!id) {
-        res.status(400).json({ msg: "The Id param is required" });
-      }
-
-      const item = await Alc.findOne({ _id: id });
-
-      if (!item) {
-        res.status(404).json({ msg: "The item was not found" });
-      }
-
-      res.status(200).json({ item });
-    } catch (err) {
-      next(err);
-    }
-  },
-
   deleteItem: async function (req, res, next) {
     try {
       const { id } = req.params;
 
-      // delete the doc
-      const item = await Alc.findByIdAndDelete({ _id: id });
-      // delete all questions
-      await Question.deleteMany({ concert: id });
+      const item = await Alc.findByIdAndRemove(id);
 
-      // delete all the files
-      unlink(path.join(__dirname, `/../public/uploads/alc/${item.audio.name}`), (err) =>
-        err ? err : null
-      );
-      unlink(path.join(__dirname, `/../public/uploads/alc/${item.video.name}`), (err) =>
-        err ? err : null
-      );
-      if (item.background_music) {
-        unlink(
-          path.join(__dirname, `/../public/uploads/alc/${item.background_music.name}`),
-          (err) => (err ? err : null)
-        );
-      }
-      unlink(path.join(__dirname, `/../public/uploads/alc/${item.passive_audio.name}`), (err) =>
-        err ? err : null
-      );
-      item.passive_images.map((passive_image) => {
-        unlink(path.join(__dirname, `/../public/uploads/alc/${passive_image.name}`), (err) =>
-          err ? err : null
-        );
-      });
-      if (item.passive_background_sound) {
-        unlink(
-          path.join(__dirname, `/../public/uploads/alc/${item.passive_background_sound.name}`),
-          (err) => (err ? err : null)
-        );
+      // delete the files
+      function handleDelete(err) {
+        if (err) {
+          console.log(err);
+        }
       }
 
-      // send the updated list
-      const updatedList = await Alc.find({}).lean({ defaults: true }).populate("category");
+      item.background_sound &&
+        unlink(__dirname + "/../public/uploads/alc/" + item.background_sound.name, handleDelete);
+      item.passive_background_sound &&
+        unlink(
+          __dirname + "/../public/uploads/alc/" + item.passive_background_sound.name,
+          handleDelete
+        );
+      unlink(__dirname + "/../public/uploads/alc/" + item.passive_image.name, handleDelete);
 
-      res
-        .status(200)
-        .json({
-          items: updatedList,
-          msg: "Deleted Successfully. And also deleted all the questions which were taught in this concert",
-        });
+      res.status(201).json({ msg: "Deleted successfully", item });
     } catch (err) {
       next(err);
     }
@@ -152,27 +104,9 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      const category = await Category.findOne({ _id: id })
-        .lean({ defaults: true })
-        .populate("prerequisites");
+      const alc = await Alc.findOne({ category: id });
 
-      let item =
-        (await Alc.findOne({
-          $and: [{ category: category._id }, { viewers: { $nin: [req.user._id] } }],
-        })) || null;
-
-      category.purchasedBy = category.purchasedBy.map((user) => user.toString());
-      const userHasPurchased = category.purchasedBy.includes(req.user._id.toString());
-
-      let hasAllPrerequisites = true;
-      for (let i = 0; i < category.prerequisites.length; i++) {
-        const prerequisite = category.prerequisites[i];
-        prerequisite.completedBy = prerequisite.completedBy.map((user) => user.toString());
-        if (!prerequisite.completedBy.includes(req.user._id.toString()))
-          hasAllPrerequisites = false;
-      }
-
-      res.status(200).json({ hasPurchased: userHasPurchased, item, hasAllPrerequisites });
+      res.status(200).json({ item: alc });
     } catch (err) {
       next(err);
     }

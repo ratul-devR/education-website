@@ -150,9 +150,9 @@ const Quiz = ({ path }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!loading && userCommitted && questions[currentIndex].type === "mcq") {
+      if (!loading && userCommitted && questions[currentIndex].type === "mcq" && questions.length > 0) {
         setTimer((pre) => pre + 1);
-      } else if (questions[currentIndex].type === "text") {
+      } else if (questions.length > 0 && questions[currentIndex].type === "text") {
         setTimer((pre) => pre + 1);
       }
     }, 1000);

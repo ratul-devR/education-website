@@ -13,12 +13,9 @@ module.exports = function (req, res, next) {
   const upload = uploader("alc");
 
   upload.fields([
-    { name: "audio" },
-    { name: "video" },
-    { name: "background_music" },
-    { name: "passive_images" },
-    { name: "passive_audio" },
-    { name: "passive_background_sound" },
+    { name: "background_music", maxCount: 1 },
+    { name: "passive_image", maxCount: 1 },
+    { name: "passive_background_sound", maxCount: 1 },
   ])(req, res, (err) => {
     if (err) {
       res.status(500).json({ msg: err.message });

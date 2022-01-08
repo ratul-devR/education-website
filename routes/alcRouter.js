@@ -7,7 +7,6 @@ const {
   deleteItem,
   userViewedConcert,
   getItemAccordingToId,
-  getItemAccordingToItemId,
 } = require("../controllers/alcController");
 
 // middlewares
@@ -21,9 +20,6 @@ router.post("/", authorizeAdmin, uploadAlcFiles, uploadSingleAlc);
 
 // for getting all the items
 router.get("/", authorizeAdmin, getItems);
-
-// for getting a specific item according to item id
-router.get("/id/:id", authorizeAdmin, getItemAccordingToItemId);
 
 // for deleting a single ite
 router.delete("/:id", authorizeAdmin, deleteItem);

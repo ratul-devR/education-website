@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/button";
-import { Text, Spinner, Divider, Link as ChakraLink } from "@chakra-ui/react";
+import { Text, Spinner, Divider } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/hooks";
 import {
   Modal,
@@ -14,10 +14,8 @@ import { Flex } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/button";
 import { MdDeleteOutline } from "react-icons/md";
 import { useEffect, useState } from "react";
-import { Input } from "@chakra-ui/input";
 import { Select } from "@chakra-ui/select";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
-import { useHistory } from "react-router-dom";
 
 import NoMessage from "../global/NoMessage";
 
@@ -26,19 +24,13 @@ import config from "../../config";
 
 // active learning concert and passive learning concert
 const Alc = () => {
-  const [
-    { audio, video, background_music, passive_background_sound, passive_audio, passive_images },
-    setFiles,
-  ] = useState({
-    audio: null,
-    video: null,
-    background_music: null,
-    passive_audio: null,
-    passive_images: [],
-    passive_background_sound: null,
-  });
-  const [timeout, setTimeout] = useState();
-  const [title, setTitle] = useState();
+  const [{ background_music, passive_background_sound, passive_image }, setState] =
+    useState({
+      background_music: null,
+      passive_image: null,
+      timeout: "",
+      passive_background_sound: null,
+    });
   const [category, setCategory] = useState();
 
   const [categories, setCategories] = useState();
@@ -50,11 +42,10 @@ const Alc = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-  const history = useHistory();
 
   function handleInputChange(event) {
     const { name, files } = event.target;
-    setFiles((pre) => ({ ...pre, [name]: name === "passive_images" ? files : files[0] }));
+      setState((pre) => ({ ...pre, [name]: files[0] }));
   }
 
   // for fetching all the categories
@@ -81,22 +72,14 @@ const Alc = () => {
     setProcessing(true);
     const formData = new FormData();
 
-    formData.append("audio", audio);
-    formData.append("video", video);
     if (background_music) {
       formData.append("background_music", background_music);
     }
-    for (let i = 0; i < passive_images.length; i++) {
-      const passiveImage = passive_images[i];
-      formData.append("passive_images", passiveImage);
-    }
-    formData.append("timeout", timeout);
     formData.append("category", category);
-    formData.append("title", title);
-    formData.append("passive_audio", passive_audio);
     if (passive_background_sound) {
       formData.append("passive_background_sound", passive_background_sound);
     }
+    formData.append("passive_image", passive_image)
 
     try {
       const res = await fetch(`${config.serverURL}/active_learning_concert`, {
@@ -108,7 +91,7 @@ const Alc = () => {
 
       if (res.ok) {
         toast({ status: "success", description: body.msg });
-        setItems(body.items);
+        setItems((pre) => [...pre, body.item]);
         setProcessing(false);
         onClose();
       } else if (res.status === 400) {
@@ -159,7 +142,7 @@ const Alc = () => {
         const body = await res.json();
 
         if (res.ok) {
-          setItems(body.items);
+          setItems(items.filter((item) => item._id !== body.item._id));
           toast({ status: "success", description: body.msg });
         } else if (res.status === 400) {
           toast({ status: "warning", description: body.msg });
@@ -206,12 +189,6 @@ const Alc = () => {
           <ModalHeader>Add new item</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Input
-              onChange={(e) => setTitle(e.target.value)}
-              value={title}
-              placeholder="Enter a name to identify this Item"
-              mb={5}
-            />
             <Flex
               border="1px solid"
               p={3}
@@ -220,38 +197,13 @@ const Alc = () => {
               direction="column"
               mb={5}
             >
-              <Text mb={2}>
-                Audio<sup>*</sup>
-              </Text>
-              <input name="audio" onChange={handleInputChange} accept="audio/mpeg" type="file" />
-            </Flex>
-            <Flex
-              border="1px solid"
-              p={3}
-              borderRadius={5}
-              borderColor="gray.100"
-              direction="column"
-              mb={5}
-            >
-              <Text mb={2}>Background Sound</Text>
+              <Text mb={2}>Background Sound (Active Learning)</Text>
               <input
                 name="background_music"
                 onChange={handleInputChange}
                 accept="audio/mpeg"
                 type="file"
               />
-            </Flex>
-            <Flex
-              border="1px solid"
-              p={3}
-              borderRadius={5}
-              borderColor="gray.100"
-              direction="column"
-            >
-              <Text mb={2}>
-                Video<sup>*</sup>
-              </Text>
-              <input name="video" onChange={handleInputChange} accept="video/mp4" type="file" />
             </Flex>
 
             <Divider my={10} />
@@ -265,38 +217,12 @@ const Alc = () => {
               mb={5}
             >
               <Text mb={2}>
-                Passive Learning Images<sup>*</sup>
+                Passive Learning Image<sup>*</sup>
               </Text>
               <input
-                multiple
-                name="passive_images"
+                name="passive_image"
                 onChange={handleInputChange}
                 accept="image/*"
-                type="file"
-              />
-            </Flex>
-            <Flex mb={5}>
-              <Input
-                value={timeout}
-                onChange={(event) => setTimeout(event.target.value)}
-                placeholder="TimeSpan for each images (seconds)*"
-              />
-            </Flex>
-            <Flex
-              border="1px solid"
-              p={3}
-              borderRadius={5}
-              borderColor="gray.100"
-              direction="column"
-              mb={5}
-            >
-              <Text mb={2}>
-                Passive Learning Audio<sup>*</sup>
-              </Text>
-              <input
-                name="passive_audio"
-                onChange={handleInputChange}
-                accept="audio/mpeg"
                 type="file"
               />
             </Flex>
@@ -338,15 +264,7 @@ const Alc = () => {
               Close
             </Button>
             <Button
-              disabled={
-                !audio ||
-                !video ||
-                processing ||
-                !passive_images.length ||
-                !passive_audio ||
-                !timeout ||
-                !category
-              }
+              disabled={processing || !passive_image || !category}
               onClick={uploadItem}
               colorScheme="secondary"
               color="black"
@@ -360,28 +278,14 @@ const Alc = () => {
       {items && items.length > 0 ? (
         <Table minW="700px" size="sm">
           <Thead>
-            <Th>Name</Th>
             <Th>Category</Th>
-            <Th>views</Th>
             <Th>Action</Th>
           </Thead>
           <Tbody>
             {items.map((item) => {
               return (
                 <Tr key={item._id}>
-                  <Td>
-                    <ChakraLink
-                      onClick={() =>
-                        history.push(`/dashboard/alc/${item._id}`, {
-                          id: item._id,
-                        })
-                      }
-                    >
-                      {item.title}
-                    </ChakraLink>
-                  </Td>
                   <Td>{item.category.name}</Td>
-                  <Td>{item.viewers.length}</Td>
                   <Td>
                     <IconButton
                       onClick={() => deleteItem(item._id)}
