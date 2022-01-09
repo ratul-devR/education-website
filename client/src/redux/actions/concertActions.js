@@ -6,8 +6,8 @@ export function LOAD_ASSETS(payload) {
   return {type: "LOAD_ASSETS", payload};
 }
 
-export function NEXT_QUESTION() {
-  return { type: "NEXT_QUESTION" }
+export function NEXT_WORD() {
+  return { type: "NEXT_WORD" }
 }
 
 export function RESET_CONCERT() {

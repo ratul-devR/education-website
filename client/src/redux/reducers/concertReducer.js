@@ -3,10 +3,10 @@ const initialState = {
   loading: true,
   currentPhase: "active",
   currentIndex: 0,
-  activeLearningPlayedCount: 0,
+  activeLearningPlayedBefore: false,
   assets: {},
   useDefaultAsset: true,
-  ended: false
+  ended: false,
 };
 
 export default function concertReducer(state = initialState, action) {
@@ -34,16 +34,27 @@ export default function concertReducer(state = initialState, action) {
       };
     }
 
-    case "NEXT_QUESTION": {
+    case "NEXT_WORD": {
       if (state.currentIndex + 1 < state.questions.length) {
-        return {...state, currentIndex: state.currentIndex + 1}
+        return { ...state, currentIndex: state.currentIndex + 1 };
       } else {
-        return { ...state, currentPhase: "passive" }
+        if (state.currentPhase === "passive" && !state.activeLearningPlayedBefore) {
+          return {
+            ...state,
+            currentPhase: "active",
+            currentIndex: 0,
+            activeLearningPlayedBefore: true,
+          };
+        } else if (state.currentPhase === "active" && state.activeLearningPlayedBefore) {
+          return { ...state, ended: true };
+        } else if (state.currentPhase === "active" && !state.activeLearningPlayedBefore) {
+          return { ...state, currentIndex: 0, currentPhase: "passive" };
+        }
       }
     }
 
-    case "RESET_QUIZ": {
-      return state;
+    case "RESET_CONCERT": {
+      return initialState;
     }
 
     default: {

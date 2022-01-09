@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Flex, Heading } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/button";
+import { Link } from "react-router-dom";
 import useToast from "../../hooks/useToast";
 import config from "../../config";
 import { useParams } from "react-router-dom";
@@ -9,9 +11,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { LOAD_QUESTIONS, LOAD_ASSETS, RESET_CONCERT } from "../../redux/actions/concertActions";
 
 import ActiveLearning from "../Dashboard/Concerts/ActiveLearning";
+import PassiveLearning from "../Dashboard/Concerts/PassiveLearning";
 
 export default function Alc() {
-  const { questions, loading, currentIndex, currentPhase } = useSelector(
+  const { questions, loading, currentIndex, currentPhase, ended } = useSelector(
     (state) => state.concertReducer
   );
   const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
@@ -60,13 +63,17 @@ export default function Alc() {
   }
 
   useEffect(() => {
-    dispatch(RESET_CONCERT())
     const abortController = new AbortController();
     fetchItem(abortController);
     fetchQuestions(abortController);
-    return () => 
-       abortController.abort();
+    return () => abortController.abort();
   }, []);
+
+  useEffect(() => {
+    return () => {
+      dispatch(RESET_CONCERT());
+    };
+  }, [alcId, courseId]);
 
   if (loading) {
     return (
@@ -85,19 +92,37 @@ export default function Alc() {
   } else if (questions && !questions[currentIndex] && !questions.length) {
     return (
       <Flex justify="center" align="center" w="full" h="full">
-        <Heading>No new words to learn</Heading>
+        <Heading mb={5} color="GrayText" fontWeight="normal">No new words to learn</Heading>
+        <Button
+          colorScheme="secondary"
+          color="black"
+          as={Link}
+          to={`/dashboard/activation_phase/${courseId}`}
+        >
+          Start Activation Phase
+        </Button>
+      </Flex>
+    );
+  } else if (ended) {
+    return (
+      <Flex w="full" h="full" justify="center" align="center" direction="column">
+        <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
+          The concert has been ended
+        </Heading>
+        <Button
+          colorScheme="secondary"
+          color="black"
+          as={Link}
+          to={`/dashboard/activation_phase/${courseId}`}
+        >
+          Start Activation Phase
+        </Button>
       </Flex>
     );
   } else {
     return (
       <Flex direction="column" w="full" h="full" rounded={5} overflow="hidden">
-        {currentPhase === "active" ? (
-          <ActiveLearning />
-        ) : (
-          <Flex direction="column">
-            <h1>Passive learning</h1>
-          </Flex>
-        )}
+        {currentPhase === "active" ? <ActiveLearning /> : <PassiveLearning />}
       </Flex>
     );
   }
