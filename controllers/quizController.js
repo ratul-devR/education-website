@@ -80,6 +80,7 @@ module.exports = {
       const courseQuestions = await Question.find({
         $and: [{ category: course._id }, { unknownUsers: { $in: [user._id] } }],
       }).lean({ defaults: true });
+      const learningQuestions = courseQuestions.filter((question) => question.type === "mcq")
 
       let hasAllPrerequisites = true;
 
@@ -96,7 +97,11 @@ module.exports = {
         $and: [{ category: course._id }, { packUsers: { $in: [req.user._id] } }],
       }).lean({ defaults: true });
 
-      res.status(200).json({ courseQuestions, course, hasAllPrerequisites, unknownQuestionsPack });
+      // check if the user has purchased this course or not
+      course.purchasedBy = course.purchasedBy.map((user) => user.toString())
+      const userHasPaid = course.purchasedBy.includes(user._id.toString())
+
+      res.status(200).json({ courseQuestions, learningQuestions, userHasPaid, course, hasAllPrerequisites, unknownQuestionsPack });
     } catch (err) {
       next(err);
     }

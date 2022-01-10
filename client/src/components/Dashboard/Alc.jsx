@@ -7,6 +7,7 @@ import config from "../../config";
 import { useParams } from "react-router-dom";
 import { Spinner } from "@chakra-ui/spinner";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import { LOAD_QUESTIONS, LOAD_ASSETS, RESET_CONCERT } from "../../redux/actions/concertActions";
 
@@ -21,6 +22,7 @@ export default function Alc() {
 
   const { courseId, alcId } = useParams();
   const toast = useToast();
+  const history = useHistory();
   const dispatch = useDispatch();
 
   async function fetchItem(abortController) {
@@ -51,10 +53,14 @@ export default function Alc() {
         credentials: "include",
       });
       const body = await res.json();
+
       if (res.ok) {
-        body.courseQuestions = body.courseQuestions.map((question) => ({ ...question, question: question.question.replaceAll("_", "") }))
-        dispatch(LOAD_QUESTIONS(body.courseQuestions));
-        setHasAllPrerequisites(body.hasAllPrerequisites);
+        if (!body.userHasPaid) {
+          history.push(`/dashboard/pay/${courseId}`, { phase: "learning" });
+        } else {
+          dispatch(LOAD_QUESTIONS(body.learningQuestions));
+          setHasAllPrerequisites(body.hasAllPrerequisites);
+        }
       } else {
         toast({ status: "error", description: body.msg });
       }

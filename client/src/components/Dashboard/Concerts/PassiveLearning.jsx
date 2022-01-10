@@ -14,31 +14,40 @@ export default function PassiveLearning() {
   const defaultAudio = new Audio(PassiveBgSound);
   const dispatch = useDispatch();
 
+  /*
+    First play the passive learning voice immediately
+    then play it again after 3 seconds
+    then wait until 1 second and navigate into the next word
+  */
   function repeatAudios(index) {
     const passiveLearningAudio = new Audio(questions[index].passiveLearningVoice);
-    setTimeout(() => {
-      passiveLearningAudio.currentTime = 0;
-      passiveLearningAudio.play();
-      passiveLearningAudio.onended = () => {
-        setTimeout(() => {
-          passiveLearningAudio.currentTime = 0;
-          passiveLearningAudio.play();
-          passiveLearningAudio.onended = () => {
+
+    passiveLearningAudio.currentTime = 0;
+    passiveLearningAudio.play();
+
+    passiveLearningAudio.onended = () => {
+      setTimeout(() => {
+        passiveLearningAudio.currentTime = 0;
+        passiveLearningAudio.play();
+        passiveLearningAudio.onended = () => {
+          setTimeout(() => {
             dispatch(NEXT_WORD());
-          };
-        }, 1000);
-      };
-    }, 500);
+          }, 1000);
+        };
+      }, 3000);
+    };
   }
 
   function playBgAudio() {
     if (useDefaultAsset) {
       defaultAudio.currentTime = 0;
       defaultAudio.volume = 0.2;
+      defaultAudio.loop = true
       defaultAudio.play();
     } else {
       assets.passiveLearningBgAudio.currentTime = 0;
       assets.passiveLearningBgAudio.volume = 0.2;
+      assets.passiveLearningBgAudio.loop = true
       assets.passiveLearningBgAudio.play();
     }
   }
@@ -54,8 +63,8 @@ export default function PassiveLearning() {
   useEffect(() => {
     playBgAudio();
     return () => {
-      stopBgAudio()
-    }; 
+      stopBgAudio();
+    };
   }, []);
 
   return (

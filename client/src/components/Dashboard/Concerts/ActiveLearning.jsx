@@ -1,7 +1,9 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Flex, Heading } from "@chakra-ui/layout";
 import { Text } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
+import { BiMicrophone } from "react-icons/bi";
+import { Tooltip } from "@chakra-ui/tooltip";
 
 import { NEXT_WORD } from "../../../redux/actions/concertActions";
 
@@ -11,9 +13,9 @@ export default function ActiveLearning() {
   const { questions, currentIndex, assets, useDefaultAsset } = useSelector(
     (state) => state.concertReducer
   );
-  const [currentPlayedCount, setCurrentPlayedCount] = useState(0);
-  const questionAudioRef = useRef();
   const dispatch = useDispatch();
+  const [showMic, setShowMic] = useState(false);
+  const [showTranslation, setShowTranslation] = useState(true);
 
   const defaultAudio = new Audio(activeLearningDefaultAudio);
 
@@ -21,10 +23,12 @@ export default function ActiveLearning() {
     if (assets.activeLearningBgAudio) {
       assets.activeLearningBgAudio.currentTime = 0;
       assets.activeLearningBgAudio.volume = 0.2;
+      assets.loop = true
       assets.activeLearningBgAudio.play();
     } else if (useDefaultAsset) {
       defaultAudio.currentTime = 0;
       defaultAudio.volume = 0.2;
+      defaultAudio.loop = true
       defaultAudio.play();
     }
   }
@@ -38,12 +42,15 @@ export default function ActiveLearning() {
   }
 
   function handleAudioEnd() {
-    setCurrentPlayedCount((pre) => pre + 1);
-    if (currentPlayedCount + 1 === 2) {
-      dispatch(NEXT_WORD());
-    } else {
-      setTimeout(() => questionAudioRef.current.play(), 1000);
-    }
+    setShowMic(true);
+    setShowTranslation(false);
+    setTimeout(() => {
+      setShowMic(false);
+      const questionAudio = new Audio(questions[currentIndex].activeLearningVoice);
+      questionAudio.currentTime = 0;
+      questionAudio.play();
+      questionAudio.onended = () => setTimeout(() => dispatch(NEXT_WORD()), 1000);
+    }, 3000);
   }
 
   useEffect(() => {
@@ -52,7 +59,10 @@ export default function ActiveLearning() {
   }, []);
 
   useEffect(() => {
-    setCurrentPlayedCount(0);
+    return () => {
+      setShowMic(false);
+      setShowTranslation(true);
+    };
   }, [currentIndex]);
 
   return (
@@ -60,16 +70,22 @@ export default function ActiveLearning() {
       <Heading color="primary" fontSize={100} mb={5}>
         {questions[currentIndex].answers[0]}
       </Heading>
-      <Text mb={10} color="GrayText" fontSize="2xl">
-        {questions[currentIndex].question}
-      </Text>
-      <audio
-        autoPlay
-        ref={questionAudioRef}
-        onEnded={handleAudioEnd}
-        src={questions[currentIndex].activeLearningVoice}
-        controls
-      />
+
+      {showMic && (
+        <Tooltip hasArrow label="Try pronouncing yourself">
+          <Heading fontSize={50} color="GrayText">
+            <BiMicrophone />
+          </Heading>
+        </Tooltip>
+      )}
+
+      {showTranslation && (
+        <Text mb={10} color="GrayText" fontSize="2xl">
+          {questions[currentIndex].question}
+        </Text>
+      )}
+
+      <audio autoPlay onEnded={handleAudioEnd} src={questions[currentIndex].activeLearningVoice} />
     </Flex>
   );
 }

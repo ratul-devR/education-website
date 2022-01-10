@@ -73,7 +73,8 @@ module.exports = {
   getItemsOfCategory: async function (req, res, next) {
     try {
       const { courseId } = req.params;
-      const items = await Alc.find({ category: courseId });
+
+      const items = await Alc.find({category: courseId});
 
       res.status(200).json({ items });
     } catch (err) {

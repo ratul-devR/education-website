@@ -108,8 +108,18 @@ const Pay = ({ location }) => {
           setProcessing(false);
           history.push("/dashboard/paymentSuccess", {
             course,
-            type: "course",
-            checking: location.state ? location.state.fromCheckingPhase : false,
+            phase: location.state.phase,
+            subMessage:
+              location.state.phase === "learning"
+                ? "Now you can get started with concerts"
+                : "Now you can start the checking phase",
+            button: {
+              text: location.state.phase === "learning" ? "Start Learning" : "Start Checking",
+              url:
+                location.state.phase === "learning"
+                  ? `/dashboard/alcs/${course._id}`
+                  : `/dashboard/quiz/${course._id}`,
+            },
           });
           toast({
             status: "success",

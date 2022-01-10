@@ -11,7 +11,7 @@ export default function PaymentSuccess({ location }) {
   const history = useHistory();
   const toast = useToast();
   const dispatch = useDispatch();
-  const { course, type } = location.state;
+  const { course, phase, subMessage, button } = location.state
 
   async function startLearning() {
     try {
@@ -23,12 +23,7 @@ export default function PaymentSuccess({ location }) {
       const body = await res.json();
       if (res.ok) {
         dispatch(LOGIN(body));
-        let pushPath = location.state.checking
-          ? `quiz/${course._id}`
-          : type === "course"
-          ? `alc/${course._id}`
-          : `activation_phase/${course._id}`;
-        history.push(`/dashboard/${pushPath}`);
+        history.push(button.url);
       } else {
         toast({ status: "error", description: body.msg });
       }
@@ -40,15 +35,12 @@ export default function PaymentSuccess({ location }) {
     <Flex w="full" h="full" justify="center" align="center" direction="column">
       <Heading mb={3} fontSize="2xl" fontWeight="normal" textAlign="center">
         Thanks for Purchasing "{course.name}"{" "}
-        <span>{type === "package" ? "Question Pack" : ""}</span>
       </Heading>
       <Text mb={5}>
-        {type === "course"
-          ? "Now You can access everything in this course"
-          : "Now you can start learning your unknown questions"}
+        {subMessage}
       </Text>
       <Button onClick={startLearning} colorScheme="secondary" color="black">
-        {type === "course" ? "Start Learning" : "Start Activation Phase"}
+        {button.text}
       </Button>
     </Flex>
   );
