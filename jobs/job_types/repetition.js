@@ -25,14 +25,6 @@ module.exports = function (agenda) {
 					await Question.updateOne({ _id: questionId }, { $pull: { unknownUsers: user._id } });
 					await Question.updateOne({ _id: questionId }, { $pull: { packUsers: user._id } });
 
-					// mark the user has he has repeated this question
-					// so I can see if the user has given wrong answer of a repeated question
-					// the user will have to learn them again in the learning phase
-					question.repeatedUsers = question.repeatedUsers.map((user) => user.toString());
-					const alreadyRepeated = question.repeatedUsers.includes(user._id.toString());
-					if (!alreadyRepeated)
-						await Question.updateOne({ _id: questionId }, { $push: { repeatedUsers: user._id } });
-
 					client.close();
 					done();
 				} catch (err) {

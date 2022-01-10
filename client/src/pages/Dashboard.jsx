@@ -38,7 +38,7 @@ const Dashboard = () => {
         <Heading fontSize="2xl" color="red.400" mb={3}>
           Sign Up
         </Heading>
-        <Heading w="full" maxW="400px" fontSize="md" textAlign="center" fontWeight="normal" mb={3}>
+        <Heading w="full" maxW="450px" fontSize="md" textAlign="center" fontWeight="normal" mb={3}>
           Please check your emails to confirm your registration. If you do not find an email from us
           please look into your spam.
         </Heading>

@@ -8,7 +8,6 @@ const dataSchema = new mongoose.Schema({
   type: { type: String, required: true, enum: ["mcq", "text"] },
   category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
   timeLimit: { type: Number, required: true },
-  concert: { type: mongoose.Schema.Types.ObjectId, ref: "Alc", required: true },
   activeLearningVoice: { type: String, required: true },
   passiveLearningVoice: { type: String, required: true },
   passiveLearningMaleVoice: { type: String, required: true },
@@ -16,7 +15,6 @@ const dataSchema = new mongoose.Schema({
   knownUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
   unknownUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
   packUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
-  repeatedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
 });
 
 dataSchema.plugin(mongooseLeanDefaults);

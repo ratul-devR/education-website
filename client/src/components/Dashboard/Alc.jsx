@@ -52,6 +52,7 @@ export default function Alc() {
       });
       const body = await res.json();
       if (res.ok) {
+        body.courseQuestions = body.courseQuestions.map((question) => ({ ...question, question: question.question.replaceAll("_", "") }))
         dispatch(LOAD_QUESTIONS(body.courseQuestions));
         setHasAllPrerequisites(body.hasAllPrerequisites);
       } else {
@@ -63,6 +64,7 @@ export default function Alc() {
   }
 
   useEffect(() => {
+    dispatch(RESET_CONCERT());
     const abortController = new AbortController();
     fetchItem(abortController);
     fetchQuestions(abortController);
@@ -91,8 +93,10 @@ export default function Alc() {
     );
   } else if (questions && !questions[currentIndex] && !questions.length) {
     return (
-      <Flex justify="center" align="center" w="full" h="full">
-        <Heading mb={5} color="GrayText" fontWeight="normal">No new words to learn</Heading>
+      <Flex justify="center" align="center" direction="column" mb={5} w="full" h="full">
+        <Heading mb={5} color="GrayText" fontWeight="normal">
+          No new words to learn
+        </Heading>
         <Button
           colorScheme="secondary"
           color="black"

@@ -226,7 +226,7 @@ module.exports = {
   addQuestion: async function (req, res, next) {
     try {
       const { categoryId } = req.params;
-      const { question, options, answer, type, concert, timeLimit, answers } = req.body;
+      const { question, options, answer, type, timeLimit, answers } = req.body;
       const { activeLearningVoice, passiveLearningVoice, passiveLearningMaleVoice } = req.files;
 
       let newQuestion;
@@ -235,7 +235,6 @@ module.exports = {
         newQuestion = new Question({
           question,
           options,
-          concert,
           answers: [answer],
           category: categoryId,
           type,
@@ -248,7 +247,6 @@ module.exports = {
           category: categoryId,
           type,
           timeLimit,
-          concert,
         });
       }
 
@@ -258,7 +256,6 @@ module.exports = {
       newQuestion.passiveLearningVoice = url + passiveLearningVoice[0].filename;
       newQuestion.passiveLearningMaleVoice = url + passiveLearningMaleVoice[0].filename;
 
-      await newQuestion.populate("concert");
       await newQuestion.save();
 
       await Category.updateOne({ _id: categoryId }, { $push: { questions: newQuestion } });
@@ -319,8 +316,6 @@ module.exports = {
         }
 
         if (question.type === "mcq") {
-          const questionConcert = await Alc.findOne({ title: question.concert });
-
           if (
             !question.question ||
             !question.option1_answer ||
@@ -329,7 +324,6 @@ module.exports = {
             !question.option4 ||
             !question.option5 ||
             !question.timeLimit ||
-            !question.concert ||
             !question.activeLearningVoice ||
             !question.passiveLearningVoice ||
             !question.passiveLearningMaleVoice
@@ -341,17 +335,7 @@ module.exports = {
             res.status(400).json({
               msg: `A required field is missing in the doc. On row/line number: [${i + 1}]`,
             });
-          } else if (!questionConcert) {
-            unlink(
-              path.join(__dirname, `/../public/uploads/question-csv-files/${file.filename}`),
-              (err) => (err ? err : null)
-            );
-            res.status(400).json({
-              msg: `This concert named "${
-                question.concert
-              }" was not found. Check line/row number [${i + 1}]`,
-            });
-          }
+          } 
 
           question.options = [];
 
@@ -363,7 +347,6 @@ module.exports = {
             question.option5
           );
           question.answers = [question.option1_answer];
-          question.concert = questionConcert._id;
           question.category = category;
 
           // delete the raw dummy fields
@@ -377,7 +360,6 @@ module.exports = {
             !question.question ||
             !question.answers ||
             !question.timeLimit ||
-            !question.concert ||
             !question.activeLearningVoice ||
             !question.passiveLearningVoice ||
             !question.passiveLearningMaleVoice
@@ -391,22 +373,7 @@ module.exports = {
             });
           }
 
-          const questionConcert = await Alc.findOne({ title: question.concert });
-
-          if (!questionConcert) {
-            unlink(
-              path.join(__dirname, `/../public/uploads/question-csv-files/${file.filename}`),
-              (err) => (err ? err : null)
-            );
-            res.status(400).json({
-              msg: `This concert named "${
-                question.concert
-              }" was not found. Check line/row number [${i + 1}]`,
-            });
-          }
-
           question.answers = question.answers.split("/ ");
-          question.concert = questionConcert._id;
           question.category = category;
         }
       }
@@ -441,8 +408,7 @@ module.exports = {
         const category =
           (await Category.findOne({ _id: categoryId })
             .lean({ defaults: true })
-            .populate("questions")
-            .populate({ path: "questions", populate: "concert" })) || null;
+            .populate("questions"))
 
         if (category) {
           res.status(200).json({ questions: category.questions, category });

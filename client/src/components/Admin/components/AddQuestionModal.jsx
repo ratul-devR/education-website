@@ -17,7 +17,6 @@ import { Select } from "@chakra-ui/select";
 import { Textarea } from "@chakra-ui/textarea";
 import { Tag, TagLabel, TagCloseButton } from "@chakra-ui/tag";
 import { useDisclosure } from "@chakra-ui/hooks";
-import { useEffect } from "react";
 import validator from "validator";
 
 // internal
@@ -31,7 +30,6 @@ const AddQuestionModal = ({ modalValue, setQuestions }) => {
       answer,
       type,
       timeLimit,
-      concert,
       activeLearningVoice,
       passiveLearningVoice,
       passiveLearningMaleVoice,
@@ -42,7 +40,6 @@ const AddQuestionModal = ({ modalValue, setQuestions }) => {
     answer: "",
     type: "",
     timeLimit: "",
-    concert: "",
     activeLearningVoice: null,
     passiveLearningVoice: null,
   });
@@ -50,8 +47,6 @@ const AddQuestionModal = ({ modalValue, setQuestions }) => {
 
   const [optionInput, setOptionInput] = useState("");
   const [options, setOptions] = useState([]);
-
-  const [alcs, setAlcs] = useState();
 
   const [answersInput, setAnswersInput] = useState("");
   const [answers, setAnswers] = useState([]);
@@ -121,7 +116,6 @@ const AddQuestionModal = ({ modalValue, setQuestions }) => {
     formData.append("answer", answer);
     formData.append("type", type);
     formData.append("timeLimit", timeLimit);
-    formData.append("concert", concert);
     optionsToSend.map((option) => {
       formData.append("options", option);
     });
@@ -155,24 +149,6 @@ const AddQuestionModal = ({ modalValue, setQuestions }) => {
     }
   }
 
-  // for fetching alcs
-  async function fetchAlcs(abortController) {
-    try {
-      const res = await fetch(`${config.serverURL}/active_learning_concert`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        signal: abortController.signal,
-        credentials: "include",
-      });
-      const body = await res.json();
-      if (res.ok) {
-        setAlcs(body.items.length > 0 ? body.items : null);
-      }
-    } catch (err) {
-      toast({ status: "error", description: err.message });
-    }
-  }
-
   // for closing up the modal and resetting the values
   function closeModal() {
     setInput({ answer: "", question: "" });
@@ -180,12 +156,6 @@ const AddQuestionModal = ({ modalValue, setQuestions }) => {
     setOptions([]);
     onClose();
   }
-
-  useEffect(() => {
-    const abortController = new AbortController();
-    fetchAlcs(abortController);
-    return () => abortController.abort();
-  }, []);
 
   return (
     <Flex>
@@ -289,24 +259,6 @@ const AddQuestionModal = ({ modalValue, setQuestions }) => {
                 placeholder="Time limit for this question"
                 mb={3}
               />
-              <Select
-                disabled={!alcs}
-                value={concert}
-                onChange={HandleInputChange}
-                name="concert"
-                mb={3}
-                placeholder={alcs ? "Where it will be taught? (concert)" : "No Concerts found"}
-              >
-                {alcs &&
-                  alcs.length > 0 &&
-                  alcs.map((alc) => {
-                    return (
-                      <option key={alc._id} value={alc._id}>
-                        {alc.title}
-                      </option>
-                    );
-                  })}
-              </Select>
               <Flex
                 p={5}
                 flexDirection="column"
@@ -375,7 +327,6 @@ const AddQuestionModal = ({ modalValue, setQuestions }) => {
                 !question ||
                 !type ||
                 !timeLimit ||
-                !concert ||
                 !activeLearningVoice ||
                 !passiveLearningVoice ||
                 !passiveLearningMaleVoice ||

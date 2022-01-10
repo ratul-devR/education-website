@@ -9,6 +9,7 @@ import {
   Link,
   InputGroup,
   InputRightElement,
+  Select
 } from "@chakra-ui/react";
 import validator from "validator";
 import { useDispatch } from "react-redux";
@@ -31,9 +32,10 @@ function useQuery() {
 }
 
 const Register = () => {
-  const [{ fName, lName, email, password, conPass }, setInput] = useState({
+  const [{ fName, lName, email, password, conPass, age }, setInput] = useState({
     fName: "",
     lName: "",
+    age: "",
     email: "",
     password: "",
     conPass: "",
@@ -46,6 +48,24 @@ const Register = () => {
   const dispatch = useDispatch();
   const toast = useToast();
   const history = useHistory();
+
+  const ages = [
+      "10 - 15 years",
+      "16 - 20 years",
+      "21 - 25 years",
+      "26 - 30 years",
+      "31 - 35 years",
+      "36 - 40 years",
+      "41 - 45 years",
+      "46 - 50 years",
+      "51 - 55 years",
+      "56 - 60 years",
+      "61 - 65 years",
+      "66 - 70 years",
+      "71 - 75 years ",
+      "76 - 80 years",
+      "> 81 years",
+  ]
 
   const query = useQuery();
 
@@ -61,7 +81,7 @@ const Register = () => {
   // for validating the input infos after clicking on the button
   function ValidateInputInfo() {
     const { allFields, emailOk, passwordLength, passwordMatched } = {
-      allFields: fName && lName && email && password && conPass,
+      allFields: fName && lName && email && password && conPass && age,
       emailOk: validator.isEmail(email),
       passwordLength: password.length >= 8,
       passwordMatched: password === conPass,
@@ -90,6 +110,7 @@ const Register = () => {
         body: JSON.stringify({
           firstName: fName,
           lastName: lName,
+          age,
           email,
           password,
           referer: refererId,
@@ -166,6 +187,11 @@ const Register = () => {
           type="text"
           value={lName}
         />
+        <Select mb={3} placeholder="What is your age" onChange={HandleInputChange} name="age" value={age}>
+          {ages.map((age, index) => {
+            return <option value={age} key={index}>{age}</option>
+          })}
+        </Select>
         <InputField
           onChange={HandleInputChange}
           placeholder="Enter your email"

@@ -39,7 +39,7 @@ module.exports = {
 
   register: async function (req, res, next) {
     try {
-      const { firstName, lastName, email, password, referer } = req.body;
+      const { firstName, lastName, age, email, password, referer } = req.body;
 
       let newUser;
 
@@ -51,9 +51,9 @@ module.exports = {
 
       // if the user is referred
       if (hasReferred) {
-        newUser = new User({ firstName, lastName, email, password, referer });
+        newUser = new User({ firstName, lastName, email, password, referer, age });
       } else {
-        newUser = new User({ firstName, lastName, email, password });
+        newUser = new User({ firstName, lastName, email, password, age });
       }
 
       // updating the referer

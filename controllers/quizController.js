@@ -2,7 +2,6 @@ const Category = require("../models/category");
 const User = require("../models/people");
 const QuizAsset = require("../models/quizAsset");
 const Question = require("../models/question");
-const Alc = require("../models/alc");
 
 const agenda = require("../jobs/agenda");
 

@@ -150,7 +150,12 @@ const Quiz = ({ path }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!loading && userCommitted && questions[currentIndex].type === "mcq" && questions.length > 0) {
+      if (
+        !loading &&
+        userCommitted &&
+        questions[currentIndex].type === "mcq" &&
+        questions.length > 0
+      ) {
         setTimer((pre) => pre + 1);
       } else if (questions.length > 0 && questions[currentIndex].type === "text") {
         setTimer((pre) => pre + 1);
@@ -233,7 +238,7 @@ const Quiz = ({ path }) => {
           to={
             path === "getUserUnknownQuestions"
               ? `/dashboard/quiz/${course._id}`
-              : `/dashboard/alc/${course._id}`
+              : `/dashboard/alcs/${course._id}`
           }
         >
           {path === "getUserUnknownQuestions" ? "Play Quiz" : "Watch Concert"}
@@ -259,7 +264,7 @@ const Quiz = ({ path }) => {
           to={
             path === "getUserUnknownQuestions"
               ? `/dashboard/quiz/${course._id}`
-              : `/dashboard/alc/${course._id}`
+              : `/dashboard/alcs/${course._id}`
           }
           colorScheme="secondary"
           color="black"
