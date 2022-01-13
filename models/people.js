@@ -32,6 +32,7 @@ const dataSchema = new mongoose.Schema({
       "> 81 years",
     ],
   },
+  loginRequired: Boolean,
 
   // if any org has referred him
   referer: { type: mongoose.Schema.Types.ObjectId, ref: "Org" },

@@ -1,16 +1,27 @@
 import { useEffect, useState } from "react";
 import config from "../../config";
 import useToast from "../../hooks/useToast";
-import { Heading, Flex, Tooltip } from "@chakra-ui/react";
-import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
+import { Heading, Flex, Tooltip, Text } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, Tfoot } from "@chakra-ui/table";
 import { Spinner } from "@chakra-ui/spinner";
+import { IconButton } from "@chakra-ui/button";
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 
 import NoMessage from "../global/NoMessage";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage] = useState(30);
   const toast = useToast();
+
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(users.length / usersPerPage);
+
+  const paginate = (number) => number >= 1 && number <= totalPages && setCurrentPage(number);
 
   // for fetching all the users
   async function fetchUsers(abortController) {
@@ -54,7 +65,7 @@ const Users = () => {
         Users List
       </Heading>
 
-      {users && users.length ? (
+      {currentUsers && currentUsers.length ? (
         <Table minW="900px" size="md" colorScheme="gray">
           <Thead>
             <Th>Name</Th>
@@ -85,6 +96,28 @@ const Users = () => {
               );
             })}
           </Tbody>
+          <Tfoot>
+            <Tr>
+              <Td colSpan={2}>
+                <Text color="GrayText">
+                  ({currentPage} / {totalPages}) pages
+                </Text>
+              </Td>
+              <Td colSpan={2}>
+                <IconButton
+                  onClick={() => paginate(currentPage - 1)}
+                  colorScheme="blue"
+                  mr={3}
+                  icon={<AiOutlineLeft />}
+                />
+                <IconButton
+                  onClick={() => paginate(currentPage + 1)}
+                  colorScheme="blue"
+                  icon={<AiOutlineRight />}
+                />
+              </Td>
+            </Tr>
+          </Tfoot>
         </Table>
       ) : (
         <NoMessage message="No Users Found" />

@@ -3,7 +3,7 @@ import { Switch, Route, useRouteMatch } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { useSelector } from "react-redux";
-import { Flex, Heading, Button } from "@chakra-ui/react";
+import { Flex, Heading, Button, Text } from "@chakra-ui/react";
 
 import config from "../config";
 
@@ -50,41 +50,55 @@ const Dashboard = () => {
         </Button>
       </Flex>
     );
+  } else if (user.loginRequired) {
+    return (
+      <Flex direction="column" w="full" h="100vh" justify="center" align="center">
+        <Heading fontSize={50} mb={3}>
+          Login Required
+        </Heading>
+        <Text color="GrayText" mb={3}>
+          Please login again to continue
+        </Text>
+        <Button colorScheme="secondary" color="black" onClick={logout}>
+          Logout
+        </Button>
+      </Flex>
+    );
+  } else {
+    return (
+      <Layout>
+        <Elements stripe={stripePromise}>
+          <Switch>
+            <Route path={path} exact component={Learn} />
+            <Route path={`${path}/quiz`} exact>
+              <Courses title="Checking Phase" path="quiz" />
+            </Route>
+            <Route path={`${path}/activation_phase`} exact>
+              <Courses title="Activation Phase" path="activation_phase" />
+            </Route>
+
+            <Route path={`${path}/alc/:alcId/:courseId`} component={Alc} />
+            <Route path={`${path}/alc`}>
+              <Courses title="Active and Passive Learning Concert" path="alcs" />
+            </Route>
+            <Route path={`${path}/alcs/:courseId`} component={AllAlcItems} />
+
+            {/* "getUserQuestionsOfCourse" is the path for checking phase */}
+            <Route path={`${path}/quiz/:courseId`}>
+              <Quiz path={"getUserQuestionsOfCourse"} />
+            </Route>
+            {/* "getUserUnknownQuestions" is the path for activation/learning phase */}
+            <Route path={`${path}/activation_phase/:courseId`}>
+              <Quiz path={"getUserUnknownQuestions"} />
+            </Route>
+            <Route path={`${path}/pay/:courseId/`} component={Pay} />
+            <Route path={`${path}/buyPackage/:courseId`} component={BuyPackage} />
+            <Route path={`${path}/paymentSuccess`} component={PaymentSuccess} />
+          </Switch>
+        </Elements>
+      </Layout>
+    );
   }
-
-  return (
-    <Layout>
-      <Elements stripe={stripePromise}>
-        <Switch>
-          <Route path={path} exact component={Learn} />
-          <Route path={`${path}/quiz`} exact>
-            <Courses title="Checking Phase" path="quiz" />
-          </Route>
-          <Route path={`${path}/activation_phase`} exact>
-            <Courses title="Activation Phase" path="activation_phase" />
-          </Route>
-
-          <Route path={`${path}/alc/:alcId/:courseId`} component={Alc} />
-          <Route path={`${path}/alc`}>
-            <Courses title="Active and Passive Learning Concert" path="alcs" />
-          </Route>
-          <Route path={`${path}/alcs/:courseId`} component={AllAlcItems} />
-
-          {/* "getUserQuestionsOfCourse" is the path for checking phase */}
-          <Route path={`${path}/quiz/:courseId`}>
-            <Quiz path={"getUserQuestionsOfCourse"} />
-          </Route>
-          {/* "getUserUnknownQuestions" is the path for activation/learning phase */}
-          <Route path={`${path}/activation_phase/:courseId`}>
-            <Quiz path={"getUserUnknownQuestions"} />
-          </Route>
-          <Route path={`${path}/pay/:courseId/`} component={Pay} />
-          <Route path={`${path}/buyPackage/:courseId`} component={BuyPackage} />
-          <Route path={`${path}/paymentSuccess`} component={PaymentSuccess} />
-        </Switch>
-      </Elements>
-    </Layout>
-  );
 };
 
 export default Dashboard;

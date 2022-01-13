@@ -9,7 +9,7 @@ import {
   Link,
   InputGroup,
   InputRightElement,
-  Select
+  Select,
 } from "@chakra-ui/react";
 import validator from "validator";
 import { useDispatch } from "react-redux";
@@ -32,15 +32,16 @@ function useQuery() {
 }
 
 const Register = () => {
-  const [{ fName, lName, email, password, conPass, age }, setInput] = useState({
+  const [{ fName, lName, email, password, conPass, age, phone }, setInput] = useState({
     fName: "",
     lName: "",
     age: "",
     email: "",
     password: "",
     conPass: "",
+    phone: "",
   });
-  const [org, setOrg] = useState()
+  const [org, setOrg] = useState();
   const [processing, setProcessing] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [showConPass, setShowConPass] = useState(false);
@@ -50,22 +51,22 @@ const Register = () => {
   const history = useHistory();
 
   const ages = [
-      "10 - 15 years",
-      "16 - 20 years",
-      "21 - 25 years",
-      "26 - 30 years",
-      "31 - 35 years",
-      "36 - 40 years",
-      "41 - 45 years",
-      "46 - 50 years",
-      "51 - 55 years",
-      "56 - 60 years",
-      "61 - 65 years",
-      "66 - 70 years",
-      "71 - 75 years ",
-      "76 - 80 years",
-      "> 81 years",
-  ]
+    "10 - 15 years",
+    "16 - 20 years",
+    "21 - 25 years",
+    "26 - 30 years",
+    "31 - 35 years",
+    "36 - 40 years",
+    "41 - 45 years",
+    "46 - 50 years",
+    "51 - 55 years",
+    "56 - 60 years",
+    "61 - 65 years",
+    "66 - 70 years",
+    "71 - 75 years ",
+    "76 - 80 years",
+    "> 81 years",
+  ];
 
   const query = useQuery();
 
@@ -80,9 +81,10 @@ const Register = () => {
 
   // for validating the input infos after clicking on the button
   function ValidateInputInfo() {
-    const { allFields, emailOk, passwordLength, passwordMatched } = {
+    const { allFields, emailOk, passwordLength, passwordMatched, phoneOk } = {
       allFields: fName && lName && email && password && conPass && age,
       emailOk: validator.isEmail(email),
+      phoneOk: validator.isMobilePhone(phone),
       passwordLength: password.length >= 8,
       passwordMatched: password === conPass,
     };
@@ -91,6 +93,8 @@ const Register = () => {
       toast({ status: "error", description: "Please fill all the fields properly" });
     } else if (!emailOk) {
       toast({ status: "error", description: "Your email is Invalid" });
+    } else if (phone && !phoneOk) {
+      toast({ status: "error", description: "Please make sure your phone number is valid" });
     } else if (!passwordLength) {
       toast({ status: "error", description: "password must contain 8 chars" });
     } else if (!passwordMatched) {
@@ -114,6 +118,7 @@ const Register = () => {
           email,
           password,
           referer: refererId,
+          phone,
         }),
         credentials: "include",
       });
@@ -139,18 +144,18 @@ const Register = () => {
     try {
       const res = await fetch(`${config.serverURL}/get_auth/getRefererInfo/org/${refererId}`, {
         method: "GET",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal
-      })
-      const body = await res.json()
+        signal: abortController.signal,
+      });
+      const body = await res.json();
       if (res.ok) {
-        setOrg(body.org)
+        setOrg(body.org);
       } else {
-        toast({ status: "error", description: body.msg })
+        toast({ status: "error", description: body.msg });
       }
     } catch (err) {
-      toast({ status: "error", description: err.message })
+      toast({ status: "error", description: err.message });
     }
   }
 
@@ -159,12 +164,12 @@ const Register = () => {
   }, []);
 
   useEffect(() => {
-    const abortController = new AbortController()
+    const abortController = new AbortController();
     if (refererId) {
-      fetchOrgInfo(abortController)
+      fetchOrgInfo(abortController);
     }
-    return () => abortController.abort()
-  }, [refererId])
+    return () => abortController.abort();
+  }, [refererId]);
 
   return (
     <Flex h="full" justify="center" align="center">
@@ -187,11 +192,27 @@ const Register = () => {
           type="text"
           value={lName}
         />
-        <Select mb={3} placeholder="What is your age" onChange={HandleInputChange} name="age" value={age}>
+        <Select
+          mb={3}
+          placeholder="What is your age"
+          onChange={HandleInputChange}
+          name="age"
+          value={age}
+        >
           {ages.map((age, index) => {
-            return <option value={age} key={index}>{age}</option>
+            return (
+              <option value={age} key={index}>
+                {age}
+              </option>
+            );
           })}
         </Select>
+        <InputField
+          onChange={HandleInputChange}
+          placeholder="WhatsApp number (optional)"
+          name="phone"
+          value={phone}
+        />
         <InputField
           onChange={HandleInputChange}
           placeholder="Enter your email"

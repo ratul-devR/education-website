@@ -4,14 +4,19 @@ const Org = require("../models/org");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require("twilio")(accountSid, authToken);
+
 const transporter = require("../utils/emailTransporter");
+const agenda = require("../jobs/agenda");
 
 module.exports = {
   login: async function (req, res, next) {
     try {
       const { email, password } = req.body;
 
-      const user = await User.findOne({ email });
+      const user = await User.findOneAndUpdate({ email }, { loginRequired: false }, { new: true });
 
       if (user) {
         const passwordMatched = await bcrypt.compare(password, user.password);
@@ -39,7 +44,7 @@ module.exports = {
 
   register: async function (req, res, next) {
     try {
-      const { firstName, lastName, age, email, password, referer } = req.body;
+      const { firstName, lastName, age, email, password, referer, phone } = req.body;
 
       let newUser;
 
@@ -51,9 +56,9 @@ module.exports = {
 
       // if the user is referred
       if (hasReferred) {
-        newUser = new User({ firstName, lastName, email, password, referer, age });
+        newUser = new User({ firstName, lastName, email, password, referer, age, phone });
       } else {
-        newUser = new User({ firstName, lastName, email, password, age });
+        newUser = new User({ firstName, lastName, email, password, age, phone });
       }
 
       // updating the referer
@@ -69,6 +74,18 @@ module.exports = {
         signed: true,
       });
 
+      // send a whats app message to the user if he has entered phone number
+      if (newUser.phone) {
+        client.messages
+          .create({
+            body: "Hey yo! thanks for registering!",
+            from: process.env.TWILIO_WA_PHONE_NUMBER,
+            to: `whatsapp:${newUser.phone}`,
+          })
+          .catch((err) => console.log(err.message))
+          .done();
+      }
+
       // send a confirmation email to the user
       const domain = req.protocol + "://" + req.get("host");
       await transporter.sendMail({
@@ -80,6 +97,12 @@ module.exports = {
           <p>In order to continue, you need to confirm your email address</p>
           <a href="${domain + `/get_auth/confirmEmail/${newUser._id}`}">Confirm Email</a>
         `,
+      });
+
+      const after1Day = new Date().getTime() + 86400000;
+
+      agenda.schedule(after1Day, "sendWAMessage", {
+        userId: newUser._id,
       });
 
       const userCreated = await User.findOne({ _id: newUser._id }).lean({ defaults: true });
