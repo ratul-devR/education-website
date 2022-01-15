@@ -373,7 +373,7 @@ module.exports = {
             });
           }
 
-          question.answers = question.answers.split(", ");
+          question.answers = question.answers.split("/ ");
           question.category = category;
         }
       }
