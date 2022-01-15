@@ -17,30 +17,6 @@ export default function ActiveLearning() {
   const [showMic, setShowMic] = useState(false);
   const [showTranslation, setShowTranslation] = useState(true);
 
-  const defaultAudio = new Audio(activeLearningDefaultAudio);
-
-  function playBgSound() {
-    if (assets.activeLearningBgAudio) {
-      assets.activeLearningBgAudio.currentTime = 0;
-      assets.activeLearningBgAudio.volume = 0.2;
-      assets.loop = true
-      assets.activeLearningBgAudio.play();
-    } else if (useDefaultAsset) {
-      defaultAudio.currentTime = 0;
-      defaultAudio.volume = 0.2;
-      defaultAudio.loop = true
-      defaultAudio.play();
-    }
-  }
-
-  function stopBgSound() {
-    if (assets.activeLearningBgAudio) {
-      assets.activeLearningBgAudio.pause();
-    } else if (useDefaultAsset) {
-      defaultAudio.pause();
-    }
-  }
-
   function handleAudioEnd() {
     setShowMic(true);
     setShowTranslation(false);
@@ -54,11 +30,6 @@ export default function ActiveLearning() {
   }
 
   useEffect(() => {
-    playBgSound();
-    return () => stopBgSound();
-  }, []);
-
-  useEffect(() => {
     return () => {
       setShowMic(false);
       setShowTranslation(true);
@@ -67,8 +38,16 @@ export default function ActiveLearning() {
 
   return (
     <Flex direction="column" w="full" h="full" justify="center" align="center">
-      <Heading color="primary" fontSize={100} mb={5}>
-        {questions[currentIndex].answers[0]}
+      <Heading
+        color="primary"
+        fontWeight={questions[currentIndex].type === "text" && "normal"}
+        fontSize={questions[currentIndex].type === "text" ? 50 : 100}
+        mb={5}
+      >
+        {questions[currentIndex].type === "text"
+          ? questions[currentIndex].question.replace("_", " _____ ") +
+            ` (${questions[currentIndex].answers[0]})`
+          : questions[currentIndex].answers[0]}
       </Heading>
 
       {showMic && (
@@ -79,13 +58,19 @@ export default function ActiveLearning() {
         </Tooltip>
       )}
 
-      {showTranslation && (
+      {showTranslation && questions[currentIndex].type === "mcq" && (
         <Text mb={10} color="GrayText" fontSize="2xl">
-          {questions[currentIndex].question}
+          {questions[currentIndex].question.replace("_", " _____ ")}
         </Text>
       )}
 
       <audio autoPlay onEnded={handleAudioEnd} src={questions[currentIndex].activeLearningVoice} />
+      <audio
+        autoPlay
+        loop
+        onCanPlay={(e) => (e.target.volume = 0.2)}
+        src={useDefaultAsset ? activeLearningDefaultAudio : assets.activeLearningBgAudio}
+      />
     </Flex>
   );
 }

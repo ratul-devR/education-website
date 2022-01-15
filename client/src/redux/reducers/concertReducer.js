@@ -25,8 +25,8 @@ export default function concertReducer(state = initialState, action) {
         assets:
           Object.keys(action.payload).length > 0
             ? {
-                activeLearningBgAudio: new Audio(action.payload.background_sound.url),
-                passiveLearningBgAudio: new Audio(action.payload.passive_background_sound.url),
+                activeLearningBgAudio: action.payload.background_sound.url,
+                passiveLearningBgAudio: action.payload.passive_background_sound.url,
                 passiveLearningImage: action.payload.passive_image.url,
               }
             : {},

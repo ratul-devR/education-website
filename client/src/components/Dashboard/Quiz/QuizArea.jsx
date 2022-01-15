@@ -74,12 +74,12 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
   }
 
   // for stopping all the audios
-  function stopAllAudios() {
+  /* function stopAllAudios() {
     if (positiveAudio && negativeAudio) {
       positiveAudio.pause();
       negativeAudio.pause();
     }
-  }
+  } */
 
   // for handling option click
   function checkAnswer(usersAnswer, questionId) {
@@ -161,12 +161,12 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
     };
   }, [selectedAnswer]);
 
-  // play the background sound when it is ready
+  /* // play the background sound when it is ready
   useEffect(() => {
     return () => {
       stopAllAudios();
     };
-  }, [positiveAudio, negativeAudio]);
+  }, [positiveAudio, negativeAudio]); */
 
   useEffect(() => {
     setUserKnowsAnswer(false);
@@ -174,7 +174,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
     setSelectedAnswer();
     setInput("");
     return () => {
-      stopFeedBackSounds();
+      // stopFeedBackSounds();
       setUserCommitted(false);
     };
   }, [currentIndex]);

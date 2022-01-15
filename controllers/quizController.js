@@ -80,7 +80,7 @@ module.exports = {
       const courseQuestions = await Question.find({
         $and: [{ category: course._id }, { unknownUsers: { $in: [user._id] } }],
       }).lean({ defaults: true });
-      const learningQuestions = courseQuestions.filter((question) => question.type === "mcq");
+      const learningQuestions = courseQuestions;
 
       let hasAllPrerequisites = true;
 

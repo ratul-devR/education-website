@@ -335,7 +335,7 @@ module.exports = {
             res.status(400).json({
               msg: `A required field is missing in the doc. On row/line number: [${i + 1}]`,
             });
-          } 
+          }
 
           question.options = [];
 
@@ -373,7 +373,7 @@ module.exports = {
             });
           }
 
-          question.answers = question.answers.split("/ ");
+          question.answers = question.answers.split(", ");
           question.category = category;
         }
       }
@@ -405,10 +405,9 @@ module.exports = {
       const { categoryId } = req.params;
 
       if (mongoose.isValidObjectId(categoryId)) {
-        const category =
-          (await Category.findOne({ _id: categoryId })
-            .lean({ defaults: true })
-            .populate("questions"))
+        const category = await Category.findOne({ _id: categoryId })
+          .lean({ defaults: true })
+          .populate("questions");
 
         if (category) {
           res.status(200).json({ questions: category.questions, category });

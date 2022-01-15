@@ -205,7 +205,7 @@ const Questions = () => {
               </Tfoot>
             </Table>
           ) : (
-            <NoMessage message="No Questions Found In This Category" />
+            <NoMessage message="No questions found" />
           )}
         </Flex>
       </div>
