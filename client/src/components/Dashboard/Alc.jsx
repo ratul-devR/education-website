@@ -8,14 +8,15 @@ import { useParams } from "react-router-dom";
 import { Spinner } from "@chakra-ui/spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { Text } from "@chakra-ui/react"
 
-import { LOAD_QUESTIONS, LOAD_ASSETS, RESET_CONCERT } from "../../redux/actions/concertActions";
+import { LOAD_QUESTIONS, LOAD_ASSETS, RESET_CONCERT, START_CONCERT } from "../../redux/actions/concertActions";
 
 import ActiveLearning from "../Dashboard/Concerts/ActiveLearning";
 import PassiveLearning from "../Dashboard/Concerts/PassiveLearning";
 
 export default function Alc() {
-  const { questions, loading, currentIndex, currentPhase, ended } = useSelector(
+  const { questions, loading, currentIndex, currentPhase, ended, concertStarted, course } = useSelector(
     (state) => state.concertReducer
   );
   const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
@@ -25,6 +26,7 @@ export default function Alc() {
   const history = useHistory();
   const dispatch = useDispatch();
 
+  // fetching the learning track
   async function fetchItem(abortController) {
     try {
       const res = await fetch(`${config.serverURL}/active_learning_concert/getItem/${alcId}`, {
@@ -56,9 +58,9 @@ export default function Alc() {
 
       if (res.ok) {
         if (!body.userHasPaid) {
-          history.push(`/dashboard/pay/${courseId}`, { phase: "learning" });
+          history.push(`/dashboard/pay/${courseId}`, {phase: "learning"});
         } else {
-          dispatch(LOAD_QUESTIONS(body.learningQuestions));
+          dispatch(LOAD_QUESTIONS({ questions: body.learningQuestions, course: body.course }));
           setHasAllPrerequisites(body.hasAllPrerequisites);
         }
       } else {
@@ -113,6 +115,14 @@ export default function Alc() {
         </Button>
       </Flex>
     );
+  } else if (!concertStarted) {
+    return (
+      <Flex w="full" h="full" justify="center" align="center" direction="column">
+        <Heading mb={5} color="primary" fontWeight="normal">Instruction</Heading>
+        <Text color="GrayText" mb={5} fontSize={25} whiteSpace="pre-wrap">{course.description}</Text>
+        <Button onClick={() => dispatch(START_CONCERT())} colorScheme="secondary" color="black">Get Started</Button>
+      </Flex>
+    )
   } else if (ended) {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">

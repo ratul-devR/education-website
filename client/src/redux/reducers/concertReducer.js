@@ -1,5 +1,6 @@
 const initialState = {
   questions: [],
+  course: {},
   loading: true,
   currentPhase: "active",
   currentIndex: 0,
@@ -7,6 +8,7 @@ const initialState = {
   assets: {},
   useDefaultAsset: true,
   ended: false,
+  concertStarted: false,
 };
 
 export default function concertReducer(state = initialState, action) {
@@ -14,7 +16,8 @@ export default function concertReducer(state = initialState, action) {
     case "LOAD_QUESTIONS": {
       return {
         ...state,
-        questions: action.payload,
+        questions: action.payload.questions,
+        course: action.payload.course,
         loading: false,
       };
     }
@@ -55,6 +58,10 @@ export default function concertReducer(state = initialState, action) {
 
     case "RESET_CONCERT": {
       return initialState;
+    }
+
+    case "START_CONCERT": {
+      return { ...state, concertStarted: true }
     }
 
     default: {

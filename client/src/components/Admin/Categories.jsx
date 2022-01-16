@@ -26,6 +26,7 @@ import useToast from "../../hooks/useToast";
 import NoMessage from "../global/NoMessage";
 import AddQuizAssets from "./components/AddQuizAssets";
 import EditQuestionsModal from "./components/EditQuestionsModal";
+import EditCategoryModal from "./components/EditCategoryModal"
 
 const Categories = () => {
   const [{ title, description, price, passPercentage, askForPaymentIn }, setInput] = useState({
@@ -328,6 +329,7 @@ const Categories = () => {
                         onClick={() => deleteCategory(category._id)}
                         icon={<MdDeleteOutline />}
                       />
+                      <EditCategoryModal categoriesOF={categories} setCategoriesOF={setCategories} currentCategory={category} />
                       <EditQuestionsModal currentCategory={category} />
                     </Td>
                   </Tr>

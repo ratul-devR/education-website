@@ -105,6 +105,30 @@ module.exports = {
     }
   },
 
+  updateCategory: async function (req, res, next) {
+    try {
+      const { categoryId } = req.params;
+      const updatedInfo = req.body;
+
+      const updatedCategory = await Category.findOneAndUpdate(
+        { _id: categoryId },
+        {
+          name: updatedInfo.name,
+          description: updatedInfo.description,
+          price: updatedInfo.price,
+          passPercentage: updatedInfo.passPercentage,
+          prerequisites: updatedInfo.prerequisites,
+          askForPaymentIn: updatedInfo.askForPaymentIn,
+        },
+        { new: true }
+      ).populate("prerequisites");
+
+      res.status(201).json({ msg: "Updated Successfully", category: updatedCategory });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   deleteCategory: async function (req, res, next) {
     try {
       const { id } = req.params;

@@ -14,3 +14,6 @@ export function RESET_CONCERT() {
   return { type: "RESET_CONCERT" }
 }
 
+export function START_CONCERT() {
+  return { type: "START_CONCERT" }
+}

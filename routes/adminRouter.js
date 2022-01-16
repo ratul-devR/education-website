@@ -9,6 +9,7 @@ const uploadFilesMiddleware = require("../middlewares/admin/uploadFiles");
 const {
   getCategories,
   postCategory,
+  updateCategory,
   deleteCategory,
   addQuestion,
   addQuestionsFromCsv,
@@ -35,6 +36,8 @@ const router = express.Router();
 router.get("/categories", getCategories);
 // for adding a new category
 router.post("/post_category", postCategory);
+// for updating a category
+router.put("/update_category/:categoryId", updateCategory)
 // for getting all the questions of a category
 router.get("/category/:categoryId/questions", getQuestions);
 // for deleting a category
