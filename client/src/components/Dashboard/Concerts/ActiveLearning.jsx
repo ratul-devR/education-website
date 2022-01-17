@@ -10,9 +10,8 @@ import { NEXT_WORD } from "../../../redux/actions/concertActions";
 import activeLearningDefaultAudio from "../../../assets/audios/active-learning.mp3";
 
 export default function ActiveLearning() {
-  const { questions, currentIndex, assets, useDefaultAsset } = useSelector(
-    (state) => state.concertReducer
-  );
+  const { questions, currentIndex, assets, useDefaultAsset, course, activeLearningPlayedBefore } =
+    useSelector((state) => state.concertReducer);
   const dispatch = useDispatch();
   const [showMic, setShowMic] = useState(false);
   const [showTranslation, setShowTranslation] = useState(true);
@@ -38,6 +37,17 @@ export default function ActiveLearning() {
 
   return (
     <Flex direction="column" w="full" h="full" justify="center" align="center">
+      {currentIndex === 0 && !activeLearningPlayedBefore && (
+        <Flex direction="column" mb={10} justify="center" align="center">
+          <Heading fontWeight="normal" color="primary" color="blue.400" mb={5}>
+            Instruction
+          </Heading>
+          <Text color="GrayText" whiteSpace="pre-wrap">
+            {course.description}
+          </Text>
+        </Flex>
+      )}
+
       <Heading
         color="primary"
         fontWeight={questions[currentIndex].type === "text" && "normal"}
