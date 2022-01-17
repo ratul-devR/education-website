@@ -8,6 +8,7 @@ const initialState = {
   assets: {},
   useDefaultAsset: true,
   ended: false,
+  concertStarted: false,
 };
 
 export default function concertReducer(state = initialState, action) {
@@ -57,6 +58,10 @@ export default function concertReducer(state = initialState, action) {
 
     case "RESET_CONCERT": {
       return initialState;
+    }
+
+    case "START_CONCERT": {
+      return { ...state, concertStarted: true };
     }
 
     default: {
