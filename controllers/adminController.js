@@ -119,6 +119,7 @@ module.exports = {
           passPercentage: updatedInfo.passPercentage,
           prerequisites: updatedInfo.prerequisites,
           askForPaymentIn: updatedInfo.askForPaymentIn,
+          noOfParts: updatedInfo.noOfParts ? updatedInfo.noOfParts : 1,
         },
         { new: true }
       ).populate("prerequisites");

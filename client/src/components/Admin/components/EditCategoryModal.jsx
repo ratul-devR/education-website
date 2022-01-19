@@ -229,7 +229,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 {categories &&
                   categories.map((category) => {
                     return (
-                      <option style={{ padding: 5 }} value={category._id}>
+                      <option key={category._id} style={{ padding: 5 }} value={category._id}>
                         {category.name}
                       </option>
                     );

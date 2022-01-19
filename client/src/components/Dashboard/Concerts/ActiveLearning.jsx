@@ -7,7 +7,7 @@ import { Tooltip } from "@chakra-ui/tooltip";
 
 import { NEXT_WORD } from "../../../redux/actions/concertActions";
 
-import activeLearningDefaultAudio from "../../../assets/audios/active-learning.mp3";
+import activeLearningDefaultAudio from "../../../assets/audios/active-learning.mp3"
 
 export default function ActiveLearning() {
   const { questions, currentIndex, assets, useDefaultAsset } = useSelector(

@@ -240,14 +240,14 @@ module.exports = {
         });
       }*/
 
-      question.unknownUsers = question.unknownUsers.map((user) => user.toString());
-      const alreadyUnknown = question.unknownUsers.includes(user._id.toString());
+      question.packUsers = question.packUsers.map((user) => user.toString());
+      const alreadyUnknown = question.packUsers.includes(user._id.toString());
       if (!alreadyUnknown) {
         await Question.updateOne(
           { _id: question._id },
           {
             $push: {
-              unknownUsers: user._id,
+              packUsers: user._id,
             },
           }
         );

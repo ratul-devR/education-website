@@ -89,7 +89,15 @@ export default function BuyPackage() {
       } else {
         if (result.paymentIntent.status === "succeeded") {
           setProcessing(false);
-          history.push("/dashboard/paymentSuccess", { course, type: "package" });
+          history.push("/dashboard/paymentSuccess", {
+            course,
+            phase: "learning",
+            subMessage: "Now you can start learning these words",
+            button: {
+              text: "Start Learning",
+              url: `/dashboard/alcs/${course._id}`,
+            },
+          });
         }
         toast({
           status: "success",

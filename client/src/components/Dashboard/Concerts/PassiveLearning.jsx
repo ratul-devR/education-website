@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Flex } from "@chakra-ui/layout";
 import { useSelector, useDispatch } from "react-redux";
 

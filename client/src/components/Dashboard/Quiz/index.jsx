@@ -63,16 +63,6 @@ const Quiz = ({ path }) => {
           setHasAllPrerequisites(false);
         } else if (path === "getUserQuestionsOfCourse" && !body.userHasPaid && body.userHasToPay) {
           history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true });
-        } else if (
-          path === "getUserUnknownQuestions" &&
-          body.unknownQuestionsPack.length > 0 &&
-          body.courseQuestions.length === 0
-        ) {
-          history.push(`/dashboard/buyPackage/${body.course._id}`);
-          toast({
-            status: "info",
-            description: "You need to purchase this pack in order to learn the unknown questions",
-          });
         }
 
         document.title = `${config.appName} - ${
