@@ -3,8 +3,9 @@ import { createStore, combineReducers } from "redux";
 import authReducer from "./reducers/authReducer";
 import quizReducer from "./reducers/quizReducer";
 import concertReducer from "./reducers/concertReducer";
+import settingsReducer from "./reducers/settingsReducer";
 
-const reducers = combineReducers({ authReducer, quizReducer, concertReducer });
+const reducers = combineReducers({ authReducer, quizReducer, concertReducer, settingsReducer });
 
 const store = createStore(
   reducers,

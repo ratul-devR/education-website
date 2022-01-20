@@ -8,10 +8,13 @@ import { FiSettings } from "react-icons/fi"
 import { GoMail } from "react-icons/go";
 import { NavLink, useRouteMatch } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
+import { useSelector } from "react-redux"
+import { Text } from "@chakra-ui/react"
 
 import Logo from "../assets/logo.png";
 
 const Admin = ({ children }) => {
+  const { appSubTitle } = useSelector((state) => state.settingsReducer)
   const { url } = useRouteMatch();
 
   const logout = useLogout();
@@ -107,11 +110,14 @@ const Admin = ({ children }) => {
           justify="space-between"
           align="center"
           boxShadow="md"
-          height="60px"
+          height="80px"
           px={10}
           background="white"
         >
-          <img src={Logo} style={{ width: "150px", display: "block" }} alt="Logo" />
+          <Flex direction="column" justify="center" align="center">
+            <img src={Logo} style={{width: "150px", display: "block"}} alt="Logo" />
+            {appSubTitle && <Text color="GrayText">{appSubTitle}</Text>}
+          </Flex>
           <Button onClick={logout} colorScheme="blue">
             Log out
           </Button>

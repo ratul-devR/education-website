@@ -1,6 +1,7 @@
 import { VStack, Flex } from "@chakra-ui/layout";
 import { NavLink, useRouteMatch, Switch, Route } from "react-router-dom";
-import { UnorderedList, ListItem, Link } from "@chakra-ui/react";
+import { UnorderedList, ListItem, Link, Text } from "@chakra-ui/react";
+import { useSelector } from "react-redux";
 
 import Login from "../components/Registration/Login";
 import Register from "../components/Registration/Register";
@@ -10,16 +11,20 @@ import LoginOrg from "../components/Registration/LoginOrg";
 import Logo from "../assets/logo.png";
 
 const Registration = () => {
+  const { appSubTitle } = useSelector((state) => state.settingsReducer);
   const { path } = useRouteMatch();
 
   return (
     <VStack h="100vh" overflow="hidden" spacing={0}>
       <Flex py={2} px={10} as="nav" boxShadow="sm" w="100%" justify="space-between" align="center">
-        <img
-          style={{ display: "block", width: "200px" }}
-          src={Logo}
-          alt="Official Logo of check2Learn"
-        />
+        <Flex direction="column" justify="center" align="center">
+          <img
+            style={{ display: "block", width: "200px" }}
+            src={Logo}
+            alt="Official Logo of check2Learn"
+          />
+          {appSubTitle && <Text color="GrayText">{appSubTitle}</Text>}
+        </Flex>
 
         <UnorderedList display="flex" gridColumnGap={5} alignItems="center">
           <ListItem listStyleType="none">

@@ -1,17 +1,19 @@
 import { Button, IconButton } from "@chakra-ui/button";
 import { Flex, HStack, VStack } from "@chakra-ui/layout";
+import { Text } from "@chakra-ui/react";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { MdQuiz } from "react-icons/md";
-import { BsGrid1X2Fill } from "react-icons/bs";
 import { NavLink, useRouteMatch } from "react-router-dom";
 import { FaAssistiveListeningSystems } from "react-icons/fa";
 import { GiBrain } from "react-icons/gi";
 import useLogout from "../hooks/useLogout";
+import { useSelector } from "react-redux";
 
 import Logo from "../assets/logo.png";
 
 // this is the layout of the dashboard page
 const Dashboard = ({ children }) => {
+  const { appSubTitle } = useSelector((state) => state.settingsReducer);
   const { url } = useRouteMatch();
 
   const logout = useLogout();
@@ -80,11 +82,14 @@ const Dashboard = ({ children }) => {
           justify="space-between"
           align="center"
           boxShadow="md"
-          height="60px"
+          height="80px"
           background="white"
           px={10}
         >
-          <img src={Logo} style={{ width: "150px", display: "block" }} alt="Logo" />
+          <Flex direction="column" justify="center" align="center">
+            <img src={Logo} style={{ width: "150px", display: "block" }} alt="Logo" />
+            {appSubTitle && <Text color="GrayText">{appSubTitle}</Text>}
+          </Flex>
           <Button onClick={logout} colorScheme="blue">
             Log out
           </Button>
