@@ -221,7 +221,10 @@ module.exports = {
       const { questionId } = req.body;
       const user = req.user;
 
-      const question = await Question.findOne({ _id: questionId }).lean({ defaults: true });
+      const question = await Question.findOne({ _id: questionId })
+        .populate("category")
+        .lean({ defaults: true });
+      const category = question.category;
 
       /*// if he is a repeated user and if because he has not given the right answer,
       // so he will have to learn it again in the specified learning phase
@@ -240,17 +243,25 @@ module.exports = {
         });
       }*/
 
-      question.packUsers = question.packUsers.map((user) => user.toString());
-      const alreadyUnknown = question.packUsers.includes(user._id.toString());
-      if (!alreadyUnknown) {
-        await Question.updateOne(
-          { _id: question._id },
-          {
-            $push: {
-              packUsers: user._id,
-            },
-          }
-        );
+      if (category.learningPhasePaid) {
+        question.packUsers = question.packUsers.map((user) => user.toString());
+        const alreadyUnknown = question.packUsers.includes(user._id.toString());
+        if (!alreadyUnknown) {
+          await Question.updateOne(
+            { _id: question._id },
+            {
+              $push: {
+                packUsers: user._id,
+              },
+            }
+          );
+        }
+      } else {
+        question.unknownUsers = question.unknownUsers.map((user) => user.toString());
+        const alreadyUnknown = question.unknownUsers.includes(user._id.toString());
+        if (!alreadyUnknown) {
+          await Question.updateOne({ _id: question._id }, { $push: { unknownUsers: user._id } });
+        }
       }
 
       res.status(200).json({ msg: "done" });

@@ -12,6 +12,7 @@ const dataSchema = new mongoose.Schema({
     default: "learning-phase",
     required: true,
   },
+  learningPhasePaid: { type: Boolean, required: true },
   prerequisites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
   purchasedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],

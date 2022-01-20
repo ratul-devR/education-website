@@ -75,8 +75,15 @@ module.exports = {
 
   postCategory: async function (req, res, next) {
     try {
-      const { title, description, price, passPercentage, prerequisites, askForPaymentIn } =
-        req.body;
+      const {
+        title,
+        description,
+        price,
+        passPercentage,
+        prerequisites,
+        askForPaymentIn,
+        learningPhasePaid,
+      } = req.body;
 
       const categoryExist =
         (await Category.findOne({ name: title }).lean({ defaults: true })) || null;
@@ -91,6 +98,7 @@ module.exports = {
           prerequisites,
           passPercentage,
           askForPaymentIn,
+          learningPhasePaid,
         });
 
         await newCategory.save();
@@ -120,6 +128,7 @@ module.exports = {
           prerequisites: updatedInfo.prerequisites,
           askForPaymentIn: updatedInfo.askForPaymentIn,
           noOfParts: updatedInfo.noOfParts ? updatedInfo.noOfParts : 1,
+          learningPhasePaid: updatedInfo.learningPhasePaid,
         },
         { new: true }
       ).populate("prerequisites");

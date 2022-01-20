@@ -16,6 +16,7 @@ import { Input } from "@chakra-ui/input";
 import { Textarea } from "@chakra-ui/textarea";
 import { Select } from "@chakra-ui/select";
 import { Text } from "@chakra-ui/react";
+import { Checkbox } from "@chakra-ui/checkbox";
 import config from "../../../config";
 import useToast from "../../../hooks/useToast";
 
@@ -84,6 +85,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               categoryOF.prerequisites = body.category.prerequisites;
               categoryOF.askForPaymentIn = body.category.askForPaymentIn;
               categoryOF.passPercentage = body.category.passPercentage;
+              categoryOF.learningPhasePaid = body.category.learningPhasePaid;
             }
             return categoryOF;
           })
@@ -215,7 +217,14 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 <option value="learning-phase">Learning phase</option>
               </Select>
             </Flex>
-            <Flex p={5} rounded={5} border="1px solid" borderColor="gray.100" direction="column">
+            <Flex
+              p={5}
+              rounded={5}
+              mb={5}
+              border="1px solid"
+              borderColor="gray.100"
+              direction="column"
+            >
               <Text color="GrayText" mb={3}>
                 Edit Prerequisites
               </Text>
@@ -236,6 +245,15 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                   })}
               </select>
             </Flex>
+            <Checkbox
+              checked={!!category.learningPhasePaid}
+              defaultChecked={!!category.learningPhasePaid}
+              onChange={() =>
+                setCategory((pre) => ({ ...pre, learningPhasePaid: !category.learningPhasePaid }))
+              }
+            >
+              Learning phase is paid
+            </Checkbox>
           </ModalBody>
           <ModalFooter>
             <Button onClick={closeModal} mr={3}>

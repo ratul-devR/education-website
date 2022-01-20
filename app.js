@@ -13,6 +13,7 @@ const adminRouter = require("./routes/adminRouter");
 const coursesRouter = require("./routes/coursesRouter");
 const quizRouter = require("./routes/quizRouter");
 const alcRouter = require("./routes/alcRouter");
+const settingsRouter = require("./routes/settingsRouter")
 
 // middleware's
 const { notFoundHandler, errorHandler } = require("./middlewares/common/errorHandler");
@@ -44,6 +45,8 @@ app.use("/get_courses", coursesRouter);
 app.use("/get_quiz", checkLogin, quizRouter);
 // for handling the active learning concert like uploading getting deleting etc
 app.use("/active_learning_concert", checkLogin, alcRouter);
+// for handling some settings related things in the admin panel
+app.use("/get_settings", authorizeAmin, settingsRouter)
 
 // for production
 if (process.env.NODE_ENV === "production") {

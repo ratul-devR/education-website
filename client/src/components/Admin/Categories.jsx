@@ -13,6 +13,7 @@ import {
 import { useDisclosure, Link as ChakraLink, Badge } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Input } from "@chakra-ui/input";
+import { Checkbox } from "@chakra-ui/checkbox";
 import { Select } from "@chakra-ui/select";
 import { MdDeleteOutline } from "react-icons/md";
 import { Link, useRouteMatch } from "react-router-dom";
@@ -29,12 +30,16 @@ import EditQuestionsModal from "./components/EditQuestionsModal";
 import EditCategoryModal from "./components/EditCategoryModal";
 
 const Categories = () => {
-  const [{ title, description, price, passPercentage, askForPaymentIn }, setInput] = useState({
+  const [
+    { title, description, price, passPercentage, askForPaymentIn, learningPhasePaid },
+    setInput,
+  ] = useState({
     title: "",
     description: "",
     price: "",
     passPercentage: "",
     askForPaymentIn: "",
+    learningPhasePaid: false,
   });
   const [prerequisites, setPrerequisites] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -113,6 +118,7 @@ const Categories = () => {
           passPercentage,
           prerequisites,
           askForPaymentIn,
+          learningPhasePaid,
         }),
         credentials: "include",
       });
@@ -264,10 +270,19 @@ const Categories = () => {
                 onChange={HandleInputChange}
                 name="askForPaymentIn"
                 value={askForPaymentIn}
+                mb={3}
               >
                 <option value="checking-phase">Checking Phase</option>
                 <option value="learning-phase">Learning Phase</option>
               </Select>
+              <Checkbox
+                onChange={() =>
+                  setInput((pre) => ({ ...pre, learningPhasePaid: !learningPhasePaid }))
+                }
+                checked={learningPhasePaid}
+              >
+                Learning phase is paid
+              </Checkbox>
             </ModalBody>
             <ModalFooter>
               <Button mr={3} onClick={onClose} colorScheme="blue">
@@ -334,7 +349,14 @@ const Categories = () => {
                         setCategoriesOF={setCategories}
                         currentCategory={category}
                       />
-                      <EditQuestionsModal currentCategory={category} />
+                      <EditQuestionsModal
+                        currentCategory={{
+                          ...category,
+                          prerequisites: category.prerequisites.map(
+                            (prerequisite) => prerequisite._id
+                          ),
+                        }}
+                      />
                     </Td>
                   </Tr>
                 );
