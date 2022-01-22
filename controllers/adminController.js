@@ -13,6 +13,7 @@ const QuizAsset = require("../models/quizAsset");
 const File = require("../models/files");
 
 const transporter = require("../utils/emailTransporter");
+
 module.exports = {
   getCategories: async function (_req, res, next) {
     try {
@@ -81,8 +82,8 @@ module.exports = {
         price,
         passPercentage,
         prerequisites,
-        askForPaymentIn,
         learningPhasePaid,
+        checkingPhasePaid,
       } = req.body;
 
       const categoryExist =
@@ -97,8 +98,8 @@ module.exports = {
           price,
           prerequisites,
           passPercentage,
-          askForPaymentIn,
           learningPhasePaid,
+          checkingPhasePaid,
         });
 
         await newCategory.save();
@@ -126,9 +127,8 @@ module.exports = {
           price: updatedInfo.price,
           passPercentage: updatedInfo.passPercentage,
           prerequisites: updatedInfo.prerequisites,
-          askForPaymentIn: updatedInfo.askForPaymentIn,
-          noOfParts: updatedInfo.noOfParts ? updatedInfo.noOfParts : 1,
           learningPhasePaid: updatedInfo.learningPhasePaid,
+          checkingPhasePaid: updatedInfo.checkingPhasePaid,
         },
         { new: true }
       ).populate("prerequisites");
@@ -207,7 +207,7 @@ module.exports = {
 
   getFiles: async function (_, res, next) {
     try {
-      const files = await File.find({});
+      const files = await File.find({}).lean({ defaults: true }).sort({ createdAt: -1 });
       res.status(200).json({ files });
     } catch (err) {
       next(err);

@@ -31,15 +31,15 @@ import EditCategoryModal from "./components/EditCategoryModal";
 
 const Categories = () => {
   const [
-    { title, description, price, passPercentage, askForPaymentIn, learningPhasePaid },
+    { title, description, price, passPercentage, learningPhasePaid, checkingPhasePaid },
     setInput,
   ] = useState({
     title: "",
     description: "",
     price: "",
     passPercentage: "",
-    askForPaymentIn: "",
     learningPhasePaid: false,
+    checkingPhasePaid: false,
   });
   const [prerequisites, setPrerequisites] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -117,8 +117,8 @@ const Categories = () => {
           price,
           passPercentage,
           prerequisites,
-          askForPaymentIn,
           learningPhasePaid,
+          checkingPhasePaid,
         }),
         credentials: "include",
       });
@@ -265,16 +265,16 @@ const Categories = () => {
                 value={passPercentage}
                 mb={3}
               />
-              <Select
-                placeholder="Where to ask for payment"
-                onChange={HandleInputChange}
-                name="askForPaymentIn"
-                value={askForPaymentIn}
-                mb={3}
-              >
-                <option value="checking-phase">Checking Phase</option>
-                <option value="learning-phase">Learning Phase</option>
-              </Select>
+              <Flex mb={3}>
+                <Checkbox
+                  onChange={() =>
+                    setInput((pre) => ({ ...pre, checkingPhasePaid: !checkingPhasePaid }))
+                  }
+                  checked={checkingPhasePaid}
+                >
+                  Checking phase is paid
+                </Checkbox>
+              </Flex>
               <Checkbox
                 onChange={() =>
                   setInput((pre) => ({ ...pre, learningPhasePaid: !learningPhasePaid }))

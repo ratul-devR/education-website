@@ -181,7 +181,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
 
   return (
     <Flex w="full" h="full" direction="column">
-      <Heading whiteSpace="pre-wrap" fontSize="4xl" textAlign="center" py={3} fontWeight="normal">
+      <Heading whiteSpace="pre-wrap" fontSize={questions[currentIndex].type === "text" ? "xl" : "4xl"} textAlign="center" py={3} fontWeight="normal">
         {questions[currentIndex].type === "mcq"
           ? questions[currentIndex].question
           : reactStringReplace(questions[currentIndex].question, "_", () => {
@@ -194,7 +194,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
                     }
                   }}
                   mx={3}
-                  fontSize="2xl"
+                  fontSize="xl"
                   width="auto"
                   display="inline"
                   variant="flushed"

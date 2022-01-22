@@ -142,7 +142,7 @@ export default function BuyPackage() {
         </Heading>
         <Text mb={10} textAlign="center">
           Question Pack That Contains {unknownQuestionsPack.length} Questions Which You Don't Know.
-          If you want to learn them in the Activation phase, you have to buy this package.
+          If you want to learn them in the learning phase, you have to buy this package.
         </Text>
         <CardElement
           onChange={(e) => (e.error ? setCheckoutError(e.error.message) : setCheckoutError())}

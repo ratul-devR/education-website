@@ -14,7 +14,6 @@ import {
 } from "@chakra-ui/modal";
 import { Input } from "@chakra-ui/input";
 import { Textarea } from "@chakra-ui/textarea";
-import { Select } from "@chakra-ui/select";
 import { Text } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/checkbox";
 import config from "../../../config";
@@ -83,9 +82,9 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               categoryOF.name = body.category.name;
               categoryOF.price = body.category.price;
               categoryOF.prerequisites = body.category.prerequisites;
-              categoryOF.askForPaymentIn = body.category.askForPaymentIn;
               categoryOF.passPercentage = body.category.passPercentage;
               categoryOF.learningPhasePaid = body.category.learningPhasePaid;
+              categoryOF.checkingPhasePaid = body.category.checkingPhasePaid;
             }
             return categoryOF;
           })
@@ -118,7 +117,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
-          <ModalHeader>Edit Category</ModalHeader>
+          <ModalHeader>Edit {category.name}</ModalHeader>
           <ModalBody>
             <Flex
               p={5}
@@ -205,27 +204,6 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               direction="column"
             >
               <Text color="GrayText" mb={3}>
-                Edit Payment asking phase
-              </Text>
-              <Select
-                placeholder="Where should we ask for payment"
-                value={category.askForPaymentIn}
-                onChange={handleInputChange}
-                name="askForPaymentIn"
-              >
-                <option value="checking-phase">Checking phase</option>
-                <option value="learning-phase">Learning phase</option>
-              </Select>
-            </Flex>
-            <Flex
-              p={5}
-              rounded={5}
-              mb={5}
-              border="1px solid"
-              borderColor="gray.100"
-              direction="column"
-            >
-              <Text color="GrayText" mb={3}>
                 Edit Prerequisites
               </Text>
               <select
@@ -245,15 +223,28 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                   })}
               </select>
             </Flex>
-            <Checkbox
-              checked={!!category.learningPhasePaid}
-              defaultChecked={!!category.learningPhasePaid}
-              onChange={() =>
-                setCategory((pre) => ({ ...pre, learningPhasePaid: !category.learningPhasePaid }))
-              }
-            >
-              Learning phase is paid
-            </Checkbox>
+            <Flex mb={3}>
+              <Checkbox
+                checked={!!category.checkingPhasePaid}
+                defaultChecked={!!category.checkingPhasePaid}
+                onChange={() =>
+                  setCategory((pre) => ({ ...pre, checkingPhasePaid: !category.checkingPhasePaid }))
+                }
+              >
+                Checking phase is paid
+              </Checkbox>
+            </Flex>
+            <Flex>
+              <Checkbox
+                checked={!!category.learningPhasePaid}
+                defaultChecked={!!category.learningPhasePaid}
+                onChange={() =>
+                  setCategory((pre) => ({ ...pre, learningPhasePaid: !category.learningPhasePaid }))
+                }
+              >
+                Learning phase is paid
+              </Checkbox>
+            </Flex>
           </ModalBody>
           <ModalFooter>
             <Button onClick={closeModal} mr={3}>
@@ -265,7 +256,6 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 !category.name ||
                 !category.description ||
                 !category.price ||
-                !category.askForPaymentIn ||
                 processing
               }
               onClick={saveChanges}

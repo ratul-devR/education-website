@@ -7,7 +7,7 @@ import { Tooltip } from "@chakra-ui/tooltip";
 
 import { NEXT_WORD } from "../../../redux/actions/concertActions";
 
-import activeLearningDefaultAudio from "../../../assets/audios/active-learning.mp3"
+import activeLearningDefaultAudio from "../../../assets/audios/active-learning.mp3";
 
 export default function ActiveLearning() {
   const { questions, currentIndex, assets, useDefaultAsset } = useSelector(
@@ -44,9 +44,17 @@ export default function ActiveLearning() {
         fontSize={questions[currentIndex].type === "text" ? 50 : 100}
         mb={5}
       >
+        {/*
+          If the question type is text, then show up the text
+          otherwise show up the mcq answer with translation
+          if the question type is text and is has a spanish word, then
+          show up the text answer with spanish word
+        */}
         {questions[currentIndex].type === "text"
-          ? questions[currentIndex].question.replace("_", " _____ ") +
-            ` (${questions[currentIndex].answers[0]})`
+          ? questions[currentIndex].spanishWord
+            ? questions[currentIndex].answers[0] + " - " + questions[currentIndex].spanishWord
+            : questions[currentIndex].question.replace("_", " _____ ") +
+              ` (${questions[currentIndex].answers[0]})`
           : questions[currentIndex].answers[0]}
       </Heading>
 

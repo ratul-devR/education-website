@@ -56,7 +56,7 @@ export default function UploadFiles() {
       });
       const body = await res.json();
       if (res.ok) {
-        setUploadedFiles((pre) => [...pre, ...body.files]);
+        setUploadedFiles((pre) => [...body.files, ...pre]);
         toast({ status: "success", description: body.msg });
         setProcessing(false);
         closeModal();
