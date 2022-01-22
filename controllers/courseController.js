@@ -7,7 +7,7 @@ const User = require("../models/people");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 module.exports = {
-  getCourses: async function (req, res, next) {
+  getCourses: async function (_req, res, next) {
     try {
       const courses = await Category.find({}).lean({ defaults: true });
 
