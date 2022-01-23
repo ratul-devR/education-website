@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/button";
-import { Text, Spinner, Divider } from "@chakra-ui/react";
+import { Text, Spinner, Divider, Link } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/hooks";
 import {
   Modal,
@@ -15,7 +15,6 @@ import { Input } from "@chakra-ui/input";
 import { IconButton } from "@chakra-ui/button";
 import { MdDeleteOutline } from "react-icons/md";
 import { useEffect, useState } from "react";
-import { Select } from "@chakra-ui/select";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 
 import NoMessage from "../global/NoMessage";
@@ -31,9 +30,6 @@ const Alc = () => {
     passive_image: null,
     passive_background_sound: null,
   });
-  const [category, setCategory] = useState();
-
-  const [categories, setCategories] = useState();
 
   const [processing, setProcessing] = useState(false);
 
@@ -52,33 +48,12 @@ const Alc = () => {
     }
   }
 
-  // for fetching all the categories
-  async function fetchCategories(abortController) {
-    try {
-      const res = await fetch(`${config.serverURL}/get_admin/categories`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        signal: abortController.signal,
-      });
-      const body = await res.json();
-      if (res.ok) {
-        setCategories(body.categories || []);
-      } else {
-        toast({ status: "error", description: body.msg });
-      }
-    } catch (err) {
-      toast({ status: "error", description: err.message || err });
-    }
-  }
-
   async function uploadItem() {
     setProcessing(true);
     const formData = new FormData();
 
     formData.append("name", name);
     formData.append("background_music", background_music);
-    formData.append("category", category);
     formData.append("passive_background_sound", passive_background_sound);
     formData.append("passive_image", passive_image);
 
@@ -159,15 +134,14 @@ const Alc = () => {
   useEffect(() => {
     const abortController = new AbortController();
     fetchItems(abortController);
-    fetchCategories(abortController);
     return () => abortController.abort();
   }, []);
 
   useEffect(() => {
-    if (items && categories) {
+    if (items) {
       setLoading(false);
     }
-  }, [items, categories]);
+  }, [items]);
 
   if (loading) {
     return (
@@ -250,22 +224,6 @@ const Alc = () => {
                 type="file"
               />
             </Flex>
-            <Select
-              placeholder={categories ? "Which Category?*" : "No Categories Found*"}
-              disabled={!categories}
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              {categories &&
-                categories.length > 0 &&
-                categories.map((category) => {
-                  return (
-                    <option value={category._id} key={category._id}>
-                      {category.name}
-                    </option>
-                  );
-                })}
-            </Select>
           </ModalBody>
           <ModalFooter>
             <Button onClick={onClose} colorScheme="blue" mr={3}>
@@ -275,7 +233,6 @@ const Alc = () => {
               disabled={
                 processing ||
                 !passive_image ||
-                !category ||
                 !background_music ||
                 !passive_background_sound ||
                 !name
@@ -294,15 +251,31 @@ const Alc = () => {
         <Table minW="700px" size="sm">
           <Thead>
             <Th>Name</Th>
-            <Th>Category</Th>
+            <Th>Active learning music</Th>
+            <Th>Passive learning music</Th>
+            <Th>Passive learning image</Th>
             <Th>Action</Th>
           </Thead>
           <Tbody>
             {items.map((item) => {
               return (
                 <Tr key={item._id}>
-                  <Td>{item.name}</Td>
-                  <Td>{item.category.name}</Td>
+                  <Td minW="200px">{item.name}</Td>
+                  <Td>
+                    <Link as="a" target="_blank" href={item.background_sound.url}>
+                      {item.background_sound.name}
+                    </Link>
+                  </Td>
+                  <Td>
+                    <Link as="a" target="_blank" href={item.passive_background_sound.url}>
+                      {item.passive_background_sound.name}
+                    </Link>
+                  </Td>
+                  <Td>
+                    <Link as="a" target="_blank" href={item.passive_image.url}>
+                      {item.passive_image.name}
+                    </Link>
+                  </Td>
                   <Td>
                     <IconButton
                       onClick={() => deleteItem(item._id)}

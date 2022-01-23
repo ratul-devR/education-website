@@ -14,7 +14,6 @@ import { useDisclosure, Link as ChakraLink, Badge } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Input } from "@chakra-ui/input";
 import { Checkbox } from "@chakra-ui/checkbox";
-import { Select } from "@chakra-ui/select";
 import { MdDeleteOutline } from "react-icons/md";
 import { Link, useRouteMatch } from "react-router-dom";
 import { Textarea } from "@chakra-ui/textarea";

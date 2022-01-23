@@ -15,7 +15,7 @@ export default function AllAlcItems() {
 
   async function fetchAlcItems(abortController) {
     try {
-      const res = await fetch(`${config.serverURL}/active_learning_concert/courseId/${courseId}`, {
+      const res = await fetch(`${config.serverURL}/active_learning_concert`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         signal: abortController.signal,
@@ -51,8 +51,13 @@ export default function AllAlcItems() {
         <Heading color="GrayText" fontWeight="normal" fontSize="2xl">
           No Learning Tracks Found{" "}
         </Heading>
-        <Text>You will have to proceed with the default one</Text>
-        <Button colorScheme="secondary" color="black" as={Link} to={`/dashboard/alc/default/${courseId}`}>
+        <Text>You will have to proceed without music</Text>
+        <Button
+          colorScheme="secondary"
+          color="black"
+          as={Link}
+          to={`/dashboard/alc/default/${courseId}`}
+        >
           Start Concert
         </Button>
       </Flex>

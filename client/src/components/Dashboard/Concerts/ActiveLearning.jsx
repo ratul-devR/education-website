@@ -7,12 +7,8 @@ import { Tooltip } from "@chakra-ui/tooltip";
 
 import { NEXT_WORD } from "../../../redux/actions/concertActions";
 
-import activeLearningDefaultAudio from "../../../assets/audios/active-learning.mp3";
-
 export default function ActiveLearning() {
-  const { questions, currentIndex, assets, useDefaultAsset } = useSelector(
-    (state) => state.concertReducer
-  );
+  const { questions, currentIndex, assets } = useSelector((state) => state.concertReducer);
   const dispatch = useDispatch();
   const [showMic, setShowMic] = useState(false);
   const [showTranslation, setShowTranslation] = useState(true);
@@ -72,13 +68,18 @@ export default function ActiveLearning() {
         </Text>
       )}
 
+      {/* the audio which plays the question sound */}
       <audio autoPlay onEnded={handleAudioEnd} src={questions[currentIndex].activeLearningVoice} />
-      <audio
-        autoPlay
-        loop
-        onCanPlay={(e) => (e.target.volume = 0.2)}
-        src={useDefaultAsset ? activeLearningDefaultAudio : assets.activeLearningBgAudio}
-      />
+
+      {/* the background music */}
+      {assets.activeLearningBgAudio && (
+        <audio
+          autoPlay
+          loop
+          onCanPlay={(e) => (e.target.volume = 0.2)}
+          src={assets.activeLearningBgAudio}
+        />
+      )}
     </Flex>
   );
 }

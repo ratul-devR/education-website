@@ -20,9 +20,6 @@ router.post("/", authorizeAdmin, uploadAlcFiles, uploadSingleAlc);
 // for getting all the items
 router.get("/", getItems);
 
-// for getting all items of category
-router.get("/courseId/:courseId", getItemsOfCategory)
-
 // for deleting a single ite
 router.delete("/:id", authorizeAdmin, deleteItem);
 

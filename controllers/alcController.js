@@ -7,7 +7,7 @@ module.exports = {
   uploadSingleAlc: async function (req, res, next) {
     try {
       const { background_music, passive_image, passive_background_sound } = req.files;
-      const { category, name } = req.body;
+      const { name } = req.body;
 
       const domain = req.protocol + "://" + req.get("host") + "/uploads/alc/";
 
@@ -47,12 +47,10 @@ module.exports = {
           name: passive_background_sound[0].filename,
           url: domain + passive_background_sound[0].filename,
         },
-        category,
         name,
       });
 
       await newItem.save();
-      await newItem.populate("category");
 
       res.status(201).json({ msg: "The Item was uploaded successfully", item: newItem });
     } catch (err) {
@@ -62,7 +60,7 @@ module.exports = {
 
   getItems: async function (_req, res, next) {
     try {
-      const items = await Alc.find({}).lean({ defaults: true }).populate("category");
+      const items = await Alc.find({}).lean({ defaults: true });
 
       res.status(200).json({ items });
     } catch (err) {
@@ -70,11 +68,9 @@ module.exports = {
     }
   },
 
-  getItemsOfCategory: async function (req, res, next) {
+  getItemsOfCategory: async function (_req, res, next) {
     try {
-      const { courseId } = req.params;
-
-      const items = await Alc.find({category: courseId});
+      const items = await Alc.find({});
 
       res.status(200).json({ items });
     } catch (err) {

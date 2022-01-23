@@ -14,7 +14,6 @@ const dataSchema = new mongoose.Schema({
     name: { type: String, required: true },
     url: { type: String, required: true },
   },
-  category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", ref: "Category" },
 });
 
 dataSchema.plugin(mongooseLeanDefaults);

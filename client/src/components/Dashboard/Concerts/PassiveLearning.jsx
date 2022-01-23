@@ -1,15 +1,10 @@
 import { Flex } from "@chakra-ui/layout";
 import { useSelector, useDispatch } from "react-redux";
 
-import SpaceImage from "../../../assets/space.jpg";
-import passiveLearningDefaultAudio from "../../../assets/audios/passive-learning.mp3";
-
 import { NEXT_WORD } from "../../../redux/actions/concertActions";
 
 export default function PassiveLearning() {
-  const { useDefaultAsset, assets, questions, currentIndex } = useSelector(
-    (state) => state.concertReducer
-  );
+  const { assets, questions, currentIndex } = useSelector((state) => state.concertReducer);
   const dispatch = useDispatch();
 
   /*
@@ -38,21 +33,25 @@ export default function PassiveLearning() {
 
   return (
     <Flex direction="column" w="full" h="full">
-      <img
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        src={useDefaultAsset ? SpaceImage : assets.passiveLearningImage}
-      />
+      {assets.passiveLearningImage && (
+        <img
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          src={assets.passiveLearningImage}
+        />
+      )}
       <audio
         src={questions[currentIndex].passiveLearningMaleVoice}
         onEnded={() => repeatAudios(currentIndex)}
         autoPlay
       />
-      <audio
-        onCanPlay={(e) => (e.target.volume = 0.2)}
-        loop
-        src={useDefaultAsset ? passiveLearningDefaultAudio : assets.passiveLearningBgAudio}
-        autoPlay
-      />
+      {assets.passiveLearningBgAudio && (
+        <audio
+          onCanPlay={(e) => (e.target.volume = 0.2)}
+          loop
+          src={assets.passiveLearningBgAudio}
+          autoPlay
+        />
+      )}
     </Flex>
   );
 }

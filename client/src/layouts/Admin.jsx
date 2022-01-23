@@ -3,18 +3,19 @@ import { Flex, HStack, VStack } from "@chakra-ui/layout";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { FaChartPie, FaUserFriends, FaAssistiveListeningSystems } from "react-icons/fa";
 import { AiOutlineCloudUpload } from "react-icons/ai";
+import { SiConvertio } from "react-icons/si";
 import { GrOrganization } from "react-icons/gr";
-import { FiSettings } from "react-icons/fi"
+import { FiSettings } from "react-icons/fi";
 import { GoMail } from "react-icons/go";
 import { NavLink, useRouteMatch } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
-import { useSelector } from "react-redux"
-import { Text } from "@chakra-ui/react"
+import { useSelector } from "react-redux";
+import { Text } from "@chakra-ui/react";
 
 import Logo from "../assets/logo.png";
 
 const Admin = ({ children }) => {
-  const { appSubTitle } = useSelector((state) => state.settingsReducer)
+  const { appSubTitle } = useSelector((state) => state.settingsReducer);
   const { url } = useRouteMatch();
 
   const logout = useLogout();
@@ -42,7 +43,11 @@ const Admin = ({ children }) => {
             icon={<FaChartPie />}
           />
         </Tooltip>
-        <Tooltip label="Active and Passive learning Concert Manager" placement="right" hasArrow>
+        <Tooltip
+          label="Active and passive learning concert assets manager"
+          placement="right"
+          hasArrow
+        >
           <IconButton
             rounded={0}
             bg="white"
@@ -62,13 +67,23 @@ const Admin = ({ children }) => {
             icon={<AiOutlineCloudUpload />}
           />
         </Tooltip>
+        <Tooltip label="Converter" placement="right" hasArrow>
+          <IconButton
+            rounded={0}
+            bg="white"
+            as={NavLink}
+            to={`${url}/converter`}
+            activeStyle={{ background: "#FF218D", color: "#fff" }}
+            icon={<SiConvertio />}
+          />
+        </Tooltip>
         <Tooltip label="Default Settings" placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"
             as={NavLink}
             to={`${url}/settings`}
-            activeStyle={{background: "#FF218D", color: "#fff"}}
+            activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<FiSettings />}
           />
         </Tooltip>
@@ -115,7 +130,7 @@ const Admin = ({ children }) => {
           background="white"
         >
           <Flex direction="column" justify="center" align="center">
-            <img src={Logo} style={{width: "150px", display: "block"}} alt="Logo" />
+            <img src={Logo} style={{ width: "150px", display: "block" }} alt="Logo" />
             {appSubTitle && <Text color="GrayText">{appSubTitle}</Text>}
           </Flex>
           <Button onClick={logout} colorScheme="blue">

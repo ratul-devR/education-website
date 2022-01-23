@@ -6,17 +6,19 @@ import { Button } from "@chakra-ui/button";
 import useToast from "../../hooks/useToast";
 import config from "../../config";
 import { Spinner } from "@chakra-ui/spinner";
-import { useDispatch } from "react-redux"
-import { FETCH_AND_UPDATE_SETTINGS } from "../../redux/actions/settingsActions"
+import { useDispatch } from "react-redux";
+import { FETCH_AND_UPDATE_SETTINGS } from "../../redux/actions/settingsActions";
 
 export default function DefaultSettings() {
-  const [{ appSubTitle, _id }, setInput] = useState({ appSubTitle: "" });
+  const [{ appSubTitle, _id }, setInput] = useState({
+    appSubTitle: "",
+  });
   const [newSettings, editSettings] = ["newSettings", "editSettings"];
   const [processing, setProcessing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState(newSettings);
   const toast = useToast();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   async function fetchSettings(abortController) {
     try {
@@ -60,7 +62,7 @@ export default function DefaultSettings() {
       );
       const body = await res.json();
       if (res.ok) {
-        dispatch(FETCH_AND_UPDATE_SETTINGS(body.settings))
+        dispatch(FETCH_AND_UPDATE_SETTINGS(body.settings));
         toast({ status: "success", description: body.msg });
         setPath(editSettings);
         setProcessing(false);

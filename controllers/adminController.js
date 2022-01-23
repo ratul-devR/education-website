@@ -7,10 +7,10 @@ const path = require("path");
 const Category = require("../models/category");
 const Question = require("../models/question");
 const User = require("../models/people");
-const Alc = require("../models/alc");
 const Org = require("../models/org");
 const QuizAsset = require("../models/quizAsset");
 const File = require("../models/files");
+const ConvertedFile = require("../models/convertedFile")
 
 const transporter = require("../utils/emailTransporter");
 
@@ -145,20 +145,10 @@ module.exports = {
 
       const doc = await Category.findOne({ _id: id });
 
-      // if any alc is existing in this category,
-      // the admin will have to delete them first
-      const alcsInThisCategory = await Alc.find({ category: doc._id });
+      await Category.deleteOne({ _id: doc._id });
+      await Question.deleteMany({ category: id });
 
-      if (alcsInThisCategory.length > 0) {
-        res.status(400).json({
-          msg: `This Category is containing learning concerts. Please delete ${alcsInThisCategory.length} learning concerts in this category first and try again.`,
-        });
-      } else {
-        await Category.deleteOne({ _id: doc._id });
-        await Question.deleteMany({ category: id });
-
-        res.status(201).json({ msg: `"${doc.name}" has been deleted`, category: doc });
-      }
+      res.status(201).json({ msg: `"${doc.name}" has been deleted`, category: doc });
     } catch (err) {
       next(err);
     }
@@ -431,6 +421,15 @@ module.exports = {
       });
     } catch (err) {
       next(err);
+    }
+  },
+
+  getConvertedFiles: async function (_, res, next) {
+    try {
+      const convertedFiles = await ConvertedFile.find({}).lean({ defaults: true })
+      res.status(201).json({ files: convertedFiles })
+    } catch (err) {
+      next(err)
     }
   },
 

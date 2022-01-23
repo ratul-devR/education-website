@@ -26,6 +26,7 @@ const {
   uploadFiles,
   getFiles,
   deleteFile,
+  getConvertedFiles,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -37,7 +38,7 @@ router.get("/categories", getCategories);
 // for adding a new category
 router.post("/post_category", postCategory);
 // for updating a category
-router.put("/update_category/:categoryId", updateCategory)
+router.put("/update_category/:categoryId", updateCategory);
 // for getting all the questions of a category
 router.get("/category/:categoryId/questions", getQuestions);
 // for deleting a category
@@ -64,6 +65,9 @@ router.delete("/delete_quiz_assets", deleteQuizAssets);
 router.get("/organizations", getOrganizations);
 // for sending emails to organizations
 router.post("/sendMails", sendMails);
+
+// for getting all converted files
+router.get("/getConvertedFiles", getConvertedFiles);
 
 // for updating question details
 router.put("/updateQuestion/:questionId", updateQuestion);

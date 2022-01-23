@@ -6,7 +6,6 @@ const initialState = {
   currentIndex: 0,
   activeLearningPlayedBefore: false,
   assets: {},
-  useDefaultAsset: true,
   ended: false,
   concertStarted: false,
 };
@@ -33,7 +32,6 @@ export default function concertReducer(state = initialState, action) {
                 passiveLearningImage: action.payload.passive_image.url,
               }
             : {},
-        useDefaultAsset: Object.keys(action.payload).length > 0 ? false : true,
       };
     }
 
