@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Flex, Heading } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 import { Text } from "@chakra-ui/react";
+import { Input } from "@chakra-ui/input";
+import { Select } from "@chakra-ui/select";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { Button, IconButton } from "@chakra-ui/button";
 import {
@@ -23,12 +25,15 @@ import NoMessage from "../global/NoMessage";
 export default function Converter() {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
   const [file, setFile] = useState(null);
+  const [{ type, timeLimit }, setInput] = useState({ type: "", timeLimit: "" });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
   function closeModal() {
     setFile(null);
+    setInput({ type: "", timeLimit: "" });
     onClose();
   }
 
@@ -52,6 +57,39 @@ export default function Converter() {
     }
   }
 
+  async function handleClick() {
+    setProcessing(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("type", type)
+    formData.append("timeLimit", timeLimit)
+    try {
+      const res = await fetch(`${config.serverURL}/get_admin/convertFile`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+      const body = await res.json();
+      if (res.ok) {
+        setFiles((pre) => [body.file, ...pre])
+        toast({ status: "success", description: "File converted successfully" });
+        setProcessing(false);
+        closeModal()
+      } else {
+        toast({ status: "error", description: body.msg });
+        setProcessing(false);
+      }
+    } catch (err) {
+      toast({ status: "error", description: err.message });
+      setProcessing(false);
+    }
+  }
+
+  function handleInputChange(e) {
+    const { name, value } = e.target;
+    setInput((pre) => ({ ...pre, [name]: value }));
+  }
+
   useEffect(() => {
     const abortController = new AbortController();
     fetchFiles(abortController);
@@ -71,11 +109,11 @@ export default function Converter() {
       <Heading mb={3} fontWeight="normal" fontSize="2xl" color="primary">
         Converter
       </Heading>
-      <Text mb={5} color="GrayText">
+      <Text mb={3} color="GrayText">
         Convert your CSV files into valid format
       </Text>
 
-      <Button colorScheme="secondary" color="black" onClick={onOpen}>
+      <Button mb={5} colorScheme="secondary" color="black" onClick={onOpen}>
         Convert File
       </Button>
       {/* the modal */}
@@ -87,19 +125,48 @@ export default function Converter() {
             <ModalCloseButton />
           </ModalHeader>
           <ModalBody>
-            <Flex direction="column" p={5} rounded={5} border="1px solid" borderColor="gray.100">
+            <Flex
+              direction="column"
+              mb={3}
+              p={5}
+              rounded={5}
+              border="1px solid"
+              borderColor="gray.100"
+            >
               <Text color="GrayText" mb={3}>
                 Select file
               </Text>
               <input type="file" accept="text/csv" onChange={(e) => setFile(e.target.files[0])} />
             </Flex>
+            <Select
+              placeholder="Type of questions"
+              onChange={handleInputChange}
+              name="type"
+              value={type}
+              mb={3}
+            >
+              <option value="mcq">Mcq</option>
+              <option value="text">Text</option>
+            </Select>
+            <Input
+              placeholder="Time limit for all the question"
+              onChange={handleInputChange}
+              type="number"
+              name="timeLimit"
+              value={timeLimit}
+            />
           </ModalBody>
           <ModalFooter>
             <Button onClick={closeModal} mr={3}>
               cancel
             </Button>
-            <Button disabled={!file} colorScheme="secondary" color="black">
-              Convert
+            <Button
+              onClick={handleClick}
+              disabled={!file || !timeLimit || !type || processing}
+              colorScheme="secondary"
+              color="black"
+            >
+              {processing ? "Processing..." : "Convert"}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -118,11 +185,11 @@ export default function Converter() {
                   <Td>{file.name}</Td>
                   <Td>
                     <IconButton
-                      as={a}
-                      target="_blank"
+                      as="a"
                       href={file.url}
                       icon={<MdFileDownload />}
                       colorScheme="blue"
+                      mr={3}
                     />
                     <IconButton icon={<AiOutlineDelete />} colorScheme="red" />
                   </Td>

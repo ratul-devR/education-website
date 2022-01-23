@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const csvJson = require("csvtojson/v2");
+const { Parser } = require("json2csv");
 const request = require("request");
-const { unlink } = require("fs");
+const { unlink, writeFile } = require("fs");
 const path = require("path");
 
 const Category = require("../models/category");
@@ -10,7 +11,7 @@ const User = require("../models/people");
 const Org = require("../models/org");
 const QuizAsset = require("../models/quizAsset");
 const File = require("../models/files");
-const ConvertedFile = require("../models/convertedFile")
+const ConvertedFile = require("../models/convertedFile");
 
 const transporter = require("../utils/emailTransporter");
 
@@ -424,12 +425,94 @@ module.exports = {
     }
   },
 
+  convertFile: async function (req, res, next) {
+    try {
+      const file = req.file;
+      const { type, timeLimit } = req.body;
+      const filePath = `${req.protocol}://${req.get("host")}/uploads/convertedFiles/${
+        file.filename
+      }`;
+      const jsonData = await csvJson().fromStream(request.get(filePath));
+
+      function deleteFile() {
+        unlink(path.join(__dirname, `/../public/uploads/convertedFiles/${file.filename}`), (err) =>
+          err ? err : null
+        );
+      }
+
+      // validate the information
+      for (let i = 0; i < jsonData.length; i++) {
+        const question = jsonData[i];
+        if (
+          type === "mcq" &&
+          (!question.question ||
+            !question.option1_answer ||
+            !question.option2 ||
+            !question.option3 ||
+            !question.option4 ||
+            !question.option5 ||
+            !question.activeLearningVoice ||
+            !question.passiveLearningVoice ||
+            !question.passiveLearningMaleVoice)
+        ) {
+          deleteFile();
+          res.status(400).json({
+            msg: "MCQ questions must contain these fields: question, option1_answer, option2, option3, option4, option5, activeLearningVoice, passiveLearningVoice, passiveLearningMaleVoice",
+          });
+        } else if (
+          type === "text" &&
+          (!question.question ||
+            !question.answers ||
+            !question.activeLearningVoice ||
+            !question.passiveLearningMaleVoice ||
+            !question.passiveLearningVoice)
+        ) {
+          deleteFile();
+          res.status(400).json({
+            msg: "Text questions must contain these fields: question, answers, activeLearningVoice, passiveLearningVoice, passiveLearningMaleVoice",
+          });
+        }
+        // if everything is ok, then convert it into valid format
+        else {
+          jsonData[i] = { ...jsonData[i], type, timeLimit };
+        }
+      }
+
+      // once we are done, then delete the file
+      deleteFile();
+
+      const parser = new Parser();
+      const parsedCSV = parser.parse(jsonData);
+
+      // finally convert it into a CSV file
+      writeFile(
+        path.join(__dirname, `/../public/uploads/convertedFiles/${file.filename}`),
+        parsedCSV,
+        (err) => {
+          if (err) {
+            console.log(err);
+          }
+        }
+      );
+
+      // now create a new mongo doc with this file info
+      const newConvertedFile = new ConvertedFile({ name: file.filename, url: filePath });
+      await newConvertedFile.save();
+
+      res.status(201).json({ msg: "File converted successfully", file: newConvertedFile });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   getConvertedFiles: async function (_, res, next) {
     try {
-      const convertedFiles = await ConvertedFile.find({}).lean({ defaults: true })
-      res.status(201).json({ files: convertedFiles })
+      const convertedFiles = await ConvertedFile.find({})
+        .lean({ defaults: true })
+        .sort({ createdAt: -1 });
+      res.status(201).json({ files: convertedFiles });
     } catch (err) {
-      next(err)
+      next(err);
     }
   },
 

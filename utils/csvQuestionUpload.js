@@ -5,10 +5,10 @@ module.exports = function (sub_folder_path) {
   const uploadFolder = `${__dirname}/../public/uploads/${sub_folder_path}`;
 
   const storage = multer.diskStorage({
-    destination(req, file, cb) {
+    destination(_req, _file, cb) {
       cb(null, uploadFolder);
     },
-    filename: (req, file, cb) => {
+    filename: (_req, file, cb) => {
       const fileExt = path.extname(file.originalname);
       const fileName =
         file.originalname.replace(fileExt, "").toLowerCase().split(" ").join("-") +
@@ -21,7 +21,7 @@ module.exports = function (sub_folder_path) {
 
   const upload = multer({
     storage,
-    fileFilter: (req, file, cb) => {
+    fileFilter: (_req, file, cb) => {
       if (file.mimetype !== "text/csv") {
         cb({ msg: "Only .csv file is allowed" });
       } else {

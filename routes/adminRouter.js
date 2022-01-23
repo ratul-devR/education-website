@@ -4,6 +4,7 @@ const uploadCsvFile = require("../middlewares/admin/uploadCsvFile");
 const quizAssetUpload = require("../middlewares/admin/uploadQuizAsset");
 const uploadQuestionAssets = require("../middlewares/admin/uploadQuestionAssets");
 const uploadFilesMiddleware = require("../middlewares/admin/uploadFiles");
+const uploadFileToConvert = require("../middlewares/admin/uploadFileToConvert");
 
 // controllers
 const {
@@ -27,6 +28,7 @@ const {
   getFiles,
   deleteFile,
   getConvertedFiles,
+  convertFile
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -68,6 +70,8 @@ router.post("/sendMails", sendMails);
 
 // for getting all converted files
 router.get("/getConvertedFiles", getConvertedFiles);
+// for uploading a file to convert
+router.post("/convertFile", uploadFileToConvert, convertFile);
 
 // for updating question details
 router.put("/updateQuestion/:questionId", updateQuestion);
