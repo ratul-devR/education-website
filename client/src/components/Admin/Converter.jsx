@@ -61,8 +61,8 @@ export default function Converter() {
     setProcessing(true);
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("type", type)
-    formData.append("timeLimit", timeLimit)
+    formData.append("type", type);
+    formData.append("timeLimit", timeLimit);
     try {
       const res = await fetch(`${config.serverURL}/get_admin/convertFile`, {
         method: "POST",
@@ -71,10 +71,10 @@ export default function Converter() {
       });
       const body = await res.json();
       if (res.ok) {
-        setFiles((pre) => [body.file, ...pre])
+        setFiles((pre) => [body.file, ...pre]);
         toast({ status: "success", description: "File converted successfully" });
         setProcessing(false);
-        closeModal()
+        closeModal();
       } else {
         toast({ status: "error", description: body.msg });
         setProcessing(false);
@@ -82,6 +82,25 @@ export default function Converter() {
     } catch (err) {
       toast({ status: "error", description: err.message });
       setProcessing(false);
+    }
+  }
+
+  async function deleteFile(fileId) {
+    try {
+      const res = await fetch(`${config.serverURL}/get_admin/deleteConvertedFile/${fileId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const body = await res.json();
+      if (res.ok) {
+        setFiles(files.filter((file) => file._id !== body.file._id));
+        toast({ status: "success", description: body.msg });
+      } else {
+        toast({ status: "success", description: body.msg });
+      }
+    } catch (err) {
+      toast({ status: "error", description: err.message });
     }
   }
 
@@ -191,7 +210,14 @@ export default function Converter() {
                       colorScheme="blue"
                       mr={3}
                     />
-                    <IconButton icon={<AiOutlineDelete />} colorScheme="red" />
+                    <IconButton
+                      onClick={() =>
+                        window.confirm("Are you sure? you want to delete that file?") &&
+                        deleteFile(file._id)
+                      }
+                      icon={<AiOutlineDelete />}
+                      colorScheme="red"
+                    />
                   </Td>
                 </Tr>
               );

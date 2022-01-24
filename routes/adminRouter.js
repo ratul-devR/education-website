@@ -28,7 +28,8 @@ const {
   getFiles,
   deleteFile,
   getConvertedFiles,
-  convertFile
+  convertFile,
+  deleteFileConvertedFile,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -72,6 +73,8 @@ router.post("/sendMails", sendMails);
 router.get("/getConvertedFiles", getConvertedFiles);
 // for uploading a file to convert
 router.post("/convertFile", uploadFileToConvert, convertFile);
+// for deleting a converted file
+router.delete("/deleteConvertedFile/:fileId", deleteFileConvertedFile);
 
 // for updating question details
 router.put("/updateQuestion/:questionId", updateQuestion);

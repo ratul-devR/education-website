@@ -474,9 +474,15 @@ module.exports = {
         }
         // if everything is ok, then convert it into valid format
         else {
-          jsonData[i] = { ...jsonData[i], type, timeLimit };
+          jsonData[i] = {
+            ...jsonData[i],
+            type,
+            timeLimit,
+          };
         }
       }
+
+      console.log(jsonData);
 
       // once we are done, then delete the file
       deleteFile();
@@ -500,6 +506,26 @@ module.exports = {
       await newConvertedFile.save();
 
       res.status(201).json({ msg: "File converted successfully", file: newConvertedFile });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  deleteFileConvertedFile: async function (req, res, next) {
+    try {
+      const { fileId } = req.params;
+
+      const deletedDoc = await ConvertedFile.findOneAndDelete({ _id: fileId });
+
+      function deleteFile(fileName) {
+        unlink(path.join(__dirname, `/../public/uploads/convertedFiles/${fileName}`), (err) =>
+          err ? err : null
+        );
+      }
+
+      deleteFile(deletedDoc.name);
+
+      res.status(201).json({ msg: "The file has been deleted", file: deletedDoc });
     } catch (err) {
       next(err);
     }
