@@ -66,12 +66,12 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
   }
 
   // for stopping all feedback sounds for a specific action
-  function stopFeedBackSounds() {
+  /* function stopFeedBackSounds() {
     if (positiveAudio && negativeAudio) {
       positiveAudio.pause();
       negativeAudio.pause();
     }
-  }
+  } */
 
   // for stopping all the audios
   /* function stopAllAudios() {
@@ -181,13 +181,19 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
 
   return (
     <Flex w="full" h="full" direction="column">
-      <Heading whiteSpace="pre-wrap" fontSize={questions[currentIndex].type === "text" ? "xl" : "4xl"} textAlign="center" py={3} fontWeight="normal">
+      <Heading
+        whiteSpace="pre-wrap"
+        fontSize={questions[currentIndex].type === "text" ? "xl" : "4xl"}
+        textAlign="center"
+        py={3}
+        fontWeight="normal"
+      >
         {questions[currentIndex].type === "mcq"
           ? questions[currentIndex].question
           : reactStringReplace(questions[currentIndex].question, "_", () => {
               return (
                 <Input
-                  minW="350px"
+                  w="150px"
                   onKeyPress={(e) => {
                     if (e.key === "Enter") {
                       !selectedAnswer && checkAnswer(input, questions[currentIndex]._id);
@@ -198,7 +204,6 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
                   width="auto"
                   display="inline"
                   variant="flushed"
-                  placeholder="Enter the answer > hit enter"
                   value={input}
                   ref={inputRef}
                   disabled={selectedAnswer}
@@ -206,6 +211,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
                 />
               );
             })}
+        {questions[currentIndex].spanishWord && ` (${questions[currentIndex].spanishWord})`}
       </Heading>
 
       {!userKnowsAnswer && questions[currentIndex].type !== "text" ? (

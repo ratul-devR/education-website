@@ -6,6 +6,7 @@ const dataSchema = new mongoose.Schema({
   options: { type: Array },
   answers: { type: Array, required: true },
   spanishWord: String,
+  englishVerb: String,
   type: { type: String, required: true, enum: ["mcq", "text"] },
   category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
   timeLimit: { type: Number, required: true },

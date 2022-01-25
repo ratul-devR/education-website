@@ -398,7 +398,7 @@ module.exports = {
             });
           }
 
-          question.answers = question.answers.split("/ ");
+          question.answers = question.answers.split(", ");
           question.category = category;
         }
       }
@@ -481,8 +481,6 @@ module.exports = {
           };
         }
       }
-
-      console.log(jsonData);
 
       // once we are done, then delete the file
       deleteFile();

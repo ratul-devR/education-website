@@ -198,9 +198,7 @@ const Alc = () => {
               direction="column"
               mb={5}
             >
-              <Text mb={2}>
-                Passive Learning Image<sup>*</sup>
-              </Text>
+              <Text mb={2}>Passive Learning Image</Text>
               <input
                 name="passive_image"
                 onChange={handleInputChange}

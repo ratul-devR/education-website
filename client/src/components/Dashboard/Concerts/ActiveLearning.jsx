@@ -47,8 +47,8 @@ export default function ActiveLearning() {
           show up the text answer with spanish word
         */}
         {questions[currentIndex].type === "text"
-          ? questions[currentIndex].spanishWord
-            ? questions[currentIndex].answers[0] + " - " + questions[currentIndex].spanishWord
+          ? questions[currentIndex].spanishWord && questions[currentIndex].englishVerb
+            ? questions[currentIndex].englishVerb + " - " + questions[currentIndex].spanishWord
             : questions[currentIndex].question.replace("_", " _____ ") +
               ` (${questions[currentIndex].answers[0]})`
           : questions[currentIndex].answers[0]}
