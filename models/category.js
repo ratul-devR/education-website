@@ -8,6 +8,7 @@ const dataSchema = new mongoose.Schema({
   passPercentage: { type: Number, required: true },
   learningPhasePaid: { type: Boolean, required: true },
   checkingPhasePaid: { type: Boolean, required: true },
+  quizIns: String,
   prerequisites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
   purchasedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],

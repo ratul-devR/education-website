@@ -6,7 +6,7 @@ import { Spinner } from "@chakra-ui/spinner";
 import { Button } from "@chakra-ui/button";
 import { Progress } from "@chakra-ui/progress";
 import { Link, useHistory } from "react-router-dom";
-import { CircularProgress, CircularProgressLabel } from "@chakra-ui/react";
+import { CircularProgress, CircularProgressLabel, Text } from "@chakra-ui/react";
 
 import useToast from "../../../hooks/useToast";
 
@@ -44,6 +44,7 @@ const Quiz = ({ path }) => {
   const dispatch = useDispatch();
 
   const [timer, setTimer] = useState(0);
+  const [negativeAudio, setNegativeAudio] = useState();
   const [userCommitted, setUserCommitted] = useState(false);
   const [timerInterval, setTimerInterval] = useState();
 
@@ -89,8 +90,9 @@ const Quiz = ({ path }) => {
 
   // if the user doesn't knows the answer then show him the next Q
   // and show up a toast
-  // this function will be called when the user click on I don't know and also when the user gives the wrong answer
+  // this function will be called when the user click on I don't know and also when the user gives the wrong answer also if the the times up and the user is not able to give the correct answer
   async function userDoesNotKnowTheAnswer(questionId, answered, timeOut) {
+    // if the question was not answered in specified time
     if (!answered && !timeOut) {
       dispatch(DONT_KNOW());
       dispatch(NEXT_QUESTION());
@@ -126,9 +128,29 @@ const Quiz = ({ path }) => {
     }
   }
 
+  async function fetchAudioAssets(abortController) {
+    try {
+      const res = await fetch(`${config.serverURL}/get_quiz/get_assets`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        signal: abortController.signal,
+      });
+      const body = await res.json();
+      if (res.ok && body.asset) {
+        setNegativeAudio(new Audio(body.asset.negative_sound.url));
+      }
+    } catch (err) {
+      toast({ status: "error", description: err.message });
+    }
+  }
+
   useEffect(() => {
     const abortController = new AbortController();
+
     fetchQuiz(abortController);
+    fetchAudioAssets(abortController);
+
     document.title = "Loading ...";
 
     return () => {
@@ -174,6 +196,7 @@ const Quiz = ({ path }) => {
       setTimer(0);
       dispatch(NEXT_QUESTION());
       dispatch(DONT_KNOW());
+      negativeAudio && negativeAudio.play();
       toast({ status: "warning", description: "Time up" });
       userDoesNotKnowTheAnswer(questions[currentIndex]._id, false, true);
     }
@@ -240,15 +263,35 @@ const Quiz = ({ path }) => {
   // when the quiz is done, show up the results
   if (done) {
     return (
-      <Flex w="full" h="full" align="center" py={10} direction="column">
+      <Flex align="center" py={10} direction="column">
         <Heading textAlign="center" fontWeight="normal" mb={10}>
           Quiz results
         </Heading>
-        <Heading color="primary" fontWeight="normal" mb={10}>
-          <CircularProgress color="primary" size="100px" value={totalPercentage}>
-            <CircularProgressLabel>{totalPercentage}%</CircularProgressLabel>
-          </CircularProgress>
-        </Heading>
+        <CircularProgress color="primary" size="200px" value={totalPercentage}>
+          <CircularProgressLabel color="primary" fontSize="25px">
+            Known: {totalPercentage}%
+          </CircularProgressLabel>
+        </CircularProgress>
+        <Flex direction="column" my={5}>
+          <Text>
+            Questions known:{" "}
+            <Text display="inline-block" color="blue.400">
+              {score}
+            </Text>
+          </Text>
+          <Text>
+            Questions Unknown:{" "}
+            <Text display="inline-block" color="blue.400">
+              {questionsDontKnow}
+            </Text>
+          </Text>
+          <Text>
+            Questions wrong:{" "}
+            <Text display="inline-block" color="blue.400">
+              {questionsWrong}
+            </Text>
+          </Text>
+        </Flex>
         <Button
           as={Link}
           to={
@@ -266,7 +309,7 @@ const Quiz = ({ path }) => {
   }
 
   return (
-    <Flex w="full" h="full" direction="column" align="center" gridRowGap={5} py={10}>
+    <Flex direction="column" align="center" gridRowGap={5} py={10}>
       {/* quiz header */}
       <Flex direction="column" maxW="800px" justify="center" w="full" align="center">
         <Heading
@@ -278,6 +321,7 @@ const Quiz = ({ path }) => {
         >
           {course.name}
         </Heading>
+        {course.quizIns && <Text mt={5} color="GrayText" whiteSpace="pre-wrap">{course.quizIns}</Text>}
 
         <Progress
           colorScheme="secondary"

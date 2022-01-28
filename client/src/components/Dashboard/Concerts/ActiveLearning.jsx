@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Flex, Heading } from "@chakra-ui/layout";
 import { Text } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
@@ -12,16 +12,49 @@ export default function ActiveLearning() {
   const dispatch = useDispatch();
   const [showMic, setShowMic] = useState(false);
   const [showTranslation, setShowTranslation] = useState(true);
+  const backgroundAudioRef = useRef();
+
+  function fadeBgSound(start) {
+    if (start) {
+      backgroundAudioRef.current.volume = 0.2;
+      setTimeout(() => {
+        backgroundAudioRef.current.volume = 0.3;
+        setTimeout(() => {
+          backgroundAudioRef.current.volume = 0.4;
+          setTimeout(() => {
+            backgroundAudioRef.current.volume = 0.5;
+          })
+        }, 100)
+      }, 100)
+    } else {
+      backgroundAudioRef.current.volume = 0.4;
+      setTimeout(() => {
+        backgroundAudioRef.current.volume = 0.3;
+        setTimeout(() => {
+          backgroundAudioRef.current.volume = 0.2;
+          setTimeout(() => {
+            backgroundAudioRef.current.volume = 0.1;
+          }, 100)
+        }, 100)
+      }, 100)
+    }
+  }
 
   function handleAudioEnd() {
     setShowMic(true);
     setShowTranslation(false);
+    fadeBgSound(true)
     setTimeout(() => {
       setShowMic(false);
       const questionAudio = new Audio(questions[currentIndex].activeLearningVoice);
+      fadeBgSound(false)
       questionAudio.currentTime = 0;
       questionAudio.play();
-      questionAudio.onended = () => setTimeout(() => dispatch(NEXT_WORD()), 1000);
+      questionAudio.onended = () =>
+        setTimeout(() => {
+          fadeBgSound(true)
+          dispatch(NEXT_WORD());
+        }, 1000);
     }, 3000);
   }
 
@@ -36,8 +69,8 @@ export default function ActiveLearning() {
     <Flex direction="column" w="full" h="full" justify="center" align="center">
       <Heading
         color="primary"
-        fontWeight={questions[currentIndex].type === "text" && "normal"}
-        fontSize={questions[currentIndex].type === "text" ? 50 : 100}
+        fontWeight="normal"
+        fontSize={questions[currentIndex].spanishWord ? 50 : 100}
         mb={5}
       >
         {/*
@@ -49,8 +82,7 @@ export default function ActiveLearning() {
         {questions[currentIndex].type === "text"
           ? questions[currentIndex].spanishWord && questions[currentIndex].englishVerb
             ? questions[currentIndex].englishVerb + " - " + questions[currentIndex].spanishWord
-            : questions[currentIndex].question.replace("_", " _____ ") +
-              ` (${questions[currentIndex].answers[0]})`
+            : questions[currentIndex].answers[0]
           : questions[currentIndex].answers[0]}
       </Heading>
 
@@ -62,21 +94,28 @@ export default function ActiveLearning() {
         </Tooltip>
       )}
 
-      {showTranslation && questions[currentIndex].type === "mcq" && (
+      {/* the translation appears here */}
+      {showTranslation && !questions[currentIndex].spanishWord && (
         <Text mb={10} color="GrayText" fontSize="2xl">
-          {questions[currentIndex].question.replace("_", " _____ ")}
+          {questions[currentIndex].question.replaceAll("_", "")}
         </Text>
       )}
 
       {/* the audio which plays the question sound */}
-      <audio autoPlay onEnded={handleAudioEnd} src={questions[currentIndex].activeLearningVoice} />
+      <audio
+        autoPlay
+        onPlay={() => fadeBgSound(false)}
+        onEnded={handleAudioEnd}
+        src={questions[currentIndex].activeLearningVoice}
+      />
 
       {/* the background music */}
       {assets.activeLearningBgAudio && (
         <audio
           autoPlay
           loop
-          onCanPlay={(e) => (e.target.volume = 0.2)}
+          ref={backgroundAudioRef}
+          onCanPlay={(e) => (e.target.volume = 0.5)}
           src={assets.activeLearningBgAudio}
         />
       )}

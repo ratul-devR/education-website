@@ -85,6 +85,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               categoryOF.passPercentage = body.category.passPercentage;
               categoryOF.learningPhasePaid = body.category.learningPhasePaid;
               categoryOF.checkingPhasePaid = body.category.checkingPhasePaid;
+              categoryOF.quizIns = body.category.quizIns
             }
             return categoryOF;
           })
@@ -193,6 +194,24 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 max={100}
                 placeholder="Edit price"
                 value={category.passPercentage}
+              />
+            </Flex>
+            <Flex
+              p={5}
+              rounded={5}
+              mb={5}
+              border="1px solid"
+              borderColor="gray.100"
+              direction="column"
+            >
+              <Text color="GrayText" mb={3}>
+                Quiz instruction
+              </Text>
+              <Textarea
+                onChange={handleInputChange}
+                name="quizIns"
+                placeholder="Edit quiz instruction"
+                value={category.quizIns}
               />
             </Flex>
             <Flex

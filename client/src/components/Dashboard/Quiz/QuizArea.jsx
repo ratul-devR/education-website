@@ -81,6 +81,16 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
     }
   } */
 
+  function onCorrectAnswer() {
+    setClassName("option correct");
+    // changing the score
+    dispatch(CHANGE_SCORE());
+    toast({ status: "success", description: "Correct Answer", duration: 1000 });
+    setTimeout(() => {
+      dispatch(NEXT_QUESTION());
+    }, 2000);
+  }
+
   // for handling option click
   function checkAnswer(usersAnswer, questionId) {
     setSelectedAnswer(usersAnswer);
@@ -117,13 +127,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
             description: err.message || "We are having unexpected server side errors",
           })
         );
-      setClassName("option correct");
-      // changing the score
-      dispatch(CHANGE_SCORE());
-      toast({ status: "success", description: "Correct Answer", duration: 1000 });
-      setTimeout(() => {
-        dispatch(NEXT_QUESTION());
-      }, 2000);
+      onCorrectAnswer();
     } else {
       setClassName("option wrong");
       dispatch(WRONG_ANSWER());
@@ -193,14 +197,15 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
           : reactStringReplace(questions[currentIndex].question, "_", () => {
               return (
                 <Input
-                  w="150px"
+                  w="210px"
                   onKeyPress={(e) => {
                     if (e.key === "Enter") {
                       !selectedAnswer && checkAnswer(input, questions[currentIndex]._id);
                     }
                   }}
+                  placeholder="Enter answer > press ↵"
                   mx={3}
-                  fontSize="xl"
+                  fontSize="md"
                   width="auto"
                   display="inline"
                   variant="flushed"

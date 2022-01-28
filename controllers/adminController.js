@@ -85,6 +85,7 @@ module.exports = {
         prerequisites,
         learningPhasePaid,
         checkingPhasePaid,
+        quizIns,
       } = req.body;
 
       const categoryExist =
@@ -101,6 +102,7 @@ module.exports = {
           passPercentage,
           learningPhasePaid,
           checkingPhasePaid,
+          quizIns,
         });
 
         await newCategory.save();
@@ -120,19 +122,9 @@ module.exports = {
       const { categoryId } = req.params;
       const updatedInfo = req.body;
 
-      const updatedCategory = await Category.findOneAndUpdate(
-        { _id: categoryId },
-        {
-          name: updatedInfo.name,
-          description: updatedInfo.description,
-          price: updatedInfo.price,
-          passPercentage: updatedInfo.passPercentage,
-          prerequisites: updatedInfo.prerequisites,
-          learningPhasePaid: updatedInfo.learningPhasePaid,
-          checkingPhasePaid: updatedInfo.checkingPhasePaid,
-        },
-        { new: true }
-      ).populate("prerequisites");
+      const updatedCategory = await Category.findOneAndUpdate({ _id: categoryId }, updatedInfo, {
+        new: true,
+      }).populate("prerequisites");
 
       res.status(201).json({ msg: "Updated Successfully", category: updatedCategory });
     } catch (err) {

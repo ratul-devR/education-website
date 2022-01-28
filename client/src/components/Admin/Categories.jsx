@@ -30,13 +30,22 @@ import EditCategoryModal from "./components/EditCategoryModal";
 
 const Categories = () => {
   const [
-    { title, description, price, passPercentage, learningPhasePaid, checkingPhasePaid },
+    {
+      title,
+      description,
+      price,
+      passPercentage,
+      learningPhasePaid,
+      quizIns,
+      checkingPhasePaid,
+    },
     setInput,
   ] = useState({
     title: "",
     description: "",
     price: "",
     passPercentage: "",
+    quizIns: "",
     learningPhasePaid: false,
     checkingPhasePaid: false,
   });
@@ -264,6 +273,13 @@ const Categories = () => {
                 value={passPercentage}
                 mb={3}
               />
+              <Textarea
+                placeholder="Quiz instruction"
+                onChange={HandleInputChange}
+                name="quizIns"
+                value={quizIns}
+                mb={3}
+              />
               <Flex mb={3}>
                 <Checkbox
                   onChange={() =>
@@ -291,7 +307,9 @@ const Categories = () => {
                 onClick={CreateCategory}
                 colorScheme="secondary"
                 color="black"
-                disabled={!title || !description || !price || !passPercentage}
+                disabled={
+                  !title || !description || !price || !passPercentage 
+                }
               >
                 Save
               </Button>
