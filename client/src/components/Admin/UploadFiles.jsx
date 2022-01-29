@@ -138,7 +138,7 @@ export default function UploadFiles() {
     <Flex direction="column">
       <Flex direction="column" mb={10}>
         <Heading color="primary" fontWeight="normal" fontSize="2xl" mb={3}>
-          Upload Files
+          Upload audio files
         </Heading>
         <Text mb={3} color="GrayText">
           You can upload files here and copy the link to share or use

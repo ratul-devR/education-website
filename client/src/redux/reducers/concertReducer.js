@@ -3,6 +3,8 @@ const initialState = {
   course: {},
   loading: true,
   currentPhase: "active",
+  activeLearningEnded: false,
+  passiveLearningEnded: false,
   currentIndex: 0,
   activeLearningPlayedBefore: false,
   assets: {},
@@ -45,13 +47,22 @@ export default function concertReducer(state = initialState, action) {
             currentPhase: "active",
             currentIndex: 0,
             activeLearningPlayedBefore: true,
+            passiveLearningEnded: true,
           };
         } else if (state.currentPhase === "active" && state.activeLearningPlayedBefore) {
-          return { ...state, ended: true };
+          return { ...state, ended: true, activeLearningEnded: false, passiveLearningEnded: false };
         } else if (state.currentPhase === "active" && !state.activeLearningPlayedBefore) {
-          return { ...state, currentIndex: 0, currentPhase: "passive" };
+          return { ...state, currentIndex: 0, currentPhase: "passive", activeLearningEnded: true };
         }
       }
+    }
+
+    case "START_ACTIVE_LEARNING": {
+      return { ...state, passiveLearningEnded: false };
+    }
+
+    case "START_PASSIVE_LEARNING": {
+      return { ...state, activeLearningEnded: false };
     }
 
     case "RESET_CONCERT": {

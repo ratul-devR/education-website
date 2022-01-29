@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IconButton, Button } from "@chakra-ui/button";
 import { Flex, Text } from "@chakra-ui/layout";
-import { FiEdit } from "react-icons/fi";
+import { AiOutlineClockCircle } from "react-icons/ai";
 import {
   Modal,
   ModalOverlay,
@@ -56,7 +56,7 @@ export default function EditQuestionsModal({ currentCategory }) {
 
   return (
     <Flex direction="column" display="inline-block">
-      <IconButton onClick={onOpen} colorScheme="blue" icon={<FiEdit />} />
+      <IconButton onClick={onOpen} colorScheme="blue" icon={<AiOutlineClockCircle />} />
       <Modal isOpen={isOpen} onClose={closeModal}>
         <ModalOverlay />
         <ModalContent>

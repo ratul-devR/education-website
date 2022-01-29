@@ -30,7 +30,7 @@ module.exports = {
             signed: true,
           });
 
-          res.status(201).json({ msg: `Welcome back ${user.lastName}`, user });
+          res.status(201).json({ msg: `Welcome back ${user.firstName}`, user });
         } else {
           res.status(400).json({ msg: "Invalid credentials" });
         }

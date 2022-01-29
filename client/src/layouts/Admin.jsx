@@ -57,7 +57,7 @@ const Admin = ({ children }) => {
             icon={<FaAssistiveListeningSystems />}
           />
         </Tooltip>
-        <Tooltip label="Upload Files" placement="right" hasArrow>
+        <Tooltip label="Upload audio files" placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"

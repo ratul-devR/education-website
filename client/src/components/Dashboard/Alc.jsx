@@ -15,14 +15,25 @@ import {
   LOAD_ASSETS,
   RESET_CONCERT,
   START_CONCERT,
+  START_ACTIVE_LEARNING,
+  START_PASSIVE_LEARNING,
 } from "../../redux/actions/concertActions";
 
 import ActiveLearning from "../Dashboard/Concerts/ActiveLearning";
 import PassiveLearning from "../Dashboard/Concerts/PassiveLearning";
 
 export default function Alc() {
-  const { questions, loading, currentIndex, currentPhase, ended, concertStarted, course } =
-    useSelector((state) => state.concertReducer);
+  const {
+    questions,
+    loading,
+    currentIndex,
+    currentPhase,
+    ended,
+    concertStarted,
+    course,
+    activeLearningEnded,
+    passiveLearningEnded,
+  } = useSelector((state) => state.concertReducer);
   const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
 
   const { courseId, alcId } = useParams();
@@ -130,6 +141,36 @@ export default function Alc() {
         </Text>
         <Button onClick={() => dispatch(START_CONCERT())} colorScheme="secondary" color="black">
           Get Started
+        </Button>
+      </Flex>
+    );
+  } else if (activeLearningEnded) {
+    return (
+      <Flex w="full" h="full" justify="center" align="center" direction="column">
+        <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
+          Active learning concert has been ended
+        </Heading>
+        <Button
+          onClick={() => dispatch(START_PASSIVE_LEARNING())}
+          colorScheme="secondary"
+          color="black"
+        >
+          Passive learning concert
+        </Button>
+      </Flex>
+    );
+  } else if (passiveLearningEnded) {
+    return (
+      <Flex w="full" h="full" justify="center" align="center" direction="column">
+        <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
+          Passive learning concert has been ended
+        </Heading>
+        <Button
+          colorScheme="secondary"
+          color="black"
+          onClick={() => dispatch(START_ACTIVE_LEARNING())}
+        >
+          Active learning concert
         </Button>
       </Flex>
     );
