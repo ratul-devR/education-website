@@ -200,14 +200,14 @@ const Categories = () => {
 
         {/* the modal button to open up the create category modal */}
         <Button mb={10} onClick={onOpen} color="black" colorScheme="secondary">
-          Add new Category
+          Add new Product
         </Button>
 
         {/* the modal which will be opened when the use click on the button */}
         <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Create Category</ModalHeader>
+            <ModalHeader>Create Product</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <Input

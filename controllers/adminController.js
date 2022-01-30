@@ -174,10 +174,12 @@ module.exports = {
   uploadFiles: async function (req, res, next) {
     try {
       const files = req.files;
+      const { category } = req.body;
 
       const fileData = files.map((file) => ({
         name: file.filename,
         url: req.protocol + "://" + req.get("host") + "/" + "uploads/" + "files/" + file.filename,
+        category,
       }));
 
       const uploadedFiles = await File.insertMany(fileData);
@@ -191,6 +193,18 @@ module.exports = {
   getFiles: async function (_, res, next) {
     try {
       const files = await File.find({}).lean({ defaults: true }).sort({ createdAt: -1 });
+      res.status(200).json({ files });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getFilesOfCategory: async function (req, res, next) {
+    try {
+      const { categoryId } = req.params;
+      const files = await File.find({ category: categoryId })
+        .lean({ defaults: true })
+        .sort({ createdAt: -1 });
       res.status(200).json({ files });
     } catch (err) {
       next(err);
