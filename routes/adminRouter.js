@@ -28,6 +28,7 @@ const {
   getFiles,
   deleteFile,
   getFilesOfCategory,
+  searchFiles,
   getConvertedFiles,
   convertFile,
   deleteFileConvertedFile,
@@ -57,6 +58,8 @@ router.post("/uploadFiles", uploadFilesMiddleware, uploadFiles);
 router.get("/getFiles", getFiles);
 // for getting files of a specific category
 router.get("/get_files/categoryId/:categoryId", getFilesOfCategory);
+// for getting specific searched file
+router.get("/searchFiles/:searchQuery", searchFiles)
 // for deleting a file
 router.delete("/deleteFile/:fileId", deleteFile);
 

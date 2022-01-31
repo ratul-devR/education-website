@@ -16,6 +16,7 @@ import { Button, IconButton } from "@chakra-ui/button";
 import { Spinner } from "@chakra-ui/spinner";
 import useToast from "../../hooks/useToast";
 import { Select } from "@chakra-ui/select";
+import { Input } from "@chakra-ui/input";
 import config from "../../config";
 import { AiOutlineDelete } from "react-icons/ai";
 import { MdContentCopy } from "react-icons/md";
@@ -30,13 +31,15 @@ export default function UploadFiles() {
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState();
   const [filterSelectField, setSelectFilterField] = useState("");
+  const [searchInputField, setSearchInputField] = useState("");
   const [processing, setProcessing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [questionsPerPage] = useState(30);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {isOpen, onOpen, onClose} = useDisclosure();
   const toast = useToast();
+  const abortController = new AbortController()
 
   const indexOfLastFile = currentPage * questionsPerPage;
   const indexOfFirstFile = indexOfLastFile - questionsPerPage;
@@ -80,7 +83,6 @@ export default function UploadFiles() {
     setSelectFilterField(filterState);
 
     if (filterState === "") {
-      const abortController = new AbortController();
       setLoading(true);
       fetchFiles(abortController);
     } else {
@@ -103,6 +105,34 @@ export default function UploadFiles() {
         }
       } catch (err) {
         toast({ status: "error", description: err.message });
+      }
+    }
+  }
+
+  async function searchFile(e) {
+    e.preventDefault();
+    const searchQuery = searchInputField
+
+    if (searchQuery === "") {
+      setLoading(true)
+      fetchFiles(abortController)
+    } else {
+      setLoading(true);
+      try {
+        const res = await fetch(`${config.serverURL}/get_admin/searchFiles/${searchQuery}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include"
+        })
+        const body = await res.json()
+        if (res.ok) {
+          setUploadedFiles(body.files || []);
+          setLoading(false);
+        } else {
+          toast({ status: "error", description: body.msg });
+        }
+      } catch (err) {
+        toast({ status: "error", description: err.message })
       }
     }
   }
@@ -180,7 +210,6 @@ export default function UploadFiles() {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
     fetchFiles(abortController);
     fetchCategories(abortController);
     return () => abortController.abort();
@@ -203,10 +232,18 @@ export default function UploadFiles() {
         <Text mb={3} color="GrayText">
           You can upload files here and copy the link to share or use
         </Text>
-        <Flex justify="space-between" gridColumnGap={10} align="center">
+        <Flex justify="space-between" gridColumnGap={5} align="center">
           <Button minW="200px" onClick={onOpen} colorScheme="secondary" color="black">
             Upload audio files
           </Button>
+          <form onSubmit={searchFile} style={{ width: "100%" }}>
+            <Input
+              type="search"
+              placeholder="Search..."
+              onChange={(e) => setSearchInputField(e.target.value)}
+              value={searchInputField}
+            />
+          </form>
           <Select
             onChange={filterByProduct}
             placeholder="Filter by product"

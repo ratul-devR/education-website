@@ -211,6 +211,20 @@ module.exports = {
     }
   },
 
+  searchFiles: async function (req, res, next) {
+    try {
+      const { searchQuery } = req.params;
+
+      const files = await File.find({
+        $or: [{ name: { $regex: `${searchQuery}`, $options: "gi" } }],
+      });
+
+      res.status(200).json({ files });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   deleteFile: async function (req, res, next) {
     try {
       const { fileId } = req.params;
