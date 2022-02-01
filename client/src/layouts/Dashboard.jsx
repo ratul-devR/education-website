@@ -82,13 +82,17 @@ const Dashboard = ({ children }) => {
           justify="space-between"
           align="center"
           boxShadow="md"
-          height="80px"
           background="white"
           px={10}
+          py={3}
         >
           <Flex direction="column" justify="center" align="center">
             <img src={Logo} style={{ width: "150px", display: "block" }} alt="Logo" />
-            {appSubTitle && <Text color="GrayText">{appSubTitle}</Text>}
+            {appSubTitle && (
+              <Text whiteSpace="pre-wrap" color="GrayText">
+                {appSubTitle}
+              </Text>
+            )}
           </Flex>
           <Button onClick={logout} colorScheme="blue">
             Log out

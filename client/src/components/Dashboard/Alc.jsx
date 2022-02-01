@@ -3,6 +3,7 @@ import { Flex, Heading } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { Link } from "react-router-dom";
 import useToast from "../../hooks/useToast";
+import useSettings from "../../hooks/useSettings";
 import config from "../../config";
 import { useParams } from "react-router-dom";
 import { Spinner } from "@chakra-ui/spinner";
@@ -18,6 +19,7 @@ import {
   START_ACTIVE_LEARNING,
   START_PASSIVE_LEARNING,
 } from "../../redux/actions/concertActions";
+import { CHANGE_SUB_TITLE } from "../../redux/actions/settingsActions";
 
 import ActiveLearning from "../Dashboard/Concerts/ActiveLearning";
 import PassiveLearning from "../Dashboard/Concerts/PassiveLearning";
@@ -38,6 +40,7 @@ export default function Alc() {
 
   const { courseId, alcId } = useParams();
   const toast = useToast();
+  const getSettings = useSettings();
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -77,6 +80,8 @@ export default function Alc() {
         } else {
           dispatch(LOAD_QUESTIONS({ questions: body.learningQuestions, course: body.course }));
           setHasAllPrerequisites(body.hasAllPrerequisites);
+          // change the sub title with the course description
+          dispatch(CHANGE_SUB_TITLE(body.course.description));
         }
       } else {
         toast({ status: "error", description: body.msg });
@@ -91,7 +96,11 @@ export default function Alc() {
     const abortController = new AbortController();
     fetchItem(abortController);
     fetchQuestions(abortController);
-    return () => abortController.abort();
+    return () => {
+      abortController.abort();
+      dispatch(RESET_CONCERT());
+      getSettings();
+    };
   }, []);
 
   useEffect(() => {
@@ -130,14 +139,14 @@ export default function Alc() {
         </Button>
       </Flex>
     );
-  } else if (!concertStarted) {
+  } else if (!concertStarted && course.concertIns) {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
         <Heading mb={5} color="primary" fontWeight="normal">
           Instruction
         </Heading>
         <Text color="GrayText" mb={5} fontSize={25} whiteSpace="pre-wrap">
-          {course.description}
+          {course.concertIns}
         </Text>
         <Button onClick={() => dispatch(START_CONCERT())} colorScheme="secondary" color="black">
           Get Started

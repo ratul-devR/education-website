@@ -80,12 +80,14 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
           categoriesOF.map((categoryOF) => {
             if (categoryOF._id === body.category._id) {
               categoryOF.name = body.category.name;
+              categoryOF.description = body.category.description;
               categoryOF.price = body.category.price;
               categoryOF.prerequisites = body.category.prerequisites;
               categoryOF.passPercentage = body.category.passPercentage;
               categoryOF.learningPhasePaid = body.category.learningPhasePaid;
               categoryOF.checkingPhasePaid = body.category.checkingPhasePaid;
-              categoryOF.quizIns = body.category.quizIns
+              categoryOF.quizIns = body.category.quizIns;
+              categoryOF.concertIns = body.category.concertIns;
             }
             return categoryOF;
           })
@@ -212,6 +214,24 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 name="quizIns"
                 placeholder="Edit quiz instruction"
                 value={category.quizIns}
+              />
+            </Flex>
+            <Flex
+              p={5}
+              rounded={5}
+              mb={5}
+              border="1px solid"
+              borderColor="gray.100"
+              direction="column"
+            >
+              <Text color="GrayText" mb={3}>
+                Concert instruction
+              </Text>
+              <Textarea
+                onChange={handleInputChange}
+                name="concertIns"
+                placeholder="Edit concert instruction"
+                value={category.concertIns}
               />
             </Flex>
             <Flex

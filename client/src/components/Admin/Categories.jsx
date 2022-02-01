@@ -37,6 +37,7 @@ const Categories = () => {
       passPercentage,
       learningPhasePaid,
       quizIns,
+      concertIns,
       checkingPhasePaid,
     },
     setInput,
@@ -46,6 +47,7 @@ const Categories = () => {
     price: "",
     passPercentage: "",
     quizIns: "",
+    concertIns: "",
     learningPhasePaid: false,
     checkingPhasePaid: false,
   });
@@ -127,6 +129,8 @@ const Categories = () => {
           prerequisites,
           learningPhasePaid,
           checkingPhasePaid,
+          quizIns,
+          concertIns,
         }),
         credentials: "include",
       });
@@ -280,6 +284,13 @@ const Categories = () => {
                 value={quizIns}
                 mb={3}
               />
+              <Textarea
+                placeholder="Concert instruction"
+                onChange={HandleInputChange}
+                name="concertIns"
+                value={concertIns}
+                mb={3}
+              />
               <Flex mb={3}>
                 <Checkbox
                   onChange={() =>
@@ -307,9 +318,7 @@ const Categories = () => {
                 onClick={CreateCategory}
                 colorScheme="secondary"
                 color="black"
-                disabled={
-                  !title || !description || !price || !passPercentage 
-                }
+                disabled={!title || !description || !price || !passPercentage}
               >
                 Save
               </Button>

@@ -5,12 +5,12 @@ import { Flex } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 
 import useToast from "./hooks/useToast";
+import useSettings from "./hooks/useSettings"
 
 import config from "./config";
 
 // actions
 import { LOGIN, LOGOUT, ORG_LOGIN } from "./redux/actions/authActions";
-import { FETCH_AND_UPDATE_SETTINGS } from "./redux/actions/settingsActions"
 
 // components
 import ProtectedRoute from "./components/global/ProtectedRoute";
@@ -27,6 +27,8 @@ const App = () => {
   const [pending, setPending] = useState(true);
   const dispatch = useDispatch();
   const toast = useToast();
+  const getSettings = useSettings()
+  const abortController = new AbortController()
 
   // for checking if the user is authenticated or not
   async function checkAuthStatus(abortController) {
@@ -59,27 +61,7 @@ const App = () => {
     }
   }
 
-  async function getSettings(abortController) {
-    try {
-      const res = await fetch(`${config.serverURL}/get_settings`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        signal: abortController.signal,
-      });
-      const body = await res.json();
-      if (res.ok) {
-        dispatch(FETCH_AND_UPDATE_SETTINGS(body.settings))
-      } else if (res.status !== 404 && !res.ok) {
-        toast({ status: "error", description: body.msg });
-      }
-    } catch (err) {
-      toast({ status: "error", description: err.message });
-    }
-  }
-
   useEffect(() => {
-    const abortController = new AbortController();
 
     checkAuthStatus(abortController);
     getSettings(abortController);

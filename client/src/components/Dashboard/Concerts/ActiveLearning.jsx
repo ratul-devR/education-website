@@ -4,6 +4,7 @@ import { Flex, Heading } from "@chakra-ui/layout";
 import { Text } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
 import { BiMicrophone } from "react-icons/bi";
+import { BsFullscreen } from "react-icons/bs";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { FiPlay, FiPause } from "react-icons/fi";
 import { motion } from "framer-motion";
@@ -83,6 +84,23 @@ export default function ActiveLearning() {
     }
   }
 
+  function toggleScreenSize() {
+    /* const learningArea = learningAudioRef.current;
+    console.log(learningArea);
+    learningArea.requestFullscreen(); */
+    const docElm = document.querySelector(".learningArea");
+
+    if (docElm.requestFullscreen) {
+      docElm.requestFullscreen();
+    } else if (docElm.mozRequestFullScreen) {
+      docElm.mozRequestFullScreen();
+    } else if (docElm.webkitRequestFullScreen) {
+      docElm.webkitRequestFullScreen();
+    } else if (docElm.msRequestFullscreen) {
+      docElm.msRequestFullscreen();
+    }
+  }
+
   useEffect(() => {
     return () => {
       setShowMic(false);
@@ -92,21 +110,30 @@ export default function ActiveLearning() {
   }, [currentIndex]);
 
   return (
-    <Flex position="relative" direction="column" w="full" h="full" justify="center" align="center">
+    <Flex
+      position="relative"
+      direction="column"
+      w="full"
+      bg="white"
+      h="full"
+      className="learningArea"
+      justify="center"
+      align="center"
+    >
       {/* the full screen button */}
       {!showMic && (
         <motion.div
-          whileHover={{ opacity: 1, transition: { duration: 0.2 } }}
+          whileHover={{ opacity: 1, transition: { duration: 0.1 } }}
           style={{
             display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
             position: "absolute",
             top: 0,
             left: 0,
             width: "100%",
             height: "100%",
-            background: "#00000015",
+            padding: "10px",
             opacity: 0,
           }}
         >
@@ -115,8 +142,14 @@ export default function ActiveLearning() {
             colorScheme="secondary"
             color="black"
             size="lg"
-            rounded={100}
             onClick={handleControlClick}
+          />
+          <IconButton
+            icon={<BsFullscreen />}
+            onClick={toggleScreenSize}
+            colorScheme="secondary"
+            color="black"
+            size="lg"
           />
         </motion.div>
       )}

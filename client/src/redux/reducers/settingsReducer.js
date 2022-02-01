@@ -7,6 +7,9 @@ export default function settingsReducer(state = initialState, action) {
     case "FETCH_AND_UPDATE_SETTINGS": {
       return action.payload;
     }
+    case "CHANGE_SUB_TITLE": {
+      return { ...state, appSubTitle: action.payload };
+    }
     default: {
       return state;
     }

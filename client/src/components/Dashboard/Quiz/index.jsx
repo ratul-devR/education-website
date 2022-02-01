@@ -9,6 +9,7 @@ import { Link, useHistory } from "react-router-dom";
 import { CircularProgress, CircularProgressLabel, Text } from "@chakra-ui/react";
 
 import useToast from "../../../hooks/useToast";
+import useSettings from "../../../hooks/useSettings";
 
 import config from "../../../config";
 
@@ -22,11 +23,13 @@ import {
   RESET_QUIZ,
   DONT_KNOW,
 } from "../../../redux/actions/quizActions";
+import { CHANGE_SUB_TITLE } from "../../../redux/actions/settingsActions";
 
 const Quiz = ({ path }) => {
   const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
 
   const toast = useToast();
+  const getSettings = useSettings();
   const { courseId } = useParams();
   const history = useHistory();
 
@@ -70,6 +73,7 @@ const Quiz = ({ path }) => {
           path === "getUserUnknownQuestions" ? "Activation Phase" : "Checking Phase"
         }: ${body.course.name}`;
 
+        dispatch(CHANGE_SUB_TITLE(body.course.description));
         dispatch(
           LOAD_QUIZ({
             // shuffle the question options
@@ -156,6 +160,7 @@ const Quiz = ({ path }) => {
     return () => {
       // reset the quiz
       dispatch(RESET_QUIZ());
+      getSettings();
       abortController.abort();
     };
   }, [path]);
@@ -321,7 +326,11 @@ const Quiz = ({ path }) => {
         >
           {course.name}
         </Heading>
-        {course.quizIns && <Text mt={5} color="GrayText" whiteSpace="pre-wrap">{course.quizIns}</Text>}
+        {course.quizIns && (
+          <Text mt={5} color="GrayText" whiteSpace="pre-wrap">
+            {course.quizIns}
+          </Text>
+        )}
 
         <Progress
           colorScheme="secondary"

@@ -9,6 +9,7 @@ const dataSchema = new mongoose.Schema({
   learningPhasePaid: { type: Boolean, required: true },
   checkingPhasePaid: { type: Boolean, required: true },
   quizIns: String,
+  concertIns: String,
   prerequisites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
   purchasedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],

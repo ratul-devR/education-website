@@ -86,6 +86,7 @@ module.exports = {
         learningPhasePaid,
         checkingPhasePaid,
         quizIns,
+        concertIns,
       } = req.body;
 
       const categoryExist =
@@ -103,6 +104,7 @@ module.exports = {
           learningPhasePaid,
           checkingPhasePaid,
           quizIns,
+          concertIns,
         });
 
         await newCategory.save();
@@ -217,7 +219,7 @@ module.exports = {
 
       const files = await File.find({
         $or: [{ name: { $regex: `${searchQuery}`, $options: "gi" } }],
-      });
+      }).lean({ defaults: true });
 
       res.status(200).json({ files });
     } catch (err) {
