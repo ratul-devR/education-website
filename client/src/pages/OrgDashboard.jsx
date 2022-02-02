@@ -1,6 +1,6 @@
-import {Grid, Flex, Container} from "@chakra-ui/layout";
-import {Button} from "@chakra-ui/button";
-import { Text } from "@chakra-ui/react"
+import { Grid, Flex, Container } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/button";
+import { Text } from "@chakra-ui/react";
 import { Input, InputGroup, InputLeftAddon, InputRightAddon } from "@chakra-ui/input";
 import { Table, Thead, Tbody, Tr, Th, Td, TableCaption } from "@chakra-ui/table";
 import useLogout from "../hooks/useLogout";
@@ -8,11 +8,11 @@ import Logo from "../assets/logo.png";
 import CopyToClipBoard from "react-copy-to-clipboard";
 import { useEffect } from "react";
 import config from "../config";
-import { useSelector } from "react-redux"
+import { useSelector } from "react-redux";
 
 export default function OrgDashboard() {
   const org = JSON.parse(localStorage.getItem("org"));
-  const { appSubTitle } = useSelector((state) => state.settingsReducer)
+  const { appSubTitle } = useSelector((state) => state.settingsReducer);
   const logout = useLogout();
   useEffect(() => {
     document.title = `${config.appName} - Organization Dashboard`;
@@ -21,7 +21,7 @@ export default function OrgDashboard() {
     <Grid templateRows="60px 1fr" w="full" h="full" direction="column">
       <Flex as="nav" boxShadow="sm" justify="space-between" px={10} align="center">
         <Flex direction="column" justify="center" align="center">
-          <img style={{display: "block", width: "150px"}} alt="check2learn logo" src={Logo} />
+          <img style={{ display: "block", width: "150px" }} alt="check2learn logo" src={Logo} />
           {appSubTitle && <Text>{appSubTitle}</Text>}
         </Flex>
         <Button onClick={logout} colorScheme="blue">

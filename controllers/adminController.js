@@ -39,7 +39,7 @@ module.exports = {
 
   getOrganizations: async function (_req, res, next) {
     try {
-      const organizations = await Org.find({}).lean({ defaults: true });
+      let organizations = await Org.find({}).populate("refers").lean({ defaults: true });
 
       res.status(200).json({ organizations });
     } catch (err) {

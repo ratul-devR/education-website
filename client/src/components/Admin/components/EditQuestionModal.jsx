@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { IconButton, Button } from "@chakra-ui/button";
 import { Flex, Text } from "@chakra-ui/layout";
 import { FiEdit } from "react-icons/fi";
@@ -114,7 +114,7 @@ export default function EditQuestionModal({ currentQuestion, setQuestions, quest
                 Options
               </Text>
               <Input
-                placeholder="Add New Answer"
+                placeholder="Add New Option > hit enter"
                 onKeyPress={(e) => {
                   if (
                     e.key === "Enter" &&
@@ -156,7 +156,7 @@ export default function EditQuestionModal({ currentQuestion, setQuestions, quest
                 Answers
               </Text>
               <Input
-                placeholder="Add New Option"
+                placeholder="Add New Answer > hit enter"
                 onKeyPress={(e) => {
                   if (
                     e.key === "Enter" &&

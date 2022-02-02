@@ -81,10 +81,9 @@ const Register = () => {
 
   // for validating the input infos after clicking on the button
   function ValidateInputInfo() {
-    const { allFields, emailOk, passwordLength, passwordMatched, phoneOk } = {
-      allFields: fName && lName && email && password && conPass && age,
+    const { allFields, emailOk, passwordLength, passwordMatched } = {
+      allFields: fName && lName && email && password && conPass && age && phone,
       emailOk: validator.isEmail(email),
-      phoneOk: validator.isMobilePhone(phone),
       passwordLength: password.length >= 8,
       passwordMatched: password === conPass,
     };
@@ -93,8 +92,6 @@ const Register = () => {
       toast({ status: "error", description: "Please fill all the fields properly" });
     } else if (!emailOk) {
       toast({ status: "error", description: "Your email is Invalid" });
-    } else if (phone && !phoneOk) {
-      toast({ status: "error", description: "Please make sure your phone number is valid" });
     } else if (!passwordLength) {
       toast({ status: "error", description: "password must contain 8 chars" });
     } else if (!passwordMatched) {
