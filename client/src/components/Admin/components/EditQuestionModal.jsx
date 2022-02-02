@@ -160,8 +160,7 @@ export default function EditQuestionModal({ currentQuestion, setQuestions, quest
                 onKeyPress={(e) => {
                   if (
                     e.key === "Enter" &&
-                    !validator.isEmpty(e.target.value, { ignore_whitespace: true }) &&
-                    state.options.includes(e.target.value)
+                    !validator.isEmpty(e.target.value, { ignore_whitespace: true })
                   ) {
                     setState((pre) => ({
                       ...pre,

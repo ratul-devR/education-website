@@ -79,6 +79,7 @@ export default function UploadFiles() {
 
     if (filterState === "") {
       setLoading(true);
+      setCurrentPage(1)
       fetchFiles(abortController);
     } else {
       setLoading(true);
@@ -89,6 +90,7 @@ export default function UploadFiles() {
       });
       const body = await res.json();
       if (res.ok) {
+        setCurrentPage(1)
         setUploadedFiles(body.files || []);
         setLoading(false);
       } else {
@@ -103,6 +105,7 @@ export default function UploadFiles() {
 
     if (searchQuery === "") {
       setLoading(true);
+      setCurrentPage(1)
       fetchFiles(abortController);
     } else {
       setLoading(true);
@@ -113,6 +116,7 @@ export default function UploadFiles() {
       });
       const body = await res.json();
       if (res.ok) {
+        setCurrentPage(1)
         setUploadedFiles(body.files || []);
         setLoading(false);
       } else {
@@ -136,6 +140,7 @@ export default function UploadFiles() {
     });
     const body = await res.json();
     if (res.ok) {
+      setCurrentPage(1)
       setUploadedFiles(body.files);
       setLoading(false);
       return body.files;

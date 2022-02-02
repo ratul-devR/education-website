@@ -10,6 +10,7 @@ import useLogout from "../hooks/useLogout";
 import { Select } from "@chakra-ui/select";
 import { useSelector } from "react-redux";
 import i18n from "i18next";
+import { useTranslation } from "react-i18next"
 
 import Logo from "../assets/logo.png";
 
@@ -17,6 +18,7 @@ import Logo from "../assets/logo.png";
 const Dashboard = ({ children }) => {
   const { appSubTitle } = useSelector((state) => state.settingsReducer);
   const { url } = useRouteMatch();
+  const { t } = useTranslation()
 
   const logout = useLogout();
 
@@ -32,7 +34,7 @@ const Dashboard = ({ children }) => {
         maxW={16}
         py={5}
       >
-        <Tooltip label="Checking Phase" placement="right" hasArrow>
+        <Tooltip label={t("checking_phase")} placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"
@@ -43,7 +45,7 @@ const Dashboard = ({ children }) => {
             icon={<MdQuiz />}
           />
         </Tooltip>{" "}
-        <Tooltip label="Concerts" placement="right" hasArrow>
+        <Tooltip label={t("alc_plc")} placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"
@@ -54,7 +56,7 @@ const Dashboard = ({ children }) => {
             icon={<FaAssistiveListeningSystems />}
           />
         </Tooltip>
-        <Tooltip label="Activation Phase" placement="right" hasArrow>
+        <Tooltip label={t("activation_phase")} placement="right" hasArrow>
           <IconButton
             rounded={0}
             bg="white"
@@ -107,8 +109,8 @@ const Dashboard = ({ children }) => {
               <option value="en">English</option>
               <option value="es">Spanish</option>
             </Select>
-            <Button onClick={logout} minW="100px" colorScheme="blue">
-              Log out
+            <Button onClick={logout} minW="150px" colorScheme="blue">
+              {t("logout")}
             </Button>
           </Flex>
         </Flex>

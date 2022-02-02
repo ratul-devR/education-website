@@ -5,7 +5,7 @@ import { Button } from "@chakra-ui/button";
 import { useEffect, useState } from "react";
 import config from "../../config";
 import useToast from "../../hooks/useToast";
-import { useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next";
 
 import NoMessage from "../global/NoMessage";
 
@@ -14,7 +14,7 @@ import NoMessage from "../global/NoMessage";
 const UserCourses = ({ title, path }) => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const toast = useToast();
 
   async function fetchCourses(abortController) {
@@ -40,7 +40,7 @@ const UserCourses = ({ title, path }) => {
   useEffect(() => {
     const abortController = new AbortController();
     fetchCourses(abortController);
-    document.title = `${config.appName} - ${title}`;
+    document.title = `${config.appName} - ${t(title)}`;
     return () => {
       abortController.abort();
       setLoading(true);
@@ -83,7 +83,7 @@ const UserCourses = ({ title, path }) => {
                     colorScheme="secondary"
                     color="black"
                   >
-                    Learn
+                    {t("learn")}
                   </Button>
                 </Flex>
                 <Text color="GrayText" whiteSpace="pre-wrap">

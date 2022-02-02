@@ -3,7 +3,28 @@ const trans = {
   user_dashboard_learn_button: "Start quiz",
   checking_phase: "Checking Phase",
   alc_plc: "Active and Passive learning concert",
-  activation_phase: "Activation phase"
+  activation_phase: "Activation phase",
+  learn: "Learn",
+  not_known: "Not known",
+  questions_not_known: "Questions not known",
+  known: "Known",
+  questions_known: "Questions known",
+  wrong_answers: "Wrong answers",
+  score: "Score",
+  ik: "I know",
+  idk: "I don't know",
+  questions: "Questions",
+  quiz_results: "Quiz Results",
+  no_words_to_learn_message: "No news words to learn",
+  no_words_to_learn_sub_message: "Start watching concerts",
+  watch_concert: "Start Concert",
+  back_to_checking: "Back to checking phase",
+  no_unknown_questions: "No unknown questions",
+  dont_have_all_prerequisites: "You Don't have all the prerequisites to access this course.",
+  go_back: "Go back",
+  logout: "Log out",
+  sign_in: "Sign in",
+  quiz_fib_placeholder: "Enter answer > press ↵"
 };
 
 export default trans;

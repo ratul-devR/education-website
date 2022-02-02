@@ -3,7 +3,28 @@ const trans = {
   user_dashboard_learn_button: "Iniciar prueba",
   checking_phase: "Fase de comprobación",
   alc_plc: "Concierto de aprendizaje activo y pasivo",
-  activation_phase: "Fase de activación"
+  activation_phase: "Fase de activación",
+  learn: "Aprender",
+  not_known: "No conocida",
+  questions_not_known: "Preguntas no conocidas",
+  known: "Conocida",
+  questions_known: "Preguntas conocidas",
+  wrong_answers: "Respuestas incorrectas",
+  score: "Puntaje",
+  ik: "sé",
+  idk: "No sé",
+  questions: "Preguntas",
+  quiz_results: "Resultados de la prueba",
+  no_words_to_learn_message: "No tienes palabras nuevas que aprender.",
+  no_words_to_learn_sub_message: "¿Te gustaría ver conciertos?",
+  watch_concert: "ver concierto",
+  back_to_checking: "Vuelta a la fase de comprobación",
+  no_unknown_questions: "Sin preguntas desconocidas",
+  dont_have_all_prerequisites: "No tienes todos los requisitos previos para acceder a este curso",
+  go_back: "Regresa",
+  logout: "Cerrar sesión",
+  sign_in: "Registrarse",
+  quiz_fib_placeholder: "Ingresa la > respuesta presiona ↵"
 };
 
 export default trans;

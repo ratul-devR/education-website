@@ -9,13 +9,8 @@ module.exports = function (sub_folder_path) {
       cb(null, uploadFolder);
     },
     filename: (_, file, cb) => {
-      const fileExt = path.extname(file.originalname);
-      const fileName =
-        file.originalname.replace(fileExt, "").toLowerCase().split(" ").join("-") +
-        "-" +
-        Date.now() +
-        Math.floor(Math.random() * 1000);
-      cb(null, fileName + fileExt);
+      const fileName = file.originalname;
+      cb(null, fileName);
     },
   });
 

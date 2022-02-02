@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import config from "../../../config";
 import useToast from "../../../hooks/useToast";
 import reactStringReplace from "react-string-replace";
+import { useTranslation } from "react-i18next";
 
 import { CHANGE_SCORE, NEXT_QUESTION, WRONG_ANSWER } from "../../../redux/actions/quizActions";
 
@@ -24,6 +25,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
   const { currentIndex, questions } = useSelector((state) => state.quizReducer);
   const dispatch = useDispatch();
   const toast = useToast();
+  const { t } = useTranslation();
 
   const inputRef = useRef();
 
@@ -203,7 +205,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
                       !selectedAnswer && checkAnswer(input, questions[currentIndex]._id);
                     }
                   }}
-                  placeholder="Enter answer > press ↵"
+                  placeholder={t("quiz_fib_placeholder")}
                   mx={3}
                   fontSize="md"
                   width="auto"
@@ -224,7 +226,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
           <Flex w="full" justify="center" align="center" gridColumnGap={2}>
             <Tooltip hasArrow label="Show Options">
               <Button flex={1} onClick={useKnowsTheAnswer} colorScheme="blue">
-                I know
+                {t("ik")}
               </Button>
             </Tooltip>
             <Tooltip hasArrow label="Try the next one">
@@ -233,7 +235,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
                 onClick={() => userDoesNotKnowTheAnswer(questions[currentIndex]._id, false)}
                 colorScheme="red"
               >
-                I Don't know
+                {t("idk")}
               </Button>
             </Tooltip>
           </Flex>

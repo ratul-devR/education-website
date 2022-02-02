@@ -7,6 +7,7 @@ import { Button } from "@chakra-ui/button";
 import { Progress } from "@chakra-ui/progress";
 import { Link, useHistory } from "react-router-dom";
 import { CircularProgress, CircularProgressLabel, Text } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 
 import useToast from "../../../hooks/useToast";
 import useSettings from "../../../hooks/useSettings";
@@ -31,6 +32,7 @@ const Quiz = ({ path }) => {
   const toast = useToast();
   const getSettings = useSettings();
   const { courseId } = useParams();
+  const { t } = useTranslation();
   const history = useHistory();
 
   const {
@@ -223,10 +225,10 @@ const Quiz = ({ path }) => {
           😶
         </Heading>
         <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
-          You Don't have all the prerequisites to access this course.
+          {t("dont_have_all_prerequisites")}
         </Heading>
         <Button onClick={() => history.goBack()} colorScheme="secondary" color="black">
-          Go Back
+          {t("go_back")}
         </Button>
       </Flex>
     );
@@ -241,13 +243,13 @@ const Quiz = ({ path }) => {
         </Heading>
         <Heading fontSize="2xl" mb={2} color="gray.500" fontWeight="normal" textAlign="center">
           {path === "getUserUnknownQuestions"
-            ? "You don't have any unknown questions"
-            : "You don't have any new words to learn"}
+            ? t("no_unknown_questions")
+            : t("no_words_to_learn_message")}
         </Heading>
         <Heading fontSize="1xl" fontWeight="normal" mb={3}>
           {path === "getUserUnknownQuestions"
-            ? "Would you like to go back to checking phase?"
-            : "Would you like to watch concerts?"}
+            ? t("back_to_checking")
+            : t("no_words_to_learn_sub_message")}
         </Heading>
         <Button
           colorScheme="secondary"
@@ -259,7 +261,7 @@ const Quiz = ({ path }) => {
               : `/dashboard/alcs/${course._id}`
           }
         >
-          {path === "getUserUnknownQuestions" ? "Play Quiz" : "Watch Concert"}
+          {path === "getUserUnknownQuestions" ? t("checking_phase") : t("watch_concert")}
         </Button>
       </Flex>
     );
@@ -270,28 +272,28 @@ const Quiz = ({ path }) => {
     return (
       <Flex align="center" py={10} direction="column">
         <Heading textAlign="center" fontWeight="normal" mb={10}>
-          Quiz results
+          {t("quiz_results")}
         </Heading>
-        <CircularProgress color="primary" size="200px" value={totalPercentage}>
+        <CircularProgress color="primary" size="220px" value={totalPercentage}>
           <CircularProgressLabel color="primary" fontSize="25px">
-            Known: {totalPercentage}%
+            {t("known")}: {totalPercentage}%
           </CircularProgressLabel>
         </CircularProgress>
         <Flex direction="column" my={5}>
           <Text>
-            Questions known:{" "}
+            {t("questions_known")}:{" "}
             <Text display="inline-block" color="blue.400">
               {score}
             </Text>
           </Text>
           <Text>
-            Questions Unknown:{" "}
+            {t("questions_not_known")}:{" "}
             <Text display="inline-block" color="blue.400">
               {questionsDontKnow}
             </Text>
           </Text>
           <Text>
-            Questions wrong:{" "}
+            {t("wrong_answers")}:{" "}
             <Text display="inline-block" color="blue.400">
               {questionsWrong}
             </Text>
@@ -307,7 +309,7 @@ const Quiz = ({ path }) => {
           colorScheme="secondary"
           color="black"
         >
-          {path === "getUserUnknownQuestions" ? "Back to Checking Phase" : "Start Concerts"}
+          {path === "getUserUnknownQuestions" ? t("back_to_checking") : t("watch_concert")}
         </Button>
       </Flex>
     );
@@ -345,13 +347,13 @@ const Quiz = ({ path }) => {
       {/* quiz status */}
       <Flex wrap="wrap" gridGap={5} justify="space-between" align="center" w="100%" maxW="800px">
         <Heading color="blue.500" fontSize="md" fontWeight="normal">
-          Not known: {questionsDontKnow}
+          {t("not_known")}: {questionsDontKnow}
         </Heading>
         <Heading color="blue.600" fontSize="md" fontWeight="normal">
-          Wrong answers: {questionsWrong}
+          {t("wrong_answers")}: {questionsWrong}
         </Heading>
         <Heading color="blue.600" fontSize="md" fontWeight="normal">
-          Score: {score}
+          {t("score")}: {score}
         </Heading>
       </Flex>
 
@@ -376,7 +378,7 @@ const Quiz = ({ path }) => {
       {/* the footer containing the buttons and question count */}
       <Flex wrap="wrap" w="full" justify="center" mt={5}>
         <Heading fontSize="2xl" color="blue.500" fontWeight="normal">
-          {currentIndex + 1} of {questions.length} Questions
+          {currentIndex + 1} of {questions.length} {t("questions")}
         </Heading>
       </Flex>
     </Flex>
