@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import { useSelector } from "react-redux";
-import { Flex, Heading, Button, Text } from "@chakra-ui/react";
+import {useSelector} from "react-redux";
+import {Flex, Heading, Button, Text} from "@chakra-ui/react";
 
 import config from "../config";
 
@@ -24,8 +24,8 @@ import useLogout from "../hooks/useLogout";
 const stripePromise = loadStripe(import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY);
 
 const Dashboard = () => {
-  const { user } = useSelector((state) => state.authReducer);
-  const { path } = useRouteMatch();
+  const {user} = useSelector((state) => state.authReducer);
+  const {path} = useRouteMatch();
   const logout = useLogout();
 
   useEffect(() => {
@@ -71,15 +71,15 @@ const Dashboard = () => {
           <Switch>
             <Route path={path} exact component={Learn} />
             <Route path={`${path}/quiz`} exact>
-              <Courses title="Checking Phase" path="quiz" />
+              <Courses title="checking_phase" path="quiz" />
             </Route>
             <Route path={`${path}/activation_phase`} exact>
-              <Courses title="Activation Phase" path="activation_phase" />
+              <Courses title="activation_phase" path="activation_phase" />
             </Route>
 
             <Route path={`${path}/alc/:alcId/:courseId`} component={Alc} />
             <Route path={`${path}/alc`}>
-              <Courses title="Active and Passive Learning Concert" path="alcs" />
+              <Courses title="alc_plc" path="alcs" />
             </Route>
             <Route path={`${path}/alcs/:courseId`} component={AllAlcItems} />
 

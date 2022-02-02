@@ -37,9 +37,9 @@ export default function UploadFiles() {
   const [currentPage, setCurrentPage] = useState(1);
   const [questionsPerPage] = useState(30);
 
-  const {isOpen, onOpen, onClose} = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-  const abortController = new AbortController()
+  const abortController = new AbortController();
 
   const indexOfLastFile = currentPage * questionsPerPage;
   const indexOfFirstFile = indexOfLastFile - questionsPerPage;
@@ -50,30 +50,25 @@ export default function UploadFiles() {
 
   async function uploadFiles() {
     setProcessing(true);
-    try {
-      const formData = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        formData.append("files", file);
-      }
-      formData.append("category", category);
-      const res = await fetch(`${config.serverURL}/get_admin/uploadFiles`, {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-      const body = await res.json();
-      if (res.ok) {
-        setUploadedFiles((pre) => [...body.files, ...pre]);
-        toast({ status: "success", description: body.msg });
-        setProcessing(false);
-        closeModal();
-      } else {
-        toast({ status: "error", description: body.msg || "Unexpected Server side error" });
-        setProcessing(false);
-      }
-    } catch (err) {
-      toast({ status: "error", description: err.message });
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      formData.append("files", file);
+    }
+    formData.append("category", category);
+    const res = await fetch(`${config.serverURL}/get_admin/uploadFiles`, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+    const body = await res.json();
+    if (res.ok) {
+      setUploadedFiles((pre) => [...body.files, ...pre]);
+      toast({ status: "success", description: body.msg });
+      setProcessing(false);
+      closeModal();
+    } else {
+      toast({ status: "error", description: body.msg || "Unexpected Server side error" });
       setProcessing(false);
     }
   }
@@ -87,52 +82,41 @@ export default function UploadFiles() {
       fetchFiles(abortController);
     } else {
       setLoading(true);
-      try {
-        const res = await fetch(
-          `${config.serverURL}/get_admin/get_files/categoryId/${filterState}`,
-          {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-          }
-        );
-        const body = await res.json();
-        if (res.ok) {
-          setUploadedFiles(body.files || []);
-          setLoading(false);
-        } else {
-          toast({ status: "error", description: body.msg });
-        }
-      } catch (err) {
-        toast({ status: "error", description: err.message });
+      const res = await fetch(`${config.serverURL}/get_admin/get_files/categoryId/${filterState}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const body = await res.json();
+      if (res.ok) {
+        setUploadedFiles(body.files || []);
+        setLoading(false);
+      } else {
+        toast({ status: "error", description: body.msg });
       }
     }
   }
 
   async function searchFile(e) {
     e.preventDefault();
-    const searchQuery = searchInputField
+    const searchQuery = searchInputField;
 
     if (searchQuery === "") {
-      setLoading(true)
-      fetchFiles(abortController)
+      setLoading(true);
+      fetchFiles(abortController);
     } else {
       setLoading(true);
-      try {
-        const res = await fetch(`${config.serverURL}/get_admin/searchFiles/${searchQuery}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include"
-        })
-        const body = await res.json()
-        if (res.ok) {
-          setUploadedFiles(body.files || []);
-          setLoading(false);
-        } else {
-          toast({ status: "error", description: body.msg });
-        }
-      } catch (err) {
-        toast({ status: "error", description: err.message })
+      const res = await fetch(`${config.serverURL}/get_admin/searchFiles/${searchQuery}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const body = await res.json();
+      if (res.ok) {
+        setUploadedFiles(body.files || []);
+        setLoading(false);
+      } else {
+        toast({ status: "error", description: body.msg });
       }
     }
   }
@@ -144,44 +128,36 @@ export default function UploadFiles() {
   }
 
   async function fetchFiles(abortController) {
-    try {
-      const res = await fetch(`${config.serverURL}/get_admin/getFiles`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        signal: abortController.signal,
-        credentials: "include",
-      });
-      const body = await res.json();
-      if (res.ok) {
-        setUploadedFiles(body.files);
-        setLoading(false);
-        return body.files;
-      } else {
-        toast({ status: "error", description: body.msg });
-      }
-    } catch (err) {
-      toast({ status: "error", description: err.message });
+    const res = await fetch(`${config.serverURL}/get_admin/getFiles`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      signal: abortController.signal,
+      credentials: "include",
+    });
+    const body = await res.json();
+    if (res.ok) {
+      setUploadedFiles(body.files);
+      setLoading(false);
+      return body.files;
+    } else {
+      toast({ status: "error", description: body.msg });
     }
   }
 
   // for fetching the categories
   async function fetchCategories(abortController) {
-    try {
-      const res = await fetch(`${config.serverURL}/get_admin/categories`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        signal: abortController.signal,
-      });
-      const body = await res.json();
+    const res = await fetch(`${config.serverURL}/get_admin/categories`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      signal: abortController.signal,
+    });
+    const body = await res.json();
 
-      if (res.ok) {
-        setCategories(body.categories);
-      } else {
-        toast({ status: "error", description: body.msg || "Something went wrong" });
-      }
-    } catch (err) {
-      toast({ status: "error", description: err.message || "Error!" });
+    if (res.ok) {
+      setCategories(body.categories);
+    } else {
+      toast({ status: "error", description: body.msg || "Something went wrong" });
     }
   }
 

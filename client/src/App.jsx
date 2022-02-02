@@ -1,11 +1,14 @@
+import { Suspense } from "react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { Flex } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
 
 import useToast from "./hooks/useToast";
-import useSettings from "./hooks/useSettings"
+import useSettings from "./hooks/useSettings";
 
 import config from "./config";
 
@@ -23,12 +26,27 @@ import Admin from "./pages/Admin";
 import Registration from "./pages/Registration";
 import OrgDashboard from "./pages/OrgDashboard";
 
+import enTrans from "./locales/enTrans";
+import esTrans from "./locales/esTrans";
+
+i18n
+  .use(initReactI18next) // passes i18n down to react-i18next
+  .init({
+    resources: {
+      en: { translation: enTrans },
+      es: { translation: esTrans },
+    },
+    lng: localStorage.getItem("locale") ? JSON.parse(localStorage.getItem("locale")) : "en",
+    fallbackLng: "en",
+    interpolation: { escapeValue: false },
+  });
+
 const App = () => {
   const [pending, setPending] = useState(true);
   const dispatch = useDispatch();
   const toast = useToast();
-  const getSettings = useSettings()
-  const abortController = new AbortController()
+  const getSettings = useSettings();
+  const abortController = new AbortController();
 
   // for checking if the user is authenticated or not
   async function checkAuthStatus(abortController) {
@@ -62,7 +80,6 @@ const App = () => {
   }
 
   useEffect(() => {
-
     checkAuthStatus(abortController);
     getSettings(abortController);
 
@@ -81,15 +98,17 @@ const App = () => {
   }
 
   return (
-    <BrowserRouter>
-      <Switch>
-        <ProtectedRoute path="/dashboard" component={Dashboard} />
-        <OrgProtectedRoute path="/orgDashboard" component={OrgDashboard} />
-        <AdminRoute path="/admin" component={Admin} />
-        <Route path="/auth" component={Registration} />
-        <Redirect path="*" to="/auth" />
-      </Switch>
-    </BrowserRouter>
+    <Suspense fallback="Loading...">
+      <BrowserRouter>
+        <Switch>
+          <ProtectedRoute path="/dashboard" component={Dashboard} />
+          <OrgProtectedRoute path="/orgDashboard" component={OrgDashboard} />
+          <AdminRoute path="/admin" component={Admin} />
+          <Route path="/auth" component={Registration} />
+          <Redirect path="*" to="/auth" />
+        </Switch>
+      </BrowserRouter>
+    </Suspense>
   );
 };
 

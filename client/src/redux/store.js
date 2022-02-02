@@ -5,7 +5,12 @@ import quizReducer from "./reducers/quizReducer";
 import concertReducer from "./reducers/concertReducer";
 import settingsReducer from "./reducers/settingsReducer";
 
-const reducers = combineReducers({ authReducer, quizReducer, concertReducer, settingsReducer });
+const reducers = combineReducers({
+  authReducer,
+  quizReducer,
+  concertReducer,
+  settingsReducer,
+});
 
 const store = createStore(
   reducers,

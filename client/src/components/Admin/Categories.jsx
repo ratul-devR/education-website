@@ -71,82 +71,70 @@ const Categories = () => {
 
   // for fetching quiz assets
   async function fetchQuizAssets(abortController) {
-    try {
-      const res = await fetch(`${config.serverURL}/get_admin/get_assets`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        signal: abortController.signal,
-        credentials: "include",
+    const res = await fetch(`${config.serverURL}/get_admin/get_assets`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      signal: abortController.signal,
+      credentials: "include",
+    });
+    const body = await res.json();
+    if (res.ok) {
+      setQuizAssetLoading(false);
+      setQuizAsset(body.asset);
+    } else {
+      toast({
+        status: "error",
+        description: body.msg || "We are having unexpected server side issues",
       });
-      const body = await res.json();
-      if (res.ok) {
-        setQuizAssetLoading(false);
-        setQuizAsset(body.asset);
-      } else {
-        toast({
-          status: "error",
-          description: body.msg || "We are having unexpected server side issues",
-        });
-      }
-    } catch (err) {
-      toast({ status: "error", description: err.message });
     }
   }
 
   // for fetching the categories
   async function fetchCategories(abortController) {
-    try {
-      const res = await fetch(`${config.serverURL}/get_admin/categories`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        signal: abortController.signal,
-      });
-      const body = await res.json();
+    const res = await fetch(`${config.serverURL}/get_admin/categories`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      signal: abortController.signal,
+    });
+    const body = await res.json();
 
-      if (res.ok) {
-        setCategories(body.categories);
-        setLoading(false);
-      } else {
-        toast({ status: "error", description: body.msg || "Something went wrong" });
-      }
-    } catch (err) {
-      toast({ status: "error", description: err.message || "Error!" });
+    if (res.ok) {
+      setCategories(body.categories);
+      setLoading(false);
+    } else {
+      toast({ status: "error", description: body.msg || "Something went wrong" });
     }
   }
 
   // for creating a new category according to the name
   async function CreateCategory() {
-    try {
-      const res = await fetch(`${config.serverURL}/get_admin/post_category`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          description,
-          price,
-          passPercentage,
-          prerequisites,
-          learningPhasePaid,
-          checkingPhasePaid,
-          quizIns,
-          concertIns,
-        }),
-        credentials: "include",
-      });
-      const body = await res.json();
+    const res = await fetch(`${config.serverURL}/get_admin/post_category`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title,
+        description,
+        price,
+        passPercentage,
+        prerequisites,
+        learningPhasePaid,
+        checkingPhasePaid,
+        quizIns,
+        concertIns,
+      }),
+      credentials: "include",
+    });
+    const body = await res.json();
 
-      if (res.ok) {
-        setCategories((pre) => [...pre, body.category]);
-        setInput({});
-        setPrerequisites([]);
-        onClose();
-        toast({ status: "success", description: body.msg });
-      } else {
-        toast({ status: "warning", description: body.msg });
-      }
-    } catch (err) {
-      toast({ status: "error", description: err.message || "We are having unexpected errors" });
+    if (res.ok) {
+      setCategories((pre) => [...pre, body.category]);
+      setInput({});
+      setPrerequisites([]);
+      onClose();
+      toast({ status: "success", description: body.msg });
+    } else {
+      toast({ status: "warning", description: body.msg });
     }
   }
 
@@ -155,24 +143,20 @@ const Categories = () => {
     const confirmed = window.confirm("Are you sure? You want to delete this?");
 
     if (confirmed) {
-      try {
-        const res = await fetch(`${config.serverURL}/get_admin/delete_category/${id}`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        });
-        const body = await res.json();
+      const res = await fetch(`${config.serverURL}/get_admin/delete_category/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const body = await res.json();
 
-        if (res.status === 201) {
-          toast({ status: "success", description: body.msg });
-          setCategories((pre) => pre.filter((category) => category._id !== body.category._id));
-        } else if (res.status === 400) {
-          toast({ status: "warning", description: body.msg });
-        } else if (res.status === 401) {
-          toast({ status: "error", description: body.msg });
-        }
-      } catch (err) {
-        toast({ status: "error", description: err.message || "We have an error" });
+      if (res.status === 201) {
+        toast({ status: "success", description: body.msg });
+        setCategories((pre) => pre.filter((category) => category._id !== body.category._id));
+      } else if (res.status === 400) {
+        toast({ status: "warning", description: body.msg });
+      } else if (res.status === 401) {
+        toast({ status: "error", description: body.msg });
       }
     }
   }

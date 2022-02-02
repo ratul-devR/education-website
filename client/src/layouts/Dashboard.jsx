@@ -7,7 +7,9 @@ import { NavLink, useRouteMatch } from "react-router-dom";
 import { FaAssistiveListeningSystems } from "react-icons/fa";
 import { GiBrain } from "react-icons/gi";
 import useLogout from "../hooks/useLogout";
+import { Select } from "@chakra-ui/select";
 import { useSelector } from "react-redux";
+import i18n from "i18next";
 
 import Logo from "../assets/logo.png";
 
@@ -94,9 +96,21 @@ const Dashboard = ({ children }) => {
               </Text>
             )}
           </Flex>
-          <Button onClick={logout} colorScheme="blue">
-            Log out
-          </Button>
+          <Flex gridColumnGap={3}>
+            <Select
+              placeholder="Change language"
+              onChange={(e) => {
+                i18n.changeLanguage(e.target.value);
+                localStorage.setItem("locale", JSON.stringify(e.target.value));
+              }}
+            >
+              <option value="en">English</option>
+              <option value="es">Spanish</option>
+            </Select>
+            <Button onClick={logout} minW="100px" colorScheme="blue">
+              Log out
+            </Button>
+          </Flex>
         </Flex>
         {/* all the contents */}
         <Flex bg="gray.100" direction="column" flex={1} w="full" overflowX="hidden">

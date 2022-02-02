@@ -84,22 +84,18 @@ const Alc = () => {
   }
 
   async function fetchItems(abortController) {
-    try {
-      const res = await fetch(`${config.serverURL}/active_learning_concert`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        signal: abortController.signal,
-      });
-      const body = await res.json();
+    const res = await fetch(`${config.serverURL}/active_learning_concert`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      signal: abortController.signal,
+    });
+    const body = await res.json();
 
-      if (res.ok) {
-        setItems(body.items);
-      } else {
-        toast({ status: "error", description: body.msg });
-      }
-    } catch (err) {
-      toast({ status: "error", description: err.message });
+    if (res.ok) {
+      setItems(body.items);
+    } else {
+      toast({ status: "error", description: body.msg });
     }
   }
 

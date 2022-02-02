@@ -88,6 +88,7 @@ const Organizations = () => {
           value={currentYear}
           onChange={(e) => setCurrentYear(e.target.value)}
           placeholder="Filter by year"
+          type="number"
         />
       </Flex>
 
