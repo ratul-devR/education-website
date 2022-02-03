@@ -250,6 +250,51 @@ module.exports = {
     }
   },
 
+  resetPasswordSendEmail: async function (req, res, next) {
+    try {
+      const { email } = req.body;
+
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        res.status(400).json({ msg: "Your account doesn't exists" });
+      } else {
+        await transporter.sendMail({
+          from: `${process.env.EMAIL}`,
+          to: user.email,
+          subject: "Reset password",
+          html: `
+          <p>You can use this link to reset password</p>
+          <a href="${process.env.APP_URL}/auth/resetPass/${user._id}">Reset Password</a>
+        `,
+        });
+
+        res.status(200).json({ msg: "We sent you an email" })
+      }
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  resetPass: async function(req, res, next) {
+    try {
+      const { password } = req.body
+      const { userId } = req.params
+
+      const user = await User.findOne({_id: userId})
+
+      if (!user) {
+        res.status(400).json({ msg: "Your account doesn't exist" })
+      } else {
+        user.password = password
+        await user.save()
+        res.status(201).json({ msg: "You password has been updated" })
+      }
+    } catch (err) {
+      next(err)
+    }
+  },
+
   sendResponseIfLoggedIn: function (req, res) {
     res.status(201).send(req.user || req.org);
   },

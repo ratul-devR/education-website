@@ -209,7 +209,7 @@ const Categories = () => {
                 name="description"
                 onChange={HandleInputChange}
                 value={description}
-                placeholder="description"
+                placeholder="Product subtitle"
                 mb={3}
               />
               <Input

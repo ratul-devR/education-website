@@ -111,10 +111,15 @@ const Login = () => {
         <Button onClick={ValidateInputInfo} colorScheme="secondary" color="black" mb={3}>
           Sign in
         </Button>
-        <Text fontSize="md" textAlign="center">
+        <Text mb={2} fontSize="md" textAlign="center">
           Don't have an account?{" "}
           <Link color="primary" as={RouterLink} to={`${path}/register`}>
             Register
+          </Link>
+        </Text>
+        <Text fontSize="md" textAlign="center">
+        <Link color="primary" as={RouterLink} to={`${path}/forgotPass`}>
+            Forgot password?
           </Link>
         </Text>
       </Flex>

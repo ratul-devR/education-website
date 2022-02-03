@@ -7,6 +7,8 @@ import Login from "../components/Registration/Login";
 import Register from "../components/Registration/Register";
 import CreateOrg from "../components/Registration/CreateOrg";
 import LoginOrg from "../components/Registration/LoginOrg";
+import ForgotPass from "../components/Registration/ForgotPass"
+import ResetPass from "../components/Registration/ResetPass"
 
 import Logo from "../assets/logo.png";
 
@@ -43,6 +45,8 @@ const Registration = () => {
           <Route path={`${path}/register`} component={Register} />
           <Route path={`${path}/createOrg`} component={CreateOrg} />
           <Route path={`${path}/loginOrg`} component={LoginOrg} />
+          <Route path={`${path}/resetPass/:userId`} component={ResetPass} />
+          <Route path={`${path}/forgotPass`} component={ForgotPass} />
         </Switch>
       </Flex>
     </VStack>

@@ -149,12 +149,12 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               direction="column"
             >
               <Text color="GrayText" mb={3}>
-                Edit description
+                Edit subtitle
               </Text>
               <Textarea
                 onChange={handleInputChange}
                 name="description"
-                placeholder="Edit description"
+                placeholder="Edit subtitle"
                 value={category.description}
               />
             </Flex>
