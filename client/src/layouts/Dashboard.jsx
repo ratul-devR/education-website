@@ -10,7 +10,7 @@ import useLogout from "../hooks/useLogout";
 import { Select } from "@chakra-ui/select";
 import { useSelector } from "react-redux";
 import i18n from "i18next";
-import { useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next";
 
 import Logo from "../assets/logo.png";
 
@@ -18,7 +18,7 @@ import Logo from "../assets/logo.png";
 const Dashboard = ({ children }) => {
   const { appSubTitle } = useSelector((state) => state.settingsReducer);
   const { url } = useRouteMatch();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const logout = useLogout();
 
@@ -98,21 +98,9 @@ const Dashboard = ({ children }) => {
               </Text>
             )}
           </Flex>
-          <Flex gridColumnGap={3}>
-            <Select
-              placeholder="Change language"
-              onChange={(e) => {
-                i18n.changeLanguage(e.target.value);
-                localStorage.setItem("locale", JSON.stringify(e.target.value));
-              }}
-            >
-              <option value="en">English</option>
-              <option value="es">Spanish</option>
-            </Select>
-            <Button onClick={logout} minW="150px" colorScheme="blue">
-              {t("logout")}
-            </Button>
-          </Flex>
+          <Button onClick={logout} minW="150px" colorScheme="blue">
+            {t("logout")}
+          </Button>
         </Flex>
         {/* all the contents */}
         <Flex bg="gray.100" direction="column" flex={1} w="full" overflowX="hidden">

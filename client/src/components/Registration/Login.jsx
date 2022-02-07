@@ -4,6 +4,7 @@ import { Flex, Input, Heading, Button, Text, Link } from "@chakra-ui/react";
 import { InputGroup, InputRightElement } from "@chakra-ui/input";
 import validator from "validator";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 import config from "../../config";
 
@@ -25,6 +26,7 @@ const Login = () => {
   const toast = useToast();
   const dispatch = useDispatch();
   const history = useHistory();
+  const { t } = useTranslation();
 
   // for handling input change
   function HandleInputChange(event) {
@@ -42,11 +44,11 @@ const Login = () => {
     };
 
     if (!allFields) {
-      toast({ status: "error", description: "Please fill the fields properly" });
+      toast({ status: "error", description: t("validation_all_field") });
     } else if (!validEmail) {
-      toast({ status: "error", description: "Invalid Email" });
+      toast({ status: "error", description: t("validation_valid_email") });
     } else if (!validPassword) {
-      toast({ status: "error", description: "Invalid password" });
+      toast({ status: "error", description: t("validation_password") });
       // if everything goes ok, then it's time for server side validation
     } else if (allFields && validEmail && validPassword) {
       loginUser();
@@ -67,7 +69,7 @@ const Login = () => {
       if (res.ok && body.user) {
         dispatch(LOGIN(body.user));
         history.push(body.user.role === "admin" ? "/admin" : "dashboard");
-        toast({ status: "success", description: body.msg });
+        toast({ status: "success", description: t("welcome_back") });
       } else if (res.status === 400) {
         toast({ status: "error", description: body.msg || "We have an error" });
       }
@@ -84,12 +86,12 @@ const Login = () => {
     <Flex h="full" justify="center" align="center">
       <Flex maxW="95%" w="450px" direction="column" p={10} bg="white" boxShadow="lg">
         <Heading textAlign="center" color="primary" fontWeight="normal" mb={5}>
-          Sign in
+          {t("sign_in")}
         </Heading>
         <InputField
           onChange={HandleInputChange}
           autoFocus
-          placeholder="Enter your email"
+          placeholder={t("email_placeholder")}
           name="email"
           type="email"
           value={email}
@@ -97,7 +99,7 @@ const Login = () => {
         <InputGroup size="md">
           <InputField
             onChange={HandleInputChange}
-            placeholder="Enter your password"
+            placeholder={t("password_placeholder")}
             name="password"
             type={showPass ? "text" : "password"}
             value={password}
@@ -109,17 +111,17 @@ const Login = () => {
           </InputRightElement>
         </InputGroup>
         <Button onClick={ValidateInputInfo} colorScheme="secondary" color="black" mb={3}>
-          Sign in
+          {t("sign_in")}
         </Button>
         <Text mb={2} fontSize="md" textAlign="center">
-          Don't have an account?{" "}
+          {t("dont_have_an_account")}{" "}
           <Link color="primary" as={RouterLink} to={`${path}/register`}>
-            Register
+            {t("register")}
           </Link>
         </Text>
         <Text fontSize="md" textAlign="center">
-        <Link color="primary" as={RouterLink} to={`${path}/forgotPass`}>
-            Forgot password?
+          <Link color="primary" as={RouterLink} to={`${path}/forgotPass`}>
+            {t("forgot_password")}
           </Link>
         </Text>
       </Flex>

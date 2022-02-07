@@ -81,6 +81,7 @@ const App = () => {
 
   useEffect(() => {
     checkAuthStatus(abortController);
+
     getSettings(abortController);
 
     localStorage.setItem("chakra-ui-color-mode", JSON.stringify("light"));

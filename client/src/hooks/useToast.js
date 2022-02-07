@@ -5,7 +5,7 @@ const useToast = () => {
     variant: "solid",
     position: "top-right",
     isClosable: true,
-    duration: 1000,
+    duration: 3000,
   });
   return toast;
 };

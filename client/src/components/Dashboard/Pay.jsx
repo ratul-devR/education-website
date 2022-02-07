@@ -9,6 +9,7 @@ import { CardElement } from "@stripe/react-stripe-js";
 import { Button } from "@chakra-ui/button";
 import { Text, Badge } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const Pay = ({ location }) => {
   const [course, setCourse] = useState();
@@ -20,6 +21,7 @@ const Pay = ({ location }) => {
   const history = useHistory();
   const { courseId } = useParams();
   const { user } = useSelector((state) => state.authReducer);
+  const { t } = useTranslation();
 
   const stripe = useStripe();
   const elements = useElements();
@@ -44,8 +46,7 @@ const Pay = ({ location }) => {
             title: "Attention",
             status: "info",
             duration: 60000,
-            description:
-              "The course you are going to purchase, already exists in your account. Are you going to re-purchase it?",
+            description: t("payment_already_purchased_message"),
           });
         }
       } else if (res.status === 404) {
@@ -111,10 +112,13 @@ const Pay = ({ location }) => {
             phase: location.state.phase,
             subMessage:
               location.state.phase === "learning"
-                ? "Now you can get started with concerts"
-                : "Now you can start the checking phase",
+                ? "payment_success_sub_message_learning"
+                : "payment_success_sub_message_checking",
             button: {
-              text: location.state.phase === "learning" ? "Start Learning" : "Start Checking",
+              text:
+                location.state.phase === "learning"
+                  ? "payment_success_button_learning"
+                  : "payment_success_button_checking",
               url:
                 location.state.phase === "learning"
                   ? `/dashboard/alcs/${course._id}`
@@ -123,8 +127,8 @@ const Pay = ({ location }) => {
           });
           toast({
             status: "success",
-            title: "Congratulations",
-            description: "The course was purchased successfully",
+            title: t("payment_success_toast_message_title"),
+            description: t("payment_success_toast_message_description"),
           });
         }
       }
@@ -164,7 +168,9 @@ const Pay = ({ location }) => {
           <Heading fontSize="3xl" mb={3} fontWeight="normal" textAlign="center" color="primary">
             {course.name}
           </Heading>
-          <Text textAlign="center">Your Purchase for "{course.name}"</Text>
+          <Text textAlign="center">
+            {t("your_purchase_for")} "{course.name}"
+          </Text>
         </Flex>
         <CardElement
           onChange={(e) => (e.error ? setCheckoutError(e.error.message) : setCheckoutError())}
@@ -178,7 +184,7 @@ const Pay = ({ location }) => {
           mt={5}
           p="auto"
         >
-          {processing ? "Processing..." : `Purchase by paying (${course.price}$)`}
+          {processing ? t("processing") : `${t("purchase_button")} (${course.price}$)`}
         </Button>
         {checkoutError && (
           <Badge

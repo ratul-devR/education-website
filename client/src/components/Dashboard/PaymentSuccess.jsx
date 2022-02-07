@@ -6,12 +6,14 @@ import useToast from "../../hooks/useToast";
 import config from "../../config";
 import { useDispatch } from "react-redux";
 import { LOGIN } from "../../redux/actions/authActions";
+import { useTranslation } from "react-i18next";
 
 export default function PaymentSuccess({ location }) {
   const history = useHistory();
   const toast = useToast();
   const dispatch = useDispatch();
-  const { course, phase, subMessage, button } = location.state
+  const { course, subMessage, button } = location.state;
+  const { t } = useTranslation();
 
   async function startLearning() {
     try {
@@ -34,13 +36,11 @@ export default function PaymentSuccess({ location }) {
   return (
     <Flex w="full" h="full" justify="center" align="center" direction="column">
       <Heading mb={3} fontSize="2xl" fontWeight="normal" textAlign="center">
-        Thanks for Purchasing "{course.name}"{" "}
+        {t("payment_success_message")} "{course.name}"{" "}
       </Heading>
-      <Text mb={5}>
-        {subMessage}
-      </Text>
+      <Text mb={5}>{t(subMessage)}</Text>
       <Button onClick={startLearning} colorScheme="secondary" color="black">
-        {button.text}
+        {t(button.text)}
       </Button>
     </Flex>
   );

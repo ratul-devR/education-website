@@ -2,19 +2,21 @@ import { VStack, Flex } from "@chakra-ui/layout";
 import { NavLink, useRouteMatch, Switch, Route } from "react-router-dom";
 import { UnorderedList, ListItem, Link, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 import Login from "../components/Registration/Login";
 import Register from "../components/Registration/Register";
 import CreateOrg from "../components/Registration/CreateOrg";
 import LoginOrg from "../components/Registration/LoginOrg";
-import ForgotPass from "../components/Registration/ForgotPass"
-import ResetPass from "../components/Registration/ResetPass"
+import ForgotPass from "../components/Registration/ForgotPass";
+import ResetPass from "../components/Registration/ResetPass";
 
 import Logo from "../assets/logo.png";
 
 const Registration = () => {
   const { appSubTitle } = useSelector((state) => state.settingsReducer);
   const { path } = useRouteMatch();
+  const { t } = useTranslation();
 
   return (
     <VStack h="100vh" overflow="hidden" spacing={0}>
@@ -30,11 +32,11 @@ const Registration = () => {
 
         <UnorderedList display="flex" gridColumnGap={5} alignItems="center">
           <ListItem listStyleType="none">
-            New organization?{" "}
+            {t("new_org")}{" "}
             <Link as={NavLink} color="primary" exact to={`${path}/createOrg`}>
-              Sign up
+              {t("register")}
             </Link>{" "}
-            to get started
+            {t("to_get_started")}
           </ListItem>
         </UnorderedList>
       </Flex>

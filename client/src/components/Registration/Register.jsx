@@ -14,6 +14,7 @@ import {
 import validator from "validator";
 import { useDispatch } from "react-redux";
 import { Alert, AlertIcon } from "@chakra-ui/alert";
+import { useTranslation } from "react-i18next";
 
 import config from "../../config";
 
@@ -49,6 +50,7 @@ const Register = () => {
   const dispatch = useDispatch();
   const toast = useToast();
   const history = useHistory();
+  const { t } = useTranslation();
 
   const ages = [
     "10 - 15 years",
@@ -89,13 +91,13 @@ const Register = () => {
     };
 
     if (!allFields) {
-      toast({ status: "error", description: "Please fill all the fields properly" });
+      toast({ status: "error", description: t("validation_all_field") });
     } else if (!emailOk) {
-      toast({ status: "error", description: "Your email is Invalid" });
+      toast({ status: "error", description: t("validation_valid_email") });
     } else if (!passwordLength) {
-      toast({ status: "error", description: "password must contain 8 chars" });
+      toast({ status: "error", description: t("validation_password_length") });
     } else if (!passwordMatched) {
-      toast({ status: "error", description: "password doesn't matched" });
+      toast({ status: "error", description: t("validation_password_length") });
     } else if (allFields && emailOk && passwordLength && passwordMatched) {
       createUser();
     }
@@ -172,11 +174,11 @@ const Register = () => {
     <Flex h="full" justify="center" align="center">
       <Flex maxW="95%" w="450px" direction="column" p={10} bg="white" boxShadow="lg">
         <Heading textAlign="center" color="primary" fontWeight="normal" mb={5}>
-          Sign up
+          {t("register")}
         </Heading>
         <InputField
           onChange={HandleInputChange}
-          placeholder="First name"
+          placeholder={t("fName_placeholder")}
           name="fName"
           type="text"
           autoFocus
@@ -184,14 +186,14 @@ const Register = () => {
         />
         <InputField
           onChange={HandleInputChange}
-          placeholder="Last Name"
+          placeholder={t("lName_placeholder")}
           name="lName"
           type="text"
           value={lName}
         />
         <Select
           mb={3}
-          placeholder="What is your age"
+          placeholder={t("what_is_your_age")}
           onChange={HandleInputChange}
           name="age"
           value={age}
@@ -206,13 +208,13 @@ const Register = () => {
         </Select>
         <InputField
           onChange={HandleInputChange}
-          placeholder="WhatsApp number (optional)"
+          placeholder={t("WA_number_placeholder")}
           name="phone"
           value={phone}
         />
         <InputField
           onChange={HandleInputChange}
-          placeholder="Enter your email"
+          placeholder={t("email_placeholder")}
           name="email"
           type="email"
           value={email}
@@ -220,7 +222,7 @@ const Register = () => {
         <InputGroup size="md">
           <InputField
             onChange={HandleInputChange}
-            placeholder="Enter your password"
+            placeholder={t("password_placeholder")}
             name="password"
             type={showPass ? "text" : "password"}
             value={password}
@@ -234,7 +236,7 @@ const Register = () => {
         <InputGroup size="md">
           <InputField
             onChange={HandleInputChange}
-            placeholder="Confirm password"
+            placeholder={t("confirm_password_placeholder")}
             name="conPass"
             type={showConPass ? "text" : "password"}
             value={conPass}
@@ -251,18 +253,18 @@ const Register = () => {
           colorScheme="secondary"
           color="black"
         >
-          {processing ? "Processing..." : "Sign Up"}
+          {processing ? t("processing") : t("register")}
         </Button>
         {org && refererId && (
           <Alert mt={3} rounded={5} status="info">
             <AlertIcon />
-            You are being referred by {org.name}
+            {t("you_are_being_referred_by")} {org.name}
           </Alert>
         )}
         <Text fontSize="md" mt={3} textAlign="center">
-          Already have an account?{" "}
+          {t("already_have_an_account")}{" "}
           <Link color="primary" as={RouterLink} to="/auth">
-            Login
+            {t("sign_in")}
           </Link>
         </Text>
       </Flex>

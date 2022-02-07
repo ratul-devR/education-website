@@ -2,7 +2,6 @@ import "./style.css";
 import { Button } from "@chakra-ui/button";
 import { Flex, Heading, Grid } from "@chakra-ui/layout";
 import { Input } from "@chakra-ui/input";
-import { Tooltip } from "@chakra-ui/tooltip";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import config from "../../../config";
@@ -87,7 +86,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
     setClassName("option correct");
     // changing the score
     dispatch(CHANGE_SCORE());
-    toast({ status: "success", description: "Correct Answer", duration: 1000 });
+    toast({ status: "success", description: t("correct_answer"), duration: 1000 });
     setTimeout(() => {
       dispatch(NEXT_QUESTION());
     }, 2000);
@@ -137,7 +136,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
       userDoesNotKnowTheAnswer(questionId, true);
       toast({
         status: "warning",
-        description: `Wrong Answer`,
+        description: t("wrong_answer"),
         duration: 1000,
       });
       if (questions[currentIndex].type === "text") {
@@ -224,20 +223,16 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
       {!userKnowsAnswer && questions[currentIndex].type !== "text" ? (
         <Flex mt={5} w="full" direction="column">
           <Flex w="full" justify="center" align="center" gridColumnGap={2}>
-            <Tooltip hasArrow label="Show Options">
-              <Button flex={1} onClick={useKnowsTheAnswer} colorScheme="blue">
-                {t("ik")}
-              </Button>
-            </Tooltip>
-            <Tooltip hasArrow label="Try the next one">
-              <Button
-                flex={1}
-                onClick={() => userDoesNotKnowTheAnswer(questions[currentIndex]._id, false)}
-                colorScheme="red"
-              >
-                {t("idk")}
-              </Button>
-            </Tooltip>
+            <Button flex={1} onClick={useKnowsTheAnswer} colorScheme="blue">
+              {t("ik")}
+            </Button>
+            <Button
+              flex={1}
+              onClick={() => userDoesNotKnowTheAnswer(questions[currentIndex]._id, false)}
+              colorScheme="red"
+            >
+              {t("idk")}
+            </Button>
           </Flex>
         </Flex>
       ) : (

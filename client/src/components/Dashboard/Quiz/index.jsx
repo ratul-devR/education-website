@@ -123,7 +123,7 @@ const Quiz = ({ path }) => {
         const body = await res.json();
         if (res.ok) {
           if (!answered && !timeOut) {
-            toast({ status: "error", description: "You don't know the answer", duration: 1000 });
+            toast({ status: "error", description: t("quiz_dont_know"), duration: 1000 });
           }
         } else {
           toast({ status: "error", description: body.msg });
@@ -204,7 +204,7 @@ const Quiz = ({ path }) => {
       dispatch(NEXT_QUESTION());
       dispatch(DONT_KNOW());
       negativeAudio && negativeAudio.play();
-      toast({ status: "warning", description: "Time up" });
+      toast({ status: "warning", description: t("quiz_time_up") });
       userDoesNotKnowTheAnswer(questions[currentIndex]._id, false, true);
     }
   }, [timer, currentIndex, path]);

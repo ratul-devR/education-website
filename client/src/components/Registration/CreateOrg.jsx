@@ -1,5 +1,5 @@
-import { Flex, SimpleGrid, GridItem } from "@chakra-ui/layout";
-import { Heading, Text, Link as ChakraLink } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/layout";
+import { Heading, Link as ChakraLink } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/input";
 import { Checkbox } from "@chakra-ui/checkbox";
 import { Select } from "@chakra-ui/select";
@@ -12,6 +12,7 @@ import validator from "validator";
 import { Link, useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { ORG_LOGIN } from "../../redux/actions/authActions";
+import { useTranslation } from "react-i18next";
 
 const InputField = (props) => {
   return <Input {...props} mb={3} bg="#fff" />;
@@ -57,6 +58,7 @@ const CreateOrg = () => {
   const toast = useToast();
   const dispatch = useDispatch();
   const history = useHistory();
+  const { t } = useTranslation();
 
   function handleInputChange(event) {
     const { name, value } = event.target;
@@ -76,10 +78,10 @@ const CreateOrg = () => {
     setProcessing(true);
 
     if (!validator.isEmail(email)) {
-      toast({ status: "warning", description: "Your email is invalid" });
+      toast({ status: "warning", description: t("validation_valid_email") });
       setProcessing(false);
     } else if (password !== conPass) {
-      toast({ status: "warning", description: "Password doesn't matched" });
+      toast({ status: "warning", description: t("validation_password_match") });
     } else {
       try {
         const res = await fetch(`${config.serverURL}/get_auth/registerOrg`, {
@@ -136,27 +138,39 @@ const CreateOrg = () => {
     <Flex w="full" align="center" direction="column" py={20}>
       <Flex boxShadow="md" mb={10} w="500px" bg="gray.50" p={10} direction="column" rounded={5}>
         <Heading color="primary" fontSize="2xl" fontWeight="normal" textAlign="center" mb={3}>
-          Create Organization
+          {t("create_org")}
         </Heading>
-        <InputField placeholder="Name of your org" name="name" onChange={handleInputChange} />
-        <InputField placeholder="Email" name="email" onChange={handleInputChange} />
-        <InputField placeholder="Password" name="password" onChange={handleInputChange} />
-        <InputField placeholder="Confirm Password" onChange={handleInputChange} name="conPass" />
+        <InputField placeholder={t("name_of_your_org")} name="name" onChange={handleInputChange} />
         <InputField
-          placeholder="Street Address"
+          placeholder={t("email_placeholder")}
+          name="email"
+          onChange={handleInputChange}
+        />
+        <InputField
+          placeholder={t("password_placeholder")}
+          name="password"
+          onChange={handleInputChange}
+        />
+        <InputField
+          placeholder={t("confirm_password_placeholder")}
+          onChange={handleInputChange}
+          name="conPass"
+        />
+        <InputField
+          placeholder={t("street_address")}
           name="streetAddress"
           onChange={handleInputChange}
         />
-        <InputField placeholder="City" name="city" onChange={handleInputChange} />
-        <InputField placeholder="Postal Code" name="postalCode" onChange={handleInputChange} />
-        <InputField placeholder="Province" name="province" onChange={handleInputChange} />
-        <InputField placeholder="Phone" name="phone" onChange={handleInputChange} />
+        <InputField placeholder={t("city")} name="city" onChange={handleInputChange} />
+        <InputField placeholder={t("postal_code")} name="postalCode" onChange={handleInputChange} />
+        <InputField placeholder={t("province")} name="province" onChange={handleInputChange} />
+        <InputField placeholder={t("phone")} name="phone" onChange={handleInputChange} />
         <Select
           bg="#fff"
           mb={3}
           onChange={handleInputChange}
           name="type"
-          placeholder="Type of your organization"
+          placeholder={t("type_of_your_org")}
         >
           <option value="Escuela privada">Escuela privada</option>
           <option value="escuela concertada">escuela concertada</option>
@@ -165,8 +179,12 @@ const CreateOrg = () => {
           <option value="Centro de formación profesional">Centro de formación profesional</option>
           <option value="Other">Other</option>
         </Select>
-        <InputField placeholder="Your name" name="yourName" onChange={handleInputChange} />
-        <InputField placeholder="Your Position" name="yourPosition" onChange={handleInputChange} />
+        <InputField placeholder={t("your_name")} name="yourName" onChange={handleInputChange} />
+        <InputField
+          placeholder={t("your_position")}
+          name="yourPosition"
+          onChange={handleInputChange}
+        />
         <Checkbox
           colorScheme="secondary"
           mb={3}
@@ -174,7 +192,7 @@ const CreateOrg = () => {
           name="subscribe"
           defaultChecked={subscribe}
         >
-          Subscribe to Newsletter
+          {t("subscribe_to_NL")}
         </Checkbox>
         {!registered ? (
           <Button
@@ -195,24 +213,24 @@ const CreateOrg = () => {
             colorScheme="secondary"
             color="black"
           >
-            {processing ? "Processing..." : "Register Organization"}
+            {processing ? t("processing") : t("create_org")}
           </Button>
         ) : (
           <Button colorScheme="blue" onClick={goToDashboard}>
-            Go to Dashboard
+            {t("go_to_dashboard")}
           </Button>
         )}
         {affiliateLink && (
           <Alert mt={5} rounded={5} status="info">
             <AlertIcon />
-            Here is your affiliate link: {affiliateLink}
+            {t("here_is_your_afl")}: {affiliateLink}
           </Alert>
         )}
       </Flex>
       <Flex>
-        Already Registered?{" "}
-        <ChakraLink ml={2} color="primary" as={Link} textAlign="center" to="/auth/loginorg">
-          Login
+        {t("already_have_an_account")}{" "}
+        <ChakraLink ml={2} color="primary" as={Link} textAlign="center" to="/auth/loginOrg">
+          {t("sign_in")}
         </ChakraLink>
       </Flex>
     </Flex>

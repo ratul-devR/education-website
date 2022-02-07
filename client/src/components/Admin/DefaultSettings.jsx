@@ -8,10 +8,13 @@ import config from "../../config";
 import { Spinner } from "@chakra-ui/spinner";
 import { useDispatch } from "react-redux";
 import { FETCH_AND_UPDATE_SETTINGS } from "../../redux/actions/settingsActions";
+import { Select } from "@chakra-ui/select";
+import i18n from "i18next";
 
 export default function DefaultSettings() {
-  const [{ appSubTitle, _id }, setInput] = useState({
+  const [{ appSubTitle, _id, lang }, setInput] = useState({
     appSubTitle: "",
+    lang: "",
   });
   const [newSettings, editSettings] = ["newSettings", "editSettings"];
   const [processing, setProcessing] = useState(false);
@@ -57,12 +60,16 @@ export default function DefaultSettings() {
           method: path === "editSettings" ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ appSubTitle }),
+          body: JSON.stringify({ appSubTitle, lang }),
         }
       );
       const body = await res.json();
       if (res.ok) {
         dispatch(FETCH_AND_UPDATE_SETTINGS(body.settings));
+        if (body.settings.lang) {
+          i18n.changeLanguage(body.settings.lang);
+          localStorage.setItem("locale", JSON.stringify(body.settings.lang));
+        }
         toast({ status: "success", description: body.msg });
         setPath(editSettings);
         setProcessing(false);
@@ -91,7 +98,7 @@ export default function DefaultSettings() {
   }
 
   return (
-    <Flex w="full" h="full" direction="column">
+    <Flex w="full" maxW="500px" alignSelf="center" h="full" direction="column">
       <Heading color="primary" mb={3} fontWeight="normal" fontSize="2xl">
         Default Settings
       </Heading>
@@ -105,12 +112,17 @@ export default function DefaultSettings() {
         placeholder="Application subtitle"
         mb={3}
       />
-      <Button
-        disabled={!appSubTitle || processing}
-        onClick={handleClick}
-        colorScheme="secondary"
-        color="black"
+      <Select
+        mb={3}
+        name="lang"
+        placeholder="Default language"
+        onChange={handleInputChange}
+        value={lang}
       >
+        <option value="en">English</option>
+        <option value="es">Spanish</option>
+      </Select>
+      <Button disabled={processing} onClick={handleClick} colorScheme="secondary" color="black">
         {processing ? "Processing..." : "Save changes"}
       </Button>
     </Flex>

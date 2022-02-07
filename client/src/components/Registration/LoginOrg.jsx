@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { ORG_LOGIN } from "../../redux/actions/authActions";
 import { Link } from "react-router-dom";
 import { Link as ChakraLink } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 
 export default function LoginOrg() {
   const [input, setInput] = useState({
@@ -19,6 +20,7 @@ export default function LoginOrg() {
   const toast = useToast();
   const history = useHistory();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   function handleInputChange(e) {
     const { name, value } = e.target;
     setInput((pre) => ({ ...pre, [name]: value }));
@@ -47,10 +49,10 @@ export default function LoginOrg() {
     <Flex w="full" h="full" justify="center" align="center">
       <Flex w="100%" maxW="450px" direction="column" p={10} rounded={5} boxShadow="lg">
         <Heading textAlign="center" fontSize="2xl" color="primary" fontWeight="normal" mb={5}>
-          Org Login
+          {t("sign_in")}
         </Heading>
         <Input
-          placeholder="Enter your email"
+          placeholder={t("email_placeholder")}
           mb={3}
           name="email"
           onChange={handleInputChange}
@@ -62,7 +64,7 @@ export default function LoginOrg() {
             value={input.password}
             name="password"
             type={showPass ? "text" : "password"}
-            placeholder="Enter your Password"
+            placeholder={t("password_placeholder")}
           />
           <InputRightElement w="4rem">
             <Button onClick={() => setShowPass((pre) => !pre)} size="xs" colorScheme="blue">
@@ -71,12 +73,12 @@ export default function LoginOrg() {
           </InputRightElement>
         </InputGroup>
         <Button mb={5} onClick={loginOrg} colorScheme="secondary" color="black">
-          Sign in
+          {t("sign_in")}
         </Button>
         <Flex justify="center">
-          Not Registered?{" "}
+          {t("dont_have_an_account")}?{" "}
           <ChakraLink ml={2} color="primary" as={Link} textAlign="center" to="/auth/createOrg">
-            Register
+            {t("register")}
           </ChakraLink>
         </Flex>
       </Flex>
