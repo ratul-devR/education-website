@@ -23,34 +23,33 @@ export default function ActiveLearning() {
 
   function fadeBgSound(start) {
     if (start) {
-      backgroundAudioRef.current.volume = 0.2;
       setTimeout(() => {
-        backgroundAudioRef.current.volume = 0.3;
-        setTimeout(() => {
-          backgroundAudioRef.current.volume = 0.4;
-          setTimeout(() => {
-            backgroundAudioRef.current.volume = 0.5;
-          });
-        }, 100);
-      }, 100);
-    } else {
-      backgroundAudioRef.current.volume = 0.4;
-      setTimeout(() => {
-        backgroundAudioRef.current.volume = 0.3;
+        backgroundAudioRef.current.volume = 0.1;
         setTimeout(() => {
           backgroundAudioRef.current.volume = 0.2;
           setTimeout(() => {
-            backgroundAudioRef.current.volume = 0.1;
-          }, 100);
-        }, 100);
+            backgroundAudioRef.current.volume = 0.3;
+          }, 1000);
+        }, 500);
       }, 100);
+    } else {
+      backgroundAudioRef.current.volume = 0.3;
+      setTimeout(() => {
+        backgroundAudioRef.current.volume = 0.2;
+        setTimeout(() => {
+          backgroundAudioRef.current.volume = 0.1;
+          setTimeout(() => {
+            backgroundAudioRef.current.volume = 0;
+          }, 100);
+        }, 500);
+      }, 1000);
     }
   }
 
   function handleAudioEnd() {
-    fadeBgSound(true);
     setAudioPlayedCount((pre) => pre + 1);
     const shouldPlayNext = audioPlayedCount + 1 > 1;
+    const pauseDuration = learningAudioRef.current.duration * 1000;
 
     if (shouldPlayNext) {
       setTimeout(() => {
@@ -59,13 +58,14 @@ export default function ActiveLearning() {
     } else {
       setShowMic(true);
       setShowTranslation(false);
-      fadeBgSound(true);
       setTimeout(() => {
         setShowMic(false);
         setShowTranslation(false);
-        fadeBgSound(false);
-        learningAudioRef.current.play();
-      }, 3000);
+        learningAudioRef.current && learningAudioRef.current.play();
+        if (currentIndex + 1 === questions.length) {
+          fadeBgSound(false);
+        }
+      }, pauseDuration);
     }
   }
 
@@ -191,7 +191,6 @@ export default function ActiveLearning() {
       {/* the audio which plays the question sound */}
       <audio
         autoPlay
-        onPlay={() => fadeBgSound(false)}
         onEnded={handleAudioEnd}
         src={questions[currentIndex].activeLearningVoice}
         ref={learningAudioRef}
@@ -203,7 +202,10 @@ export default function ActiveLearning() {
           autoPlay
           loop
           ref={backgroundAudioRef}
-          onCanPlay={(e) => (e.target.volume = 0.5)}
+          onCanPlay={(e) => {
+            e.target.volume = 0;
+            fadeBgSound(true);
+          }}
           src={assets.activeLearningBgAudio}
         />
       )}

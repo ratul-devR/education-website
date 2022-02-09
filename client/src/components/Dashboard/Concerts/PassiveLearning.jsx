@@ -18,27 +18,26 @@ export default function PassiveLearning() {
 
   function fadeBgSound(start) {
     if (start) {
-      backgroundAudioRef.current.volume = 0.2;
       setTimeout(() => {
-        backgroundAudioRef.current.volume = 0.3;
-        setTimeout(() => {
-          backgroundAudioRef.current.volume = 0.4;
-          setTimeout(() => {
-            backgroundAudioRef.current.volume = 0.5;
-          });
-        }, 100);
-      }, 100);
-    } else {
-      backgroundAudioRef.current.volume = 0.4;
-      setTimeout(() => {
-        backgroundAudioRef.current.volume = 0.3;
+        backgroundAudioRef.current.volume = 0.1;
         setTimeout(() => {
           backgroundAudioRef.current.volume = 0.2;
           setTimeout(() => {
-            backgroundAudioRef.current.volume = 0.1;
-          }, 100);
-        }, 100);
+            backgroundAudioRef.current.volume = 0.3;
+          }, 2000);
+        }, 500);
       }, 100);
+    } else {
+      backgroundAudioRef.current.volume = 0.3;
+      setTimeout(() => {
+        backgroundAudioRef.current.volume = 0.2;
+        setTimeout(() => {
+          backgroundAudioRef.current.volume = 0.1;
+          setTimeout(() => {
+            backgroundAudioRef.current.volume = 0;
+          }, 100);
+        }, 500);
+      }, 2000);
     }
   }
 
@@ -72,16 +71,19 @@ export default function PassiveLearning() {
   function handleMaleAudioEnd() {
     const learningAudio = learningAudioRef.current;
 
-    learningAudio.play();
+    learningAudio && learningAudio.play();
 
     learningAudio.onended = () => {
-      fadeBgSound(true);
       setTimeout(() => {
-        learningAudio.play();
+        learningAudio && learningAudio.play();
+        if (currentIndex + 1 === questions.length) {
+          fadeBgSound(false);
+        }
         learningAudio.onended = () => {
-          fadeBgSound(true);
           setTimeout(() => {
-            dispatch(NEXT_WORD());
+            if (learningAudio) {
+              dispatch(NEXT_WORD());
+            }
           }, 1000);
         };
       }, 3000);
@@ -113,15 +115,16 @@ export default function PassiveLearning() {
         whileHover={{ opacity: 1, transition: { duration: 0.2 } }}
         style={{
           display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
           position: "absolute",
           top: 0,
           left: 0,
           width: "100%",
           height: "100%",
-          background: "#00000095",
+          background: "#00000010",
           opacity: 0,
+          padding: "20px",
         }}
       >
         <IconButton
@@ -145,7 +148,6 @@ export default function PassiveLearning() {
         src={questions[currentIndex].passiveLearningMaleVoice}
         onPlay={(e) => {
           setWasPlaying(e.target);
-          fadeBgSound(false);
         }}
         onEnded={handleMaleAudioEnd}
         autoPlay
@@ -155,14 +157,16 @@ export default function PassiveLearning() {
         src={questions[currentIndex].passiveLearningVoice}
         onPlay={(e) => {
           setWasPlaying(e.target);
-          fadeBgSound(false);
         }}
         ref={learningAudioRef}
       />
 
       {assets.passiveLearningBgAudio && (
         <audio
-          onCanPlay={(e) => (e.target.volume = 0.5)}
+          onCanPlay={(e) => {
+            e.target.volume = 0;
+            fadeBgSound(true);
+          }}
           loop
           src={assets.passiveLearningBgAudio}
           autoPlay
