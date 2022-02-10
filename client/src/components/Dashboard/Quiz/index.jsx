@@ -187,7 +187,7 @@ const Quiz = ({ path }) => {
       setTimer(0);
       setTimerInterval(null);
     };
-  }, [currentIndex, currentIndex, path, loading, userCommitted]);
+  }, [currentIndex, path, loading, userCommitted]);
 
   useEffect(() => {
     if (
@@ -274,7 +274,7 @@ const Quiz = ({ path }) => {
         <Heading textAlign="center" fontWeight="normal" mb={10}>
           {t("quiz_results")}
         </Heading>
-        <CircularProgress color="primary" size="220px" value={totalPercentage}>
+        <CircularProgress color="primary" size="250px" value={totalPercentage}>
           <CircularProgressLabel color="primary" fontSize="25px">
             {t("known")}: {totalPercentage}%
           </CircularProgressLabel>

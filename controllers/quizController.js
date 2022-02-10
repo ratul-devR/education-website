@@ -21,7 +21,7 @@ module.exports = {
 
       // if the admin has determined that the user has to pay before checking-phase,
       // then the user has to pay before checking phase
-      let userHasToPay = !!course.checkingPhasePaid 
+      let userHasToPay = !!course.checkingPhasePaid;
 
       // questions the user hasn't checked yet will be shown in the checking phase
       const courseQuestions = await Question.find({

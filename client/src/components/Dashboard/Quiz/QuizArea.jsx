@@ -22,11 +22,14 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
   const [negativeAudio, setNegativeAudio] = useState();
 
   const { currentIndex, questions } = useSelector((state) => state.quizReducer);
+  const { user } = useSelector((state) => state.authReducer);
   const dispatch = useDispatch();
   const toast = useToast();
   const { t } = useTranslation();
 
   const inputRef = useRef();
+
+  const repeatedUser = questions[currentIndex].repeatedUsers.includes(user._id);
 
   // fetch all the audio assets for the quiz
   async function fetchAudioAssets(abortController) {
@@ -165,6 +168,12 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
       }
     };
   }, [selectedAnswer]);
+
+  useEffect(() => {
+    if (repeatedUser && path !== "getUserUnknownQuestions") {
+      toast({ status: "info", description: "This question is a part of space-repetition" });
+    }
+  }, [repeatedUser]);
 
   /* // play the background sound when it is ready
   useEffect(() => {
