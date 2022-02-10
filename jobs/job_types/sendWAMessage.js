@@ -35,7 +35,15 @@ module.exports = (agenda) => {
 					from: process.env.TWILIO_WA_PHONE_NUMBER,
 					to: `whatsapp:${user.phone}`,
 				})
-				.catch((err) => console.log(err.message))
+				.catch(async (err) => {
+					console.log(err.message);
+					await transporter.sendMail({
+						from: `${process.env.EMAIL}`,
+						to: user.email,
+						subject: "Hey there please login again",
+						text: "In order to continue, you have to login",
+					});
+				})
 				.done();
 		} else {
 			await transporter.sendMail({

@@ -18,8 +18,8 @@ export default function OrgDashboard() {
     document.title = `${config.appName} - Organization Dashboard`;
   }, []);
   return (
-    <Grid templateRows="60px 1fr" w="full" h="full" direction="column">
-      <Flex as="nav" boxShadow="sm" justify="space-between" px={10} align="center">
+    <Grid templateRows="80px 1fr" w="full" h="full" direction="column">
+      <Flex as="nav" boxShadow="sm" justify="space-between" py={5} px={10} align="center">
         <Flex direction="column" justify="center" align="center">
           <img style={{ display: "block", width: "150px" }} alt="check2learn logo" src={Logo} />
           {appSubTitle && <Text>{appSubTitle}</Text>}
@@ -45,6 +45,7 @@ export default function OrgDashboard() {
               <Th>First Name</Th>
               <Th>Last Name</Th>
               <Th>email</Th>
+              <Th>phone</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -55,6 +56,7 @@ export default function OrgDashboard() {
                     <Td>{user.firstName}</Td>
                     <Td>{user.lastName}</Td>
                     <Td>{user.email}</Td>
+                    <Td>{user.phone ? user.phone : "Not Provided"}</Td>
                   </Tr>
                 );
               })
