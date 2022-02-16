@@ -27,7 +27,7 @@ module.exports = {
           res.cookie(process.env.COOKIE_NAME, authToken, {
             maxAge: process.env.COOKIE_MAX_AGE,
             httpOnly: true,
-            signed: true,
+            signed: true
           });
 
           res.status(201).json({ msg: `Welcome back ${user.firstName}`, user });
@@ -71,7 +71,7 @@ module.exports = {
       res.cookie(process.env.COOKIE_NAME, authToken, {
         maxAge: process.env.COOKIE_MAX_AGE,
         httpOnly: true,
-        signed: true,
+        signed: true
       });
 
       // send a whats app message to the user if he has entered phone number
@@ -196,7 +196,7 @@ module.exports = {
       res.cookie(process.env.COOKIE_NAME, token, {
         maxAge: process.env.COOKIE_MAX_AGE,
         httpOnly: true,
-        signed: true,
+        signed: true
       });
 
       res
@@ -228,7 +228,7 @@ module.exports = {
       res.cookie(process.env.COOKIE_NAME, token, {
         maxAge: process.env.COOKIE_MAX_AGE,
         httpOnly: true,
-        signed: true,
+        signed: true
       });
 
       res.status(200).json({ msg: "Login Successful", org });
@@ -269,29 +269,29 @@ module.exports = {
         `,
         });
 
-        res.status(200).json({ msg: "We sent you an email" })
+        res.status(200).json({ msg: "We sent you an email" });
       }
     } catch (err) {
       next(err);
     }
   },
 
-  resetPass: async function(req, res, next) {
+  resetPass: async function (req, res, next) {
     try {
-      const { password } = req.body
-      const { userId } = req.params
+      const { password } = req.body;
+      const { userId } = req.params;
 
-      const user = await User.findOne({_id: userId})
+      const user = await User.findOne({ _id: userId });
 
       if (!user) {
-        res.status(400).json({ msg: "Your account doesn't exist" })
+        res.status(400).json({ msg: "Your account doesn't exist" });
       } else {
-        user.password = password
-        await user.save()
-        res.status(201).json({ msg: "You password has been updated" })
+        user.password = password;
+        await user.save();
+        res.status(201).json({ msg: "You password has been updated" });
       }
     } catch (err) {
-      next(err)
+      next(err);
     }
   },
 

@@ -226,7 +226,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
                 />
               );
             })}
-        {questions[currentIndex].spanishWord && ` (${questions[currentIndex].spanishWord})`}
+        {questions[currentIndex].hint && ` (${questions[currentIndex].hint})`}
       </Heading>
 
       {!userKnowsAnswer && questions[currentIndex].type !== "text" ? (

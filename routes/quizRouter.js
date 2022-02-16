@@ -8,9 +8,13 @@ const {
   dontKnow,
   apCorrectAnswer,
   getQuizAssets,
+  getUserInfo,
 } = require("../controllers/quizController");
 
 const router = express.Router();
+
+// for getting the user info
+router.get("/get_user_info/:userId", getUserInfo);
 
 // for getting all the user questions under a course
 router.get("/getUserQuestionsOfCourse/:courseId", getUserQuestionsOfQuiz);

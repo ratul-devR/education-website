@@ -1,3 +1,5 @@
+const mongoose = require("mongoose")
+
 const Category = require("../models/category");
 const User = require("../models/people");
 const QuizAsset = require("../models/quizAsset");
@@ -6,6 +8,25 @@ const Question = require("../models/question");
 const agenda = require("../jobs/agenda");
 
 module.exports = {
+  getUserInfo: async function(req, res, next) {
+    try {
+    const { userId } = req.params
+
+    if (!mongoose.isValidObjectId(userId)) {
+      res.status(404).json({ msg: "User not found" })
+    } else {
+      const user = await User.findOne({_id: userId})
+      if (!user) {
+        res.status(404).json({ msg: "User not found" })
+      } else {
+        res.status(200).json({ user })
+      }
+    }
+    } catch (err) {
+      next(err)
+    }
+  },
+
   getUserQuestionsOfQuiz: async function (req, res, next) {
     try {
       const { courseId } = req.params;
