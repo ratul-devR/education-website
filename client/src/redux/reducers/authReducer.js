@@ -17,6 +17,7 @@ function authReducer(state = initialState, action) {
     case "LOGOUT": {
       localStorage.removeItem("user");
       localStorage.removeItem("org");
+      localStorage.removeItem("token");
       return { isAuthenticated: false, user: {}, org: {} };
     }
     default: {

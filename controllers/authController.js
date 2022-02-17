@@ -4,10 +4,6 @@ const Org = require("../models/org");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = require("twilio")(accountSid, authToken);
-
 const transporter = require("../utils/emailTransporter");
 const agenda = require("../jobs/agenda");
 
@@ -27,10 +23,10 @@ module.exports = {
           res.cookie(process.env.COOKIE_NAME, authToken, {
             maxAge: process.env.COOKIE_MAX_AGE,
             httpOnly: true,
-            signed: true
+            signed: true,
           });
 
-          res.status(201).json({ msg: `Welcome back ${user.firstName}`, user });
+          res.status(201).json({ msg: `Welcome back ${user.firstName}`, user, token: authToken });
         } else {
           res.status(400).json({ msg: "Invalid credentials" });
         }
@@ -71,19 +67,11 @@ module.exports = {
       res.cookie(process.env.COOKIE_NAME, authToken, {
         maxAge: process.env.COOKIE_MAX_AGE,
         httpOnly: true,
-        signed: true
+        signed: true,
       });
 
       // send a whats app message to the user if he has entered phone number
       if (newUser.phone) {
-        client.messages
-          .create({
-            body: "Hey yo! thanks for registering!",
-            from: process.env.TWILIO_WA_PHONE_NUMBER,
-            to: `whatsapp:${newUser.phone}`,
-          })
-          .catch((err) => console.log(err.message))
-          .done();
       }
 
       // send a confirmation email to the user
@@ -109,8 +97,8 @@ module.exports = {
 
       res.status(201).json({
         msg: "We have sent you an email for confirmation",
-        title: "Attention",
         user: userCreated,
+        token: authToken,
       });
     } catch (err) {
       next(err);
@@ -196,7 +184,7 @@ module.exports = {
       res.cookie(process.env.COOKIE_NAME, token, {
         maxAge: process.env.COOKIE_MAX_AGE,
         httpOnly: true,
-        signed: true
+        signed: true,
       });
 
       res
@@ -228,7 +216,7 @@ module.exports = {
       res.cookie(process.env.COOKIE_NAME, token, {
         maxAge: process.env.COOKIE_MAX_AGE,
         httpOnly: true,
-        signed: true
+        signed: true,
       });
 
       res.status(200).json({ msg: "Login Successful", org });

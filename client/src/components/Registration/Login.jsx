@@ -68,6 +68,7 @@ const Login = () => {
 
       if (res.ok && body.user) {
         dispatch(LOGIN(body.user));
+        localStorage.setItem("token", JSON.stringify(body.token));
         history.push(body.user.role === "admin" ? "/admin" : "dashboard");
         toast({ status: "success", description: t("welcome_back") });
       } else if (res.status === 400) {

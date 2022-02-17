@@ -4,10 +4,13 @@ const jwt = require("jsonwebtoken");
 
 module.exports = async function (req, res, next) {
   try {
-    const cookies = Object.keys(req.signedCookies).length > 0 ? req.signedCookies : null;
+    const cookies =
+      Object.keys(req.signedCookies).length > 0
+        ? req.signedCookies
+        : req.headers.authorization.split(" ")[1];
 
     if (cookies) {
-      const token = cookies[process.env.COOKIE_NAME];
+      const token = typeof cookies === "object" ? cookies[process.env.COOKIE_NAME] : cookies;
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await User.findOne({ _id: decoded._id }).lean({ defaults: true });
       const org = await Org.findOne({ _id: decoded._id })

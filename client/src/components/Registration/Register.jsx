@@ -126,6 +126,7 @@ const Register = () => {
       if (res.ok) {
         setProcessing(false);
         dispatch(LOGIN(body.user));
+        localStorage.setItem("token", JSON.stringify(body.token));
         history.push("/dashboard");
         toast({ status: "success", description: body.msg });
       } else if (res.status === 400) {
