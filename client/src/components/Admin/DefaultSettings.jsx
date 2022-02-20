@@ -9,17 +9,19 @@ import { Spinner } from "@chakra-ui/spinner";
 import { useDispatch } from "react-redux";
 import { FETCH_AND_UPDATE_SETTINGS } from "../../redux/actions/settingsActions";
 import { Select } from "@chakra-ui/select";
-import i18n from "i18next";
+import { useTranslation } from "react-i18next";
 
 export default function DefaultSettings() {
   const [{ appSubTitle, _id, lang }, setInput] = useState({
     appSubTitle: "",
     lang: "",
   });
+  const [languages, setLanguages] = useState({});
   const [newSettings, editSettings] = ["newSettings", "editSettings"];
   const [processing, setProcessing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState(newSettings);
+  const { i18n } = useTranslation();
   const toast = useToast();
   const dispatch = useDispatch();
 
@@ -83,9 +85,24 @@ export default function DefaultSettings() {
     }
   }
 
+  async function fetchLanguages() {
+    try {
+      i18n.services.backendConnector.backend.getLanguages((err, langs) => {
+        if (err) {
+          toast({ status: "error", description: err.message });
+        } else {
+          setLanguages(langs);
+        }
+      });
+    } catch (err) {
+      toast({ status: "error", description: err.message });
+    }
+  }
+
   useEffect(() => {
     const abortController = new AbortController();
     fetchSettings(abortController);
+    fetchLanguages();
     return () => abortController.abort();
   }, []);
 
@@ -118,9 +135,15 @@ export default function DefaultSettings() {
         placeholder="Default language"
         onChange={handleInputChange}
         value={lang}
+        disabled={!Object.keys(languages).length}
       >
-        <option value="en">English</option>
-        <option value="es">Spanish</option>
+        {Object.keys(languages).map((language, index) => {
+          return (
+            <option key={index} value={language}>
+              {languages[language].nativeName}
+            </option>
+          );
+        })}
       </Select>
       <Button disabled={processing} onClick={handleClick} colorScheme="secondary" color="black">
         {processing ? "Processing..." : "Save changes"}

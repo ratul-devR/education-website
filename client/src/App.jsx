@@ -28,28 +28,17 @@ import Admin from "./pages/Admin";
 import Registration from "./pages/Registration";
 import OrgDashboard from "./pages/OrgDashboard";
 
-import enTrans from "./locales/enTrans";
-import esTrans from "./locales/esTrans";
-
 const locizeOptions = {
   projectId: import.meta.env.VITE_APP_LOCIZE_PROJECT_ID,
   apiKey: import.meta.env.VITE_APP_LOCIZE_API_KEY,
   referenceLng: "en",
 };
 
-i18n
-  .use(Backend)
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    debug: true,
-    fallbackLng: "en",
-    interpolation: {
-      escapeValue: false, // not needed for react as it escapes by default
-    },
-    backend: locizeOptions,
-    saveMissing: true,
-  });
+i18n.use(Backend).use(LanguageDetector).use(initReactI18next).init({
+  fallbackLng: "en-US",
+  backend: locizeOptions,
+  saveMissing: true,
+});
 
 const App = () => {
   const [pending, setPending] = useState(true);
