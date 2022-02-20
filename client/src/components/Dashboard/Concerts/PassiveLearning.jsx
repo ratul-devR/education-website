@@ -21,23 +21,23 @@ export default function PassiveLearning() {
       setTimeout(() => {
         backgroundAudioRef.current.volume = 0.1;
         setTimeout(() => {
-          backgroundAudioRef.current.volume = 0.2;
+          backgroundAudioRef.current.volume = 0.1;
           setTimeout(() => {
-            backgroundAudioRef.current.volume = 0.3;
-          }, 2000);
+            backgroundAudioRef.current.volume = 0.2;
+          }, 1000);
         }, 500);
       }, 100);
     } else {
-      backgroundAudioRef.current.volume = 0.3;
+      backgroundAudioRef.current.volume = 0.2;
       setTimeout(() => {
-        backgroundAudioRef.current.volume = 0.2;
+        backgroundAudioRef.current.volume = 0.1;
         setTimeout(() => {
           backgroundAudioRef.current.volume = 0.1;
           setTimeout(() => {
             backgroundAudioRef.current.volume = 0;
           }, 100);
         }, 500);
-      }, 2000);
+      }, 1000);
     }
   }
 

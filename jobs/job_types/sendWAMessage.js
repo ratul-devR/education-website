@@ -16,6 +16,10 @@ module.exports = (agenda) => {
 		}
 
 		const user = await User.findOneAndUpdate({ _id: userId }, { loginRequired: true });
+		if (user.role === "admin") {
+			user.loginRequired = false;
+			await user.save();
+		}
 
 		if (!user) {
 			done();

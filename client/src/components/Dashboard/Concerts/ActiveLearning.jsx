@@ -26,16 +26,16 @@ export default function ActiveLearning() {
       setTimeout(() => {
         backgroundAudioRef.current.volume = 0.1;
         setTimeout(() => {
-          backgroundAudioRef.current.volume = 0.2;
+          backgroundAudioRef.current.volume = 0.1;
           setTimeout(() => {
-            backgroundAudioRef.current.volume = 0.3;
+            backgroundAudioRef.current.volume = 0.2;
           }, 1000);
         }, 500);
       }, 100);
     } else {
-      backgroundAudioRef.current.volume = 0.3;
+      backgroundAudioRef.current.volume = 0.2;
       setTimeout(() => {
-        backgroundAudioRef.current.volume = 0.2;
+        backgroundAudioRef.current.volume = 0.1;
         setTimeout(() => {
           backgroundAudioRef.current.volume = 0.1;
           setTimeout(() => {
@@ -167,8 +167,8 @@ export default function ActiveLearning() {
           show up the text answer with spanish word
         */}
         {questions[currentIndex].type === "text"
-          ? questions[currentIndex].spanishWord && questions[currentIndex].englishVerb
-            ? questions[currentIndex].englishVerb + " - " + questions[currentIndex].spanishWord
+          ? questions[currentIndex].spanishWord && questions[currentIndex].englishWord
+            ? questions[currentIndex].englishWord + " - " + questions[currentIndex].spanishWord
             : questions[currentIndex].answers[0]
           : questions[currentIndex].answers[0]}
       </Heading>

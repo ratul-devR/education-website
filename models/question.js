@@ -6,7 +6,7 @@ const dataSchema = new mongoose.Schema({
   options: { type: Array },
   answers: { type: Array, required: true },
   spanishWord: String,
-  englishVerb: String,
+  englishWord: String,
   hint: String,
   type: { type: String, required: true, enum: ["mcq", "text"] },
   category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
@@ -18,7 +18,7 @@ const dataSchema = new mongoose.Schema({
   knownUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
   unknownUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
   packUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
-  repeatedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }]
+  repeatedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
 });
 
 dataSchema.plugin(mongooseLeanDefaults);

@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { Flex } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 import i18n from "i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
+import Backend from "i18next-locize-backend";
 
 import useToast from "./hooks/useToast";
 import useSettings from "./hooks/useSettings";
@@ -29,16 +31,24 @@ import OrgDashboard from "./pages/OrgDashboard";
 import enTrans from "./locales/enTrans";
 import esTrans from "./locales/esTrans";
 
+const locizeOptions = {
+  projectId: import.meta.env.VITE_APP_LOCIZE_PROJECT_ID,
+  apiKey: import.meta.env.VITE_APP_LOCIZE_API_KEY,
+  referenceLng: "en",
+};
+
 i18n
-  .use(initReactI18next) // passes i18n down to react-i18next
+  .use(Backend)
+  .use(LanguageDetector)
+  .use(initReactI18next)
   .init({
-    resources: {
-      en: { translation: enTrans },
-      es: { translation: esTrans },
-    },
-    lng: localStorage.getItem("locale") ? JSON.parse(localStorage.getItem("locale")) : "en",
+    debug: true,
     fallbackLng: "en",
-    interpolation: { escapeValue: false },
+    interpolation: {
+      escapeValue: false, // not needed for react as it escapes by default
+    },
+    backend: locizeOptions,
+    saveMissing: true,
   });
 
 const App = () => {

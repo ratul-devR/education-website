@@ -70,6 +70,7 @@ const Users = () => {
           <Thead>
             <Th>Name</Th>
             <Th>email</Th>
+            <Th>phone</Th>
             <Th>role</Th>
             <Th>Referred by</Th>
           </Thead>
@@ -82,6 +83,7 @@ const Users = () => {
                     {user.firstName} {user.lastName}
                   </Td>
                   <Td>{user.email}</Td>
+                  <Td>{user.phone ? user.phone : "Not provided"}</Td>
                   <Td>{user.role}</Td>
                   <Td>
                     {user.referer ? (
