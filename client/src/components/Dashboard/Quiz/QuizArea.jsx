@@ -142,13 +142,9 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
         description: t("wrong_answer"),
         duration: 1000,
       });
-      if (questions[currentIndex].type === "text") {
+      setTimeout(() => {
         dispatch(NEXT_QUESTION());
-      } else {
-        setTimeout(() => {
-          dispatch(NEXT_QUESTION());
-        }, 2000);
-      }
+      }, 2000);
     }
   }
 
@@ -221,7 +217,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
                   variant="flushed"
                   value={input}
                   ref={inputRef}
-                  disabled={selectedAnswer}
+                  disabled={selectedAnswer !== undefined}
                   onChange={(e) => setInput(e.target.value)}
                 />
               );
