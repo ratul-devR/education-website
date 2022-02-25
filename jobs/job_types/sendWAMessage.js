@@ -28,14 +28,14 @@ module.exports = (agenda) => {
 
 		// if the user has provided whatsapp number then we will send a whatsApp message otherwise
 		// email will be sent
-		if (user.phone) {
-		} else {
+		// if (user.phone) {
+		// } else {
 			await transporter.sendMail({
 				from: `${process.env.EMAIL}`,
 				to: user.email,
 				subject: "Hey there please login again",
 				text: "In order to continue, you have to login",
 			});
-		}
+		// }
 	});
 };

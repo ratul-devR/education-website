@@ -1,6 +1,7 @@
 const initialState = {
   course: {},
   questions: [],
+  knownQuestions: [],
   loading: true,
   currentIndex: 0,
   done: false,
@@ -54,17 +55,24 @@ const quizReducer = (state = initialState, action) => {
         ...state,
         score: state.score + 1,
         totalPercentage: Math.round(((state.score + 1) * 100) / state.questions.length),
+        knownQuestions: [...state.knownQuestions, action.payload._id],
       };
     }
 
     // if the user doesn't knows the answer
     case "DONT_KNOW": {
-      return { ...state, questionsDontKnow: state.questionsDontKnow + 1 };
+      return {
+        ...state,
+        questionsDontKnow: state.questionsDontKnow + 1,
+      };
     }
 
     // if the answer is wrong
     case "WRONG_ANSWER": {
-      return { ...state, questionsWrong: state.questionsWrong + 1 };
+      return {
+        ...state,
+        questionsWrong: state.questionsWrong + 1,
+      };
     }
 
     default: {

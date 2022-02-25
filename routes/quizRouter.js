@@ -9,6 +9,7 @@ const {
   apCorrectAnswer,
   getQuizAssets,
   getUserInfo,
+  startSpaceRepetition
 } = require("../controllers/quizController");
 
 const router = express.Router();
@@ -30,6 +31,9 @@ router.post("/correctAnswer", onCorrectAnswer);
 
 // for updating the user field after giving the correct answer of a question in activation phrase
 router.post("/apCorrectAnswer", apCorrectAnswer);
+
+// for starting a spaced-repetition session
+router.post("/spaced-repetition", startSpaceRepetition)
 
 // when the user will not know
 router.post("/dontKnow", dontKnow);

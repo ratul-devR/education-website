@@ -45,6 +45,7 @@ const Quiz = ({ path }) => {
     score,
     questionsDontKnow,
     questionsWrong,
+    knownQuestions,
   } = useSelector((state) => state.quizReducer);
   const dispatch = useDispatch();
 
@@ -134,6 +135,22 @@ const Quiz = ({ path }) => {
     }
   }
 
+  // calling it when the quiz is ending up
+  async function endQuizAction() {
+    try {
+      if (path === "getUserUnknownQuestions") {
+        await fetch(`${config.serverURL}/get_quiz/spaced-repetition`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ questions: knownQuestions }),
+          credentials: "include",
+        });
+      }
+    } catch (err) {
+      toast({ status: "error", description: err.message });
+    }
+  }
+
   async function fetchAudioAssets(abortController) {
     try {
       const res = await fetch(`${config.serverURL}/get_quiz/get_assets`, {
@@ -208,6 +225,12 @@ const Quiz = ({ path }) => {
       userDoesNotKnowTheAnswer(questions[currentIndex]._id, false, true);
     }
   }, [timer, currentIndex, path]);
+
+  useEffect(() => {
+    if (done) {
+      endQuizAction();
+    }
+  }, [done]);
 
   if (loading) {
     return (

@@ -88,7 +88,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
   function onCorrectAnswer() {
     setClassName("option correct");
     // changing the score
-    dispatch(CHANGE_SCORE());
+    dispatch(CHANGE_SCORE(questions[currentIndex]));
     toast({ status: "success", description: t("correct_answer"), duration: 1000 });
     setTimeout(() => {
       dispatch(NEXT_QUESTION());

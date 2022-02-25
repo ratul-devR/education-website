@@ -84,12 +84,12 @@ const Register = () => {
   // for validating the input infos after clicking on the button
   function ValidateInputInfo() {
     const { allFields, emailOk, passwordLength, passwordMatched } = {
-      allFields: fName && lName && email && password && conPass && age && phone,
+      allFields: fName && lName && email && password && conPass && age,
       emailOk: validator.isEmail(email),
       passwordLength: password.length >= 8,
       passwordMatched: password === conPass,
     };
-
+  
     if (!allFields) {
       toast({ status: "error", description: t("validation_all_field") });
     } else if (!emailOk) {
@@ -117,7 +117,7 @@ const Register = () => {
           email,
           password,
           referer: refererId,
-          phone,
+          phone: phone ? phone : null,
         }),
         credentials: "include",
       });

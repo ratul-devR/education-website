@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const Category = require("../models/category");
 const User = require("../models/people");
@@ -8,22 +8,22 @@ const Question = require("../models/question");
 const agenda = require("../jobs/agenda");
 
 module.exports = {
-  getUserInfo: async function(req, res, next) {
+  getUserInfo: async function (req, res, next) {
     try {
-    const { userId } = req.params
+      const { userId } = req.params;
 
-    if (!mongoose.isValidObjectId(userId)) {
-      res.status(404).json({ msg: "User not found" })
-    } else {
-      const user = await User.findOne({_id: userId})
-      if (!user) {
-        res.status(404).json({ msg: "User not found" })
+      if (!mongoose.isValidObjectId(userId)) {
+        res.status(404).json({ msg: "User not found" });
       } else {
-        res.status(200).json({ user })
+        const user = await User.findOne({ _id: userId });
+        if (!user) {
+          res.status(404).json({ msg: "User not found" });
+        } else {
+          res.status(200).json({ user });
+        }
       }
-    }
     } catch (err) {
-      next(err)
+      next(err);
     }
   },
 
@@ -101,10 +101,12 @@ module.exports = {
       const courseQuestions = await Question.find({
         $and: [{ category: course._id }, { unknownUsers: { $in: [user._id] } }],
       }).lean({ defaults: true });
+
+      // learning questions are same as the courseQuestions
       const learningQuestions = courseQuestions;
 
+      // checking if the user has all prerequisites
       let hasAllPrerequisites = true;
-
       for (let i = 0; i < course.prerequisites.length; i++) {
         const prerequisite = course.prerequisites[i];
         prerequisite.completedBy = prerequisite.completedBy.map((user) => user.toString());
@@ -172,6 +174,7 @@ module.exports = {
 
         const usersPercentage =
           (knownQuestionsInTheCategory.length * 100) / totalQuestionsInCategory;
+
         const hasPassed = usersPercentage >= passPercentage;
 
         // if the user has passed and has earned the percentage, then push his is under the category list
@@ -194,11 +197,14 @@ module.exports = {
       const { questionId } = req.body;
       const user = req.user;
 
+      // if the user has given correct answer in Activation-phase,
+      // then just make sure you remove the user from unknownList
       const question = await Question.findOneAndUpdate(
         { _id: questionId },
         { $pull: { unknownUsers: user._id } }
       );
 
+      // now add him to the known list
       question.knownUsers = question.knownUsers.map((user) => user.toString());
       const questionAlreadyKnown = question.knownUsers.includes(user._id.toString());
 
@@ -208,7 +214,7 @@ module.exports = {
         });
       }
 
-      // for repetition phase this question will be shown again in the checking phase after several time
+      /* // for repetition phase this question will be shown again in the checking phase after several time
       const after1Day = new Date().getTime() + 86400000;
       const after7Day = new Date().getTime() + after1Day * 7;
       const after16Day = new Date().getTime() + after1Day * 16;
@@ -229,9 +235,42 @@ module.exports = {
       agenda.schedule(after35Day, "repetition", {
         userId: user._id,
         question: questionId,
-      });
+      }); */
 
       res.status(201).json({ msg: "done" });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  startSpaceRepetition: async function (req, res, next) {
+    try {
+      const { questions } = req.body;
+      const user = req.user;
+
+      const after1Day = new Date().getTime() + 86400000;
+      const after7Day = new Date().getTime() + after1Day * 7;
+      const after16Day = new Date().getTime() + after1Day * 16;
+      const after35Day = new Date().getTime() + after1Day * 35;
+
+      agenda.schedule(after1Day, "repetition", {
+        userId: user._id,
+        questions,
+      });
+      agenda.schedule(after7Day, "repetition", {
+        userId: user._id,
+        questions,
+      });
+      agenda.schedule(after16Day, "repetition", {
+        userId: user._id,
+        questions,
+      });
+      agenda.schedule(after35Day, "repetition", {
+        userId: user._id,
+        questions,
+      });
+
+      res.sendStatus(201);
     } catch (err) {
       next(err);
     }

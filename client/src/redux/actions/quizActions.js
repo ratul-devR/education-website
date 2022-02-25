@@ -13,8 +13,8 @@ export function NEXT_QUESTION() {
   return { type: "NEXT_QUESTION" };
 }
 
-export function CHANGE_SCORE() {
-  return { type: "CHANGE_SCORE" };
+export function CHANGE_SCORE(payload) {
+  return { type: "CHANGE_SCORE", payload };
 }
 
 export function DONT_KNOW() {
