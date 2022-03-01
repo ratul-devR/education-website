@@ -29,27 +29,27 @@ export default function ActiveLearning() {
           backgroundAudioRef.current.volume = 0.1;
           setTimeout(() => {
             backgroundAudioRef.current.volume = 0.2;
-          }, 1000);
-        }, 500);
-      }, 100);
+          }, 1500);
+        }, 1000);
+      }, 500);
     } else {
       backgroundAudioRef.current.volume = 0.2;
       setTimeout(() => {
         backgroundAudioRef.current.volume = 0.1;
         setTimeout(() => {
-          backgroundAudioRef.current.volume = 0.1;
-          setTimeout(() => {
-            backgroundAudioRef.current.volume = 0;
-          }, 100);
-        }, 500);
-      }, 1000);
+          backgroundAudioRef.current.volume = 0;
+        }, learningAudioRef.current.duration + 1500);
+      }, 1500);
     }
   }
 
   function handleAudioEnd() {
     setAudioPlayedCount((pre) => pre + 1);
     const shouldPlayNext = audioPlayedCount + 1 > 1;
-    const pauseDuration = learningAudioRef.current.duration * 1000;
+    const pauseDuration =
+      learningAudioRef.current.duration * 1000 >= 5000
+        ? learningAudioRef.current.duration * 1000
+        : 5000;
 
     if (shouldPlayNext) {
       setTimeout(() => {

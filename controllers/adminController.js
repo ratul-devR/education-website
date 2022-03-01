@@ -61,7 +61,7 @@ module.exports = {
 
       // send the mail
       await transporter.sendMail({
-        from: `${process.env.EMAIL}`,
+        from: `EDconsulting<${process.env.EMAIL}>`,
         to: listOfMails,
         subject,
         text: email,

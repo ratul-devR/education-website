@@ -77,7 +77,7 @@ module.exports = {
       // send a confirmation email to the user
       const domain = req.protocol + "://" + req.get("host");
       await transporter.sendMail({
-        from: `${process.env.EMAIL}`,
+        from: `EDconsulting<${process.env.EMAIL}>`,
         to: newUser.email,
         subject: "Confirm Your Email address",
         html: `
@@ -169,7 +169,7 @@ module.exports = {
       await newOrg.populate("refers");
 
       await transporter.sendMail({
-        from: `${process.env.EMAIL}`,
+        from: `EDconsulting<${process.env.EMAIL}>`,
         to: newOrg.email,
         subject: "Here is your affiliate Link",
         html: `
@@ -248,7 +248,7 @@ module.exports = {
         res.status(400).json({ msg: "Your account doesn't exists" });
       } else {
         await transporter.sendMail({
-          from: `${process.env.EMAIL}`,
+          from: `EDconsulting<${process.env.EMAIL}>`,
           to: user.email,
           subject: "Reset password",
           html: `
