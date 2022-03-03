@@ -8,7 +8,6 @@ import { BsFullscreen } from "react-icons/bs";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { FiPlay, FiPause } from "react-icons/fi";
 import { motion } from "framer-motion";
-import { Howl } from "howler";
 
 import { NEXT_WORD } from "../../../redux/actions/concertActions";
 
@@ -19,16 +18,30 @@ export default function ActiveLearning() {
   const [showTranslation, setShowTranslation] = useState(true);
   const [playing, setPlaying] = useState(true);
   const [audioPlayedCount, setAudioPlayedCount] = useState(0); // if = 1 then go to the next word
-
-  const backgroundAudio = new Howl({
-    src: assets.activeLearningBgAudio,
-    volume: 0,
-    onplay: () => {
-      backgroundAudio.fade(0, 0.2, 5000);
-    },
-  });
-
+  const backgroundAudioRef = useRef();
   const learningAudioRef = useRef();
+
+  function fadeBgSound(start) {
+    if (start) {
+      setTimeout(() => {
+        backgroundAudioRef.current.volume = 0.1;
+        setTimeout(() => {
+          backgroundAudioRef.current.volume = 0.1;
+          setTimeout(() => {
+            backgroundAudioRef.current.volume = 0.2;
+          }, 1500);
+        }, 1000);
+      }, 500);
+    } else {
+      backgroundAudioRef.current.volume = 0.2;
+      setTimeout(() => {
+        backgroundAudioRef.current.volume = 0.1;
+        setTimeout(() => {
+          backgroundAudioRef.current.volume = 0;
+        }, learningAudioRef.current.duration + 1500);
+      }, 1500);
+    }
+  }
 
   function handleAudioEnd() {
     setAudioPlayedCount((pre) => pre + 1);
@@ -50,7 +63,7 @@ export default function ActiveLearning() {
         setShowTranslation(false);
         learningAudioRef.current && learningAudioRef.current.play();
         if (currentIndex + 1 === questions.length) {
-          backgroundAudio.fade(0.2, 0, 5000);
+          fadeBgSound(false);
         }
       }, pauseDuration);
     }
@@ -58,8 +71,9 @@ export default function ActiveLearning() {
 
   function handleControlClick() {
     const learningAudio = learningAudioRef.current;
+    const backgroundAudio = backgroundAudioRef.current;
 
-    if (learningAudio.paused && !backgroundAudio.playing()) {
+    if (learningAudio.paused && backgroundAudio.paused) {
       learningAudio.play();
       backgroundAudio.play();
       setPlaying(true);
@@ -94,15 +108,6 @@ export default function ActiveLearning() {
       setAudioPlayedCount(0);
     };
   }, [currentIndex]);
-
-  useEffect(() => {
-    if (backgroundAudio && !backgroundAudio.playing()) {
-      backgroundAudio.play();
-    }
-    return () => {
-      backgroundAudio.pause();
-    };
-  }, []);
 
   return (
     <Flex
@@ -192,7 +197,7 @@ export default function ActiveLearning() {
       />
 
       {/* the background music */}
-      {/* assets.activeLearningBgAudio && (
+      {assets.activeLearningBgAudio && (
         <audio
           autoPlay
           loop
@@ -203,7 +208,7 @@ export default function ActiveLearning() {
           }}
           src={assets.activeLearningBgAudio}
         />
-      ) */}
+      )}
     </Flex>
   );
 }
