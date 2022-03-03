@@ -1,7 +1,9 @@
 const Agenda = require("agenda");
 
 const dbUrl = process.env.MONGO_URL;
-const agenda = new Agenda({ db: { address: dbUrl, collection: "jobs" } });
+const agenda = new Agenda({
+	db: { address: dbUrl, collection: "jobs" },
+});
 
 const jobTypes = ["repetition", "sendWAMessage"];
 

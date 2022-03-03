@@ -11,24 +11,27 @@ module.exports = function (agenda) {
 
 		const { userId, questions } = job.attrs.data;
 
-		if (!userId || (!questions && !questions.length)) {
-			done();
-		}
-
 		try {
 			const user = await User.findOne({ _id: userId });
 
+			if (!user) {
+				done();
+			}
+
 			// show the question again to the user in checking phase
-			await Question.updateMany({ $in: questions }, { $pull: { knownUsers: user._id } });
-			await Question.updateMany({ $in: questions }, { $pull: { unknownUsers: user._id } });
-			await Question.updateMany({ $in: questions }, { $pull: { packUsers: user._id } });
+			await Question.updateMany({ _id: { $in: questions } }, { $pull: { knownUsers: user._id } });
+			await Question.updateMany({ _id: { $in: questions } }, { $pull: { unknownUsers: user._id } });
+			await Question.updateMany({ _id: { $in: questions } }, { $pull: { packUsers: user._id } });
 
 			// mark the user as repeated
-			await Question.updateMany({ $in: questions }, { $push: { repeatedUsers: user._id } });
+			await Question.updateMany(
+				{ _id: { $in: questions } },
+				{ $push: { repeatedUsers: user._id } }
+			);
 
 			// after all send the user a reminder about it through mail
 			await transporter.sendMail({
-				from: `${process.env.EMAIL}`,
+				from: `EDconsulting<${process.env.EMAIL}>`,
 				to: user.email,
 				subject: "It's time for spaced repetition",
 				text: "Hey it's time to check the words which you recently learned",
@@ -37,6 +40,7 @@ module.exports = function (agenda) {
 			done();
 		} catch (err) {
 			console.log(err.message || err);
+			done();
 		}
 	});
 };

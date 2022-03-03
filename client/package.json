@@ -15,6 +15,7 @@
     "@stripe/stripe-js": "^1.21.1",
     "ambienx": "^1.0.10",
     "framer-motion": "^4.1.17",
+    "howler": "^2.2.3",
     "i18next": "^21.6.10",
     "i18next-locize-backend": "^5.0.0",
     "react": "^17.0.0",

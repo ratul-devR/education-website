@@ -169,7 +169,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
     if (repeatedUser && path !== "getUserUnknownQuestions") {
       toast({ status: "info", description: "This question is a part of space-repetition" });
     }
-  }, [repeatedUser]);
+  }, [currentIndex]);
 
   /* // play the background sound when it is ready
   useEffect(() => {

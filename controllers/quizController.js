@@ -253,22 +253,24 @@ module.exports = {
       const after16Day = new Date().getTime() + after1Day * 16;
       const after35Day = new Date().getTime() + after1Day * 35;
 
-      agenda.schedule(after1Day, "repetition", {
-        userId: user._id,
-        questions,
-      });
-      agenda.schedule(after7Day, "repetition", {
-        userId: user._id,
-        questions,
-      });
-      agenda.schedule(after16Day, "repetition", {
-        userId: user._id,
-        questions,
-      });
-      agenda.schedule(after35Day, "repetition", {
-        userId: user._id,
-        questions,
-      });
+      if (questions.length) {
+        agenda.schedule(after1Day, "repetition", {
+          userId: user._id,
+          questions,
+        });
+        agenda.schedule(after7Day, "repetition", {
+          userId: user._id,
+          questions,
+        });
+        agenda.schedule(after16Day, "repetition", {
+          userId: user._id,
+          questions,
+        });
+        agenda.schedule(after35Day, "repetition", {
+          userId: user._id,
+          questions,
+        });
+      }
 
       res.sendStatus(201);
     } catch (err) {
