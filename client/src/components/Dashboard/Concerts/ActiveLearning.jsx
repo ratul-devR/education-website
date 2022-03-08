@@ -21,25 +21,45 @@ export default function ActiveLearning() {
   const backgroundAudioRef = useRef();
   const learningAudioRef = useRef();
 
+  function fadeIn(q) {
+    if (q.volume) {
+      var InT = 0;
+      var setVolume = 0.2; // Target volume level for new song
+      var speed = 0.005; // Rate of increase
+      q.volume = InT;
+      var eAudio = setInterval(function () {
+        InT += speed;
+        q.volume = InT.toFixed(1);
+        if (InT.toFixed(1) >= setVolume) {
+          clearInterval(eAudio);
+          //alert('clearInterval eAudio'+ InT.toFixed(1));
+        }
+      }, 50);
+    }
+  }
+
+  function fadeOut(q) {
+    if (q.volume) {
+      var InT = q.volume;
+      var setVolume = 0; // Target volume level for old song
+      var speed = 0.005; // Rate of volume decrease
+      q.volume = InT;
+      var fAudio = setInterval(function () {
+        InT -= speed;
+        q.volume = InT.toFixed(1);
+        if (InT.toFixed(1) <= setVolume) {
+          clearInterval(fAudio);
+          //alert('clearInterval fAudio'+ InT.toFixed(1));
+        }
+      }, 100);
+    }
+  }
+
   function fadeBgSound(start) {
     if (start) {
-      setTimeout(() => {
-        backgroundAudioRef.current.volume = 0.1;
-        setTimeout(() => {
-          backgroundAudioRef.current.volume = 0.1;
-          setTimeout(() => {
-            backgroundAudioRef.current.volume = 0.2;
-          }, 1500);
-        }, 1000);
-      }, 500);
+      fadeIn(backgroundAudioRef.current);
     } else {
-      backgroundAudioRef.current.volume = 0.2;
-      setTimeout(() => {
-        backgroundAudioRef.current.volume = 0.1;
-        setTimeout(() => {
-          backgroundAudioRef.current.volume = 0;
-        }, learningAudioRef.current.duration + 1500);
-      }, 1500);
+      fadeOut(backgroundAudioRef.current);
     }
   }
 
@@ -202,8 +222,7 @@ export default function ActiveLearning() {
           autoPlay
           loop
           ref={backgroundAudioRef}
-          onCanPlay={(e) => {
-            e.target.volume = 0;
+          onCanPlay={() => {
             fadeBgSound(true);
           }}
           src={assets.activeLearningBgAudio}

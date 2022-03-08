@@ -12,6 +12,7 @@ const dataSchema = new mongoose.Schema({
   concertIns: String,
   prerequisites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
+  checkedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
   purchasedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
   completedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],
 });

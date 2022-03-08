@@ -4,6 +4,7 @@ import { Text } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/input";
 import { Button } from "@chakra-ui/button";
 import useToast from "../../hooks/useToast";
+import { Textarea } from "@chakra-ui/textarea";
 import config from "../../config";
 import { Spinner } from "@chakra-ui/spinner";
 import { useDispatch } from "react-redux";
@@ -12,9 +13,24 @@ import { Select } from "@chakra-ui/select";
 import { useTranslation } from "react-i18next";
 
 export default function DefaultSettings() {
-  const [{ appSubTitle, _id, lang }, setInput] = useState({
+  const [
+    {
+      appSubTitle,
+      _id,
+      lang,
+      notificationTimeSpan,
+      reminderMessage,
+      requestMessage,
+      reminderDuration,
+    },
+    setInput,
+  ] = useState({
     appSubTitle: "",
     lang: "",
+    notificationTimeSpan: "",
+    reminderMessage: "",
+    requestMessage: "",
+    reminderDuration: "",
   });
   const [languages, setLanguages] = useState({});
   const [newSettings, editSettings] = ["newSettings", "editSettings"];
@@ -62,7 +78,14 @@ export default function DefaultSettings() {
           method: path === "editSettings" ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ appSubTitle, lang }),
+          body: JSON.stringify({
+            appSubTitle,
+            lang,
+            notificationTimeSpan,
+            requestMessage,
+            reminderMessage,
+            reminderDuration,
+          }),
         }
       );
       const body = await res.json();
@@ -115,7 +138,7 @@ export default function DefaultSettings() {
   }
 
   return (
-    <Flex w="full" maxW="500px" alignSelf="center" h="full" direction="column">
+    <Flex w="full" maxW="500px" h="auto" alignSelf="center" direction="column">
       <Heading color="primary" mb={3} fontWeight="normal" fontSize="2xl">
         Default Settings
       </Heading>
@@ -145,6 +168,34 @@ export default function DefaultSettings() {
           );
         })}
       </Select>
+      <Input
+        placeholder="Notification time span (day)"
+        value={notificationTimeSpan}
+        onChange={handleInputChange}
+        mb={3}
+        name="notificationTimeSpan"
+      />
+      <Textarea
+        placeholder="Reminder message"
+        name="reminderMessage"
+        value={reminderMessage}
+        onChange={handleInputChange}
+        mb={3}
+      />
+      <Textarea
+        placeholder="Request message"
+        name="requestMessage"
+        value={requestMessage}
+        onChange={handleInputChange}
+        mb={3}
+      />
+      <Input
+        mb={3}
+        name="reminderDuration"
+        value={reminderDuration}
+        onChange={handleInputChange}
+        placeholder="How long should we send reminders? (day)"
+      />
       <Button disabled={processing} onClick={handleClick} colorScheme="secondary" color="black">
         {processing ? "Processing..." : "Save changes"}
       </Button>

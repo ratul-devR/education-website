@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const Question = require("../../models/question");
 const User = require("../../models/people");
+const Settings = require("../../models/settings");
+const Category = require("../../models/category");
 
 const transporter = require("../../utils/emailTransporter");
 
@@ -16,6 +18,7 @@ module.exports = function (agenda) {
 
 			if (!user) {
 				done();
+				return;
 			}
 
 			// show the question again to the user in checking phase
@@ -29,12 +32,21 @@ module.exports = function (agenda) {
 				{ $push: { repeatedUsers: user._id } }
 			);
 
+			const product = await Category.findOne({ questions: { $in: questions } });
+
+			const productDetails = `
+
+
+				This repetition applies to the product, '${product.name}'
+			`;
+			const emailText = (await Settings.findOne({})).requestMessage + productDetails;
+
 			// after all send the user a reminder about it through mail
 			await transporter.sendMail({
 				from: `EDconsulting<${process.env.EMAIL}>`,
 				to: user.email,
-				subject: "It's time for spaced repetition",
-				text: "Hey it's time to check the words which you recently learned",
+				subject: "Space-Repetition",
+				text: emailText,
 			});
 
 			done();

@@ -16,54 +16,47 @@ export default function PassiveLearning() {
   const learningAudioRef = useRef();
   const learningMaleAudioRef = useRef();
 
-  function fadeBgSound(start) {
-    if (start) {
-      setTimeout(() => {
-        backgroundAudioRef.current.volume = 0.1;
-        setTimeout(() => {
-          backgroundAudioRef.current.volume = 0.1;
-          setTimeout(() => {
-            backgroundAudioRef.current.volume = 0.2;
-          }, 1500);
-        }, 1000);
-      }, 500);
-    } else {
-      backgroundAudioRef.current.volume = 0.2;
-      setTimeout(() => {
-        backgroundAudioRef.current.volume = 0.1;
-        setTimeout(() => {
-          backgroundAudioRef.current.volume = 0;
-        }, learningAudioRef.current.duration + 1500);
-      }, 1500);
+  function fadeIn(q) {
+    if (q.volume) {
+      var InT = 0;
+      var setVolume = 0.2; // Target volume level for new song
+      var speed = 0.005; // Rate of increase
+      q.volume = InT;
+      var eAudio = setInterval(function () {
+        InT += speed;
+        q.volume = InT.toFixed(1);
+        if (InT.toFixed(1) >= setVolume) {
+          clearInterval(eAudio);
+          //alert('clearInterval eAudio'+ InT.toFixed(1));
+        }
+      }, 50);
     }
   }
 
-  /*
-    First play the passive learning voice immediately
-    then play it again after 3 seconds
-    then wait until 1 second and navigate into the next word
-  */
-  /* function repeatAudios(index) {
-    const passiveLearningAudio = new Audio(questions[index].passiveLearningVoice);
+  function fadeOut(q) {
+    if (q.volume) {
+      var InT = q.volume;
+      var setVolume = 0; // Target volume level for old song
+      var speed = 0.005; // Rate of volume decrease
+      q.volume = InT;
+      var fAudio = setInterval(function () {
+        InT -= speed;
+        q.volume = InT.toFixed(1);
+        if (InT.toFixed(1) <= setVolume) {
+          clearInterval(fAudio);
+          //alert('clearInterval fAudio'+ InT.toFixed(1));
+        }
+      }, 110);
+    }
+  }
 
-    passiveLearningAudio.currentTime = 0;
-    passiveLearningAudio.play();
-
-    passiveLearningAudio.onended = () => {
-      fadeBgSound(true);
-      setTimeout(() => {
-        fadeBgSound(false);
-        passiveLearningAudio.currentTime = 0;
-        passiveLearningAudio.play();
-        passiveLearningAudio.onended = () => {
-          fadeBgSound(true);
-          setTimeout(() => {
-            dispatch(NEXT_WORD());
-          }, 1000);
-        };
-      }, 3000);
-    };
-  } */
+  function fadeBgSound(start) {
+    if (start) {
+      fadeIn(backgroundAudioRef.current);
+    } else {
+      fadeOut(backgroundAudioRef.current);
+    }
+  }
 
   function handleMaleAudioEnd() {
     const learningAudio = learningAudioRef.current;
@@ -160,8 +153,7 @@ export default function PassiveLearning() {
 
       {assets.passiveLearningBgAudio && (
         <audio
-          onCanPlay={(e) => {
-            e.target.volume = 0;
+          onCanPlay={() => {
             fadeBgSound(true);
           }}
           loop

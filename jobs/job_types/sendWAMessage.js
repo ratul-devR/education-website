@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const User = require("../../models/people");
+const Settings = require("../../models/settings")
 
 const transporter = require("../../utils/emailTransporter");
 
@@ -15,13 +16,17 @@ module.exports = (agenda) => {
 
 			if (!user) {
 				done();
+				return;
 			}
 
 			if (user.role === "admin") {
 				user.loginRequired = false;
 				await user.save();
 				done();
+				return;
 			}
+
+			const emailText = (await Settings.findOne({})).reminderMessage
 
 			// if the user has provided whatsapp number then we will send a whatsApp message otherwise
 			// email will be sent
@@ -30,8 +35,8 @@ module.exports = (agenda) => {
 			await transporter.sendMail({
 				from: `EDconsulting<${process.env.EMAIL}>`,
 				to: user.email,
-				subject: "Hey there please login again",
-				text: "In order to continue, you have to login",
+				subject: "Login reminder",
+				text: emailText,
 			});
 			// }
 			done();

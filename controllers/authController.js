@@ -1,5 +1,6 @@
 const User = require("../models/people");
 const Org = require("../models/org");
+const Settings = require("../models/settings");
 
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
@@ -87,11 +88,16 @@ module.exports = {
         `,
       });
 
-      const after1Day = new Date().getTime() + 86400000;
+      const oneDay = 86400000; // one day = that amount of ms
+      const notificationDuration = (await Settings.findOne({})).notificationTimeSpan || 1;
+      const repeatingDays = (await Settings.findOne({})).reminderDuration || 1;
 
-      agenda.schedule(after1Day, "sendWAMessage", {
-        userId: newUser._id,
-      });
+      for (let i = 1; i <= repeatingDays; i++) {
+        const duration = new Date().getTime() + oneDay * notificationDuration * i;
+        await agenda.schedule(duration, "sendWAMessage", {
+          userId: newUser._id,
+        });
+      }
 
       const userCreated = await User.findOne({ _id: newUser._id }).lean({ defaults: true });
 

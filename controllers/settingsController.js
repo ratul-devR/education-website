@@ -17,9 +17,7 @@ module.exports = {
 
   newSettings: async function (req, res, next) {
     try {
-      const { appSubTitle, lang } = req.body;
-
-      const newSettings = new Settings({ appSubTitle, lang });
+      const newSettings = new Settings({ ...req.body });
 
       newSettings.save();
 

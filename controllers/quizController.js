@@ -40,10 +40,6 @@ module.exports = {
         res.status(404).json({ msg: "Course Not Found! Please stop navigating with Urls" });
       }
 
-      // if the admin has determined that the user has to pay before checking-phase,
-      // then the user has to pay before checking phase
-      let userHasToPay = !!course.checkingPhasePaid;
-
       // questions the user hasn't checked yet will be shown in the checking phase
       const courseQuestions = await Question.find({
         $and: [
@@ -64,6 +60,11 @@ module.exports = {
           hasAllPrerequisites = false;
         }
       }
+
+      // if the admin has determined that the user has to pay before checking-phase,
+      // then the user has to pay before checking phase
+      course.checkedBy = course.checkedBy.map((user) => user.toString());
+      let userHasToPay = course.checkingPhasePaid || course.checkedBy.includes(user._id.toString());
 
       // if the user has to pay in checking-phase, then check if the user has paid or not
       let userHasPaid = false;
@@ -184,6 +185,13 @@ module.exports = {
             { $push: { completedBy: user._id } }
           ).lean({ defaults: true });
         }
+      }
+
+      // now mark as the user that he has already checked that course
+      const course = await Category.findOne({ _id: question.category._id });
+      course.checkedBy = course.checkedBy.map((user) => user.toString());
+      if (!course.checkedBy.includes(user._id.toString())) {
+        await Category.updateOne({ _id: course._id }, { $push: { checkedBy: user._id } });
       }
 
       res.status(201).json({ msg: "done" });

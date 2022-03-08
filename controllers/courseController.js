@@ -84,6 +84,7 @@ module.exports = {
       switch (event.type) {
         case "payment_intent.succeeded": {
           const { type, courseId, userId } = event.data.object.metadata;
+
           if (type === "package") {
             const user = await User.findOne({ _id: userId }).lean({ defaults: true });
             const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
@@ -103,6 +104,11 @@ module.exports = {
           }
 
           res.status(201).json({ msg: "The work has been done" });
+          break;
+        }
+
+        default: {
+          return res.status(400).end();
         }
       }
     } catch (err) {
@@ -128,6 +134,10 @@ module.exports = {
         }
 
         res.status(201).json({ msg: "The work has been done" });
+        break;
+      }
+      default: {
+        return res.status(400).end();
       }
     }
   },
