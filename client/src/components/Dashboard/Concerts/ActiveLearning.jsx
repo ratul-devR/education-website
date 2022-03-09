@@ -8,6 +8,7 @@ import { BsFullscreen } from "react-icons/bs";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { FiPlay, FiPause } from "react-icons/fi";
 import { motion } from "framer-motion";
+import $ from "jquery";
 
 import { NEXT_WORD } from "../../../redux/actions/concertActions";
 
@@ -21,45 +22,19 @@ export default function ActiveLearning() {
   const backgroundAudioRef = useRef();
   const learningAudioRef = useRef();
 
-  function fadeIn(q) {
-    if (q.volume) {
-      var InT = 0;
-      var setVolume = 0.2; // Target volume level for new song
-      var speed = 0.005; // Rate of increase
-      q.volume = InT;
-      var eAudio = setInterval(function () {
-        InT += speed;
-        q.volume = InT.toFixed(1);
-        if (InT.toFixed(1) >= setVolume) {
-          clearInterval(eAudio);
-          //alert('clearInterval eAudio'+ InT.toFixed(1));
-        }
-      }, 50);
-    }
+  function fadeIn() {
+    $("#background-sound").animate({ volume: 0.2 }, 1500);
   }
 
-  function fadeOut(q) {
-    if (q.volume) {
-      var InT = q.volume;
-      var setVolume = 0; // Target volume level for old song
-      var speed = 0.005; // Rate of volume decrease
-      q.volume = InT;
-      var fAudio = setInterval(function () {
-        InT -= speed;
-        q.volume = InT.toFixed(1);
-        if (InT.toFixed(1) <= setVolume) {
-          clearInterval(fAudio);
-          //alert('clearInterval fAudio'+ InT.toFixed(1));
-        }
-      }, 100);
-    }
+  function fadeOut() {
+    $("#background-sound").animate({ volume: 0 }, 6000);
   }
 
   function fadeBgSound(start) {
     if (start) {
-      fadeIn(backgroundAudioRef.current);
+      fadeIn();
     } else {
-      fadeOut(backgroundAudioRef.current);
+      fadeOut();
     }
   }
 
@@ -222,9 +197,11 @@ export default function ActiveLearning() {
           autoPlay
           loop
           ref={backgroundAudioRef}
-          onCanPlay={() => {
+          onCanPlay={(e) => {
+            e.target.volume = 0;
             fadeBgSound(true);
           }}
+          id="background-sound"
           src={assets.activeLearningBgAudio}
         />
       )}
