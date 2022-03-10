@@ -2,7 +2,7 @@ const initialState = {
   questions: [],
   course: {},
   loading: true,
-  currentPhase: "passive",
+  currentPhase: "active",
   activeLearningEnded: false,
   passiveLearningEnded: false,
   currentIndex: 0,
