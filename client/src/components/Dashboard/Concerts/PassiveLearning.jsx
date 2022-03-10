@@ -18,11 +18,11 @@ export default function PassiveLearning() {
   const learningMaleAudioRef = useRef();
 
   function fadeIn() {
-    $("#background-sound").animate({ volume: 0.2 }, 2500);
+    $("#background-sound").animate({ volume: 0.2 }, 3000);
   }
 
   function fadeOut() {
-    $("#background-sound").animate({ volume: 0 }, 6500);
+    $("#background-sound").animate({ volume: 0 }, 3000);
   }
 
   function fadeBgSound(start) {
@@ -41,15 +41,20 @@ export default function PassiveLearning() {
     learningAudio.onended = () => {
       setTimeout(() => {
         learningAudio && learningAudio.play();
-        if (currentIndex + 1 === questions.length) {
-          fadeBgSound(false);
-        }
+
         learningAudio.onended = () => {
-          setTimeout(() => {
-            if (learningAudio) {
+          if (currentIndex + 1 === questions.length) {
+            fadeBgSound(false);
+            setTimeout(() => {
               dispatch(NEXT_WORD());
-            }
-          }, 1000);
+            }, 3100);
+          } else {
+            setTimeout(() => {
+              if (learningAudio) {
+                dispatch(NEXT_WORD());
+              }
+            }, 1000);
+          }
         };
       }, 3000);
     };

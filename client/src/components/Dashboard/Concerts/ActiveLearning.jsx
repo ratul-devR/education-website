@@ -27,7 +27,7 @@ export default function ActiveLearning() {
   }
 
   function fadeOut() {
-    $("#background-sound").animate({ volume: 0 }, 6000);
+    $("#background-sound").animate({ volume: 0 }, 3000);
   }
 
   function fadeBgSound(start) {
@@ -47,9 +47,16 @@ export default function ActiveLearning() {
         : 5000;
 
     if (shouldPlayNext) {
-      setTimeout(() => {
-        dispatch(NEXT_WORD());
-      }, 1000);
+      if (currentIndex + 1 === questions.length) {
+        fadeBgSound(false);
+        setTimeout(() => {
+          dispatch(NEXT_WORD());
+        }, 3000);
+      } else {
+        setTimeout(() => {
+          dispatch(NEXT_WORD());
+        }, 1000);
+      }
     } else {
       setShowMic(true);
       setShowTranslation(false);
@@ -57,9 +64,6 @@ export default function ActiveLearning() {
         setShowMic(false);
         setShowTranslation(false);
         learningAudioRef.current && learningAudioRef.current.play();
-        if (currentIndex + 1 === questions.length) {
-          fadeBgSound(false);
-        }
       }, pauseDuration);
     }
   }
