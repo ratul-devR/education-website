@@ -140,9 +140,11 @@ export default function BuyPackage() {
         <Heading textAlign="center" mb={3} fontWeight="normal" fontSize="2xl" color="primary">
           {course.name}
         </Heading>
-        <Text mb={10} textAlign="center">
-          Question Pack That Contains {unknownQuestionsPack.length} Questions Which You Don't Know.
-          If you want to learn them in the learning phase, you have to buy this package.
+        <Text mb={10}>
+          Hey, you completed the checking phase. Now the words and expressions you did not know are
+          stored in your personal data base. <br /><br />
+          There are {unknownQuestionsPack.length} words and expressions.<br /><br />
+          These are the ones you still need to learn! Buy your personal package to make sure you know everything in this learning field!
         </Text>
         <CardElement
           onChange={(e) => (e.error ? setCheckoutError(e.error.message) : setCheckoutError())}

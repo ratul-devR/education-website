@@ -169,7 +169,7 @@ export default function DefaultSettings() {
         })}
       </Select>
       <Input
-        placeholder="Notification time span (day)"
+        placeholder="Reminder time span (day)"
         value={notificationTimeSpan}
         onChange={handleInputChange}
         mb={3}

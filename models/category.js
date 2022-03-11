@@ -10,6 +10,12 @@ const dataSchema = new mongoose.Schema({
   checkingPhasePaid: { type: Boolean, required: true },
   quizIns: String,
   concertIns: String,
+
+  lpPaymentMessage: String,
+  cpPaymentMessage: String,
+  courseTextSize: String,
+  cpPaymentMessageTextSize: String,
+
   prerequisites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
   checkedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "People" }],

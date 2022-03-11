@@ -23,11 +23,11 @@ export default function ActiveLearning() {
   const learningAudioRef = useRef();
 
   function fadeIn() {
-    $("#background-sound").animate({ volume: 0.2 }, 1500);
+    $("#background-sound").animate({ volume: 0.2 }, 5000);
   }
 
   function fadeOut() {
-    $("#background-sound").animate({ volume: 0 }, 3000);
+    $("#background-sound").animate({ volume: 0 }, 5000);
   }
 
   function fadeBgSound(start) {
@@ -51,7 +51,7 @@ export default function ActiveLearning() {
         fadeBgSound(false);
         setTimeout(() => {
           dispatch(NEXT_WORD());
-        }, 3000);
+        }, 5000);
       } else {
         setTimeout(() => {
           dispatch(NEXT_WORD());

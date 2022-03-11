@@ -13,6 +13,7 @@ import {
 import { useDisclosure, Link as ChakraLink, Badge } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Input } from "@chakra-ui/input";
+import { Select } from "@chakra-ui/select";
 import { Checkbox } from "@chakra-ui/checkbox";
 import { MdDeleteOutline } from "react-icons/md";
 import { Link, useRouteMatch } from "react-router-dom";
@@ -39,6 +40,10 @@ const Categories = () => {
       quizIns,
       concertIns,
       checkingPhasePaid,
+      lpPaymentMessage,
+      cpPaymentMessage,
+      courseTextSize,
+      cpPaymentMessageTextSize,
     },
     setInput,
   ] = useState({
@@ -50,6 +55,11 @@ const Categories = () => {
     concertIns: "",
     learningPhasePaid: false,
     checkingPhasePaid: false,
+
+    lpPaymentMessage: "",
+    cpPaymentMessage: "",
+    courseTextSize: "",
+    cpPaymentMessageTextSize: "",
   });
   const [prerequisites, setPrerequisites] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -113,15 +123,19 @@ const Categories = () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title,
+        name: title,
         description,
         price,
         passPercentage,
         prerequisites,
-        learningPhasePaid,
-        checkingPhasePaid,
+        learningPhasePaid: learningPhasePaid || false,
+        checkingPhasePaid: checkingPhasePaid || false,
         quizIns,
         concertIns,
+        lpPaymentMessage,
+        cpPaymentMessage,
+        courseTextSize,
+        cpPaymentMessageTextSize,
       }),
       credentials: "include",
     });
@@ -205,6 +219,22 @@ const Categories = () => {
                 placeholder="Enter the category name"
                 mb={3}
               />
+              <Select
+                onChange={HandleInputChange}
+                name="courseTextSize"
+                value={courseTextSize}
+                placeholder="Product font-size"
+                mb={3}
+              >
+                <option>sm</option>
+                <option>md</option>
+                <option>lg</option>
+                <option>xl</option>
+                <option>2xl</option>
+                <option>3xl</option>
+                <option>4xl</option>
+                <option>5xl</option>
+              </Select>
               <Textarea
                 name="description"
                 onChange={HandleInputChange}
@@ -275,6 +305,36 @@ const Categories = () => {
                 value={concertIns}
                 mb={3}
               />
+              <Textarea
+                name="lpPaymentMessage"
+                onChange={HandleInputChange}
+                value={lpPaymentMessage}
+                placeholder="Payment message shown while paying for learning-phase"
+                mb={3}
+              />
+              <Textarea
+                name="cpPaymentMessage"
+                onChange={HandleInputChange}
+                value={cpPaymentMessage}
+                placeholder="Payment message shown while paying for checking-phase"
+                mb={3}
+              />
+              <Select
+                onChange={HandleInputChange}
+                name="cpPaymentMessageTextSize"
+                value={cpPaymentMessageTextSize}
+                placeholder="Payment message for checking phase font-size"
+                mb={3}
+              >
+                <option>sm</option>
+                <option>md</option>
+                <option>lg</option>
+                <option>xl</option>
+                <option>2xl</option>
+                <option>3xl</option>
+                <option>4xl</option>
+                <option>5xl</option>
+              </Select>
               <Flex mb={3}>
                 <Checkbox
                   onChange={() =>

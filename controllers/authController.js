@@ -82,9 +82,13 @@ module.exports = {
         to: newUser.email,
         subject: "Confirm Your Email address",
         html: `
-          <h2>Thanks for Registering</h2>
-          <p>In order to continue, you need to confirm your email address</p>
+          <p>Hello ${newUser.firstName}</p>
+          <p>You have successfully registered for the learning-system</p>
+          <p>In order to continue please confirm your email address by clicking on the following link:</p>
           <a href="${domain + `/get_auth/confirmEmail/${newUser._id}`}">Confirm Email</a>
+          <br />
+          <p>We wish you a good learning experience and - have fun!</p>
+          <p>Your Check2Learn team</p>
         `,
       });
 

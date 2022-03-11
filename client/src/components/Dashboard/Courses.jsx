@@ -65,31 +65,18 @@ const UserCourses = ({ title, path }) => {
         <SimpleGrid pb={5} columns={[1, 1, 2, 3]} spacing={5}>
           {courses.map((course) => {
             return (
-              <Box
-                key={course._id}
-                boxShadow="md"
-                p={5}
-                rounded={5}
-                border="1px solid"
-                borderColor="gray.200"
+              <Button
+                as={Link}
+                to={`/dashboard/${path}/${course._id}`}
+                colorScheme="secondary"
+                color="black"
+                p={10}
+                whiteSpace="normal"
+                fontSize={course.courseTextSize || "lg"}
+                height="auto"
               >
-                <Flex mb={3} justify="space-between" align="center">
-                  <Heading noOfLines={1} fontSize="2xl" fontWeight="normal">
-                    {course.name}
-                  </Heading>
-                  <Button
-                    as={Link}
-                    to={`/dashboard/${path}/${course._id}`}
-                    colorScheme="secondary"
-                    color="black"
-                  >
-                    {t("learn")}
-                  </Button>
-                </Flex>
-                <Text color="GrayText" whiteSpace="pre-wrap">
-                  {course.description}
-                </Text>
-              </Box>
+                {course.name}
+              </Button>
             );
           })}
         </SimpleGrid>

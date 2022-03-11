@@ -15,6 +15,7 @@ import {
 import { Input } from "@chakra-ui/input";
 import { Textarea } from "@chakra-ui/textarea";
 import { Text } from "@chakra-ui/react";
+import { Select } from "@chakra-ui/select";
 import { Checkbox } from "@chakra-ui/checkbox";
 import config from "../../../config";
 import useToast from "../../../hooks/useToast";
@@ -88,6 +89,10 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               categoryOF.checkingPhasePaid = body.category.checkingPhasePaid;
               categoryOF.quizIns = body.category.quizIns;
               categoryOF.concertIns = body.category.concertIns;
+              categoryOF.lpPaymentMessage = body.category.lpPaymentMessage;
+              categoryOF.cpPaymentMessage = body.category.cpPaymentMessage;
+              categoryOF.courseTextSize = body.category.courseTextSize;
+              categoryOF.cpPaymentMessageTextSize = body.category.cpPaymentMessageTextSize;
             }
             return categoryOF;
           })
@@ -149,6 +154,34 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               direction="column"
             >
               <Text color="GrayText" mb={3}>
+                Edit Product font-size
+              </Text>
+              <Select
+                onChange={handleInputChange}
+                name="courseTextSize"
+                value={category.courseTextSize}
+                placeholder="Product font-size"
+                mb={3}
+              >
+                <option>sm</option>
+                <option>md</option>
+                <option>lg</option>
+                <option>xl</option>
+                <option>2xl</option>
+                <option>3xl</option>
+                <option>4xl</option>
+                <option>5xl</option>
+              </Select>
+            </Flex>
+            <Flex
+              p={5}
+              rounded={5}
+              mb={5}
+              border="1px solid"
+              borderColor="gray.100"
+              direction="column"
+            >
+              <Text color="GrayText" mb={3}>
                 Edit subtitle
               </Text>
               <Textarea
@@ -194,7 +227,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 type="number"
                 min={0}
                 max={100}
-                placeholder="Edit price"
+                placeholder="Edit Pass percentage"
                 value={category.passPercentage}
               />
             </Flex>
@@ -233,6 +266,70 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 placeholder="Edit concert instruction"
                 value={category.concertIns}
               />
+            </Flex>
+            <Flex
+              p={5}
+              rounded={5}
+              mb={5}
+              border="1px solid"
+              borderColor="gray.100"
+              direction="column"
+            >
+              <Text color="GrayText" mb={3}>
+                Learning phase payment text
+              </Text>
+              <Textarea
+                onChange={handleInputChange}
+                name="lpPaymentMessage"
+                placeholder="Learning phase payment text"
+                value={category.lpPaymentMessage}
+              />
+            </Flex>
+            <Flex
+              p={5}
+              rounded={5}
+              mb={5}
+              border="1px solid"
+              borderColor="gray.100"
+              direction="column"
+            >
+              <Text color="GrayText" mb={3}>
+                Checking phase payment text
+              </Text>
+              <Textarea
+                onChange={handleInputChange}
+                name="cpPaymentMessage"
+                placeholder="Checking phase payment text"
+                value={category.cpPaymentMessage}
+              />
+            </Flex>
+            <Flex
+              p={5}
+              rounded={5}
+              mb={5}
+              border="1px solid"
+              borderColor="gray.100"
+              direction="column"
+            >
+              <Text color="GrayText" mb={3}>
+                Checking-phase payment message font-size
+              </Text>
+              <Select
+                onChange={handleInputChange}
+                name="cpPaymentMessageTextSize"
+                value={category.cpPaymentMessageTextSize}
+                placeholder="Checking-phase payment message font-size"
+                mb={3}
+              >
+                <option>sm</option>
+                <option>md</option>
+                <option>lg</option>
+                <option>xl</option>
+                <option>2xl</option>
+                <option>3xl</option>
+                <option>4xl</option>
+                <option>5xl</option>
+              </Select>
             </Flex>
             <Flex
               p={5}

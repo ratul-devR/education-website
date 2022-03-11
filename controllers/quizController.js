@@ -256,25 +256,22 @@ module.exports = {
       const { questions } = req.body;
       const user = req.user;
 
-      const after1Day = new Date().getTime() + 86400000;
-      const after7Day = new Date().getTime() + after1Day * 7;
-      const after16Day = new Date().getTime() + after1Day * 16;
-      const after35Day = new Date().getTime() + after1Day * 35;
+      const after1Day = 86400000;
 
       if (questions.length) {
-        agenda.schedule(after1Day, "repetition", {
+        agenda.schedule(new Date().getTime() + after1Day, "repetition", {
           userId: user._id,
           questions,
         });
-        agenda.schedule(after7Day, "repetition", {
+        agenda.schedule(new Date().getTime() + after1Day * 7, "repetition", {
           userId: user._id,
           questions,
         });
-        agenda.schedule(after16Day, "repetition", {
+        agenda.schedule(new Date().getTime() + after1Day * 16, "repetition", {
           userId: user._id,
           questions,
         });
-        agenda.schedule(after35Day, "repetition", {
+        agenda.schedule(new Date().getTime() + after1Day * 35, "repetition", {
           userId: user._id,
           questions,
         });

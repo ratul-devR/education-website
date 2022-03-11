@@ -77,34 +77,16 @@ module.exports = {
 
   postCategory: async function (req, res, next) {
     try {
-      const {
-        title,
-        description,
-        price,
-        passPercentage,
-        prerequisites,
-        learningPhasePaid,
-        checkingPhasePaid,
-        quizIns,
-        concertIns,
-      } = req.body;
-
       const categoryExist =
-        (await Category.findOne({ name: title }).lean({ defaults: true })) || null;
+        (await Category.findOne({ name: req.body.title }).lean({ defaults: true })) || null;
+
+      req.body.cpPaymentMessage = req.body.cpPaymentMessage.replace("{{product}}", req.body.name);
 
       if (categoryExist) {
         res.status(400).json({ msg: "This category already exists" });
       } else {
         const newCategory = new Category({
-          name: title,
-          description,
-          price,
-          prerequisites,
-          passPercentage,
-          learningPhasePaid,
-          checkingPhasePaid,
-          quizIns,
-          concertIns,
+          ...req.body,
         });
 
         await newCategory.save();
@@ -123,6 +105,11 @@ module.exports = {
     try {
       const { categoryId } = req.params;
       const updatedInfo = req.body;
+
+      updatedInfo.cpPaymentMessage = updatedInfo.cpPaymentMessage.replace(
+        "{{product}}",
+        updatedInfo.name
+      );
 
       const updatedCategory = await Category.findOneAndUpdate({ _id: categoryId }, updatedInfo, {
         new: true,

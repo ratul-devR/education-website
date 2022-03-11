@@ -18,11 +18,11 @@ export default function PassiveLearning() {
   const learningMaleAudioRef = useRef();
 
   function fadeIn() {
-    $("#background-sound").animate({ volume: 0.2 }, 3000);
+    $("#background-sound").animate({ volume: 0.2 }, 5000);
   }
 
   function fadeOut() {
-    $("#background-sound").animate({ volume: 0 }, 3000);
+    $("#background-sound").animate({ volume: 0 }, 5000);
   }
 
   function fadeBgSound(start) {
@@ -47,7 +47,7 @@ export default function PassiveLearning() {
             fadeBgSound(false);
             setTimeout(() => {
               dispatch(NEXT_WORD());
-            }, 3100);
+            }, 5100);
           } else {
             setTimeout(() => {
               if (learningAudio) {

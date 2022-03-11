@@ -7,7 +7,7 @@ import useToast from "../../hooks/useToast";
 import { useStripe, useElements } from "@stripe/react-stripe-js";
 import { CardElement } from "@stripe/react-stripe-js";
 import { Button } from "@chakra-ui/button";
-import { Text, Badge } from "@chakra-ui/react";
+import { Badge } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
@@ -153,7 +153,7 @@ const Pay = ({ location }) => {
   }
 
   return (
-    <Flex direction="column" w="full" h="full" align="center" justify="center">
+    <Flex direction="column" w="full" align="center" justify="center">
       <Flex
         as="form"
         onSubmit={handleSubmit}
@@ -165,12 +165,15 @@ const Pay = ({ location }) => {
         rounded={5}
       >
         <Flex mb={10} direction="column">
-          <Heading fontSize="3xl" mb={3} fontWeight="normal" textAlign="center" color="primary">
-            {course.name}
+          <Heading
+            fontWeight="normal"
+            whiteSpace="pre-wrap"
+            textAlign={course.cpPaymentMessage ? "start" : "center"}
+            color="primary"
+            fontSize={course.cpPaymentMessageTextSize || "lg"}
+          >
+            {course.cpPaymentMessage || course.name}
           </Heading>
-          <Text textAlign="center">
-            {t("your_purchase_for")} "{course.name}"
-          </Text>
         </Flex>
         <CardElement
           onChange={(e) => (e.error ? setCheckoutError(e.error.message) : setCheckoutError())}
