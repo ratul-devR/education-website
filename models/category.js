@@ -13,6 +13,8 @@ const dataSchema = new mongoose.Schema({
 
   // checking phase payment message
   cpPaymentMessage: String,
+  // learning-phase payment message
+  lpPaymentMessage: String,
   // font-size for the course shown in dashboard
   courseTextSize: String,
   // checking phase payment message font-size

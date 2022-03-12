@@ -226,9 +226,20 @@ const Quiz = ({ path }) => {
     }
   }, [timer, currentIndex, path]);
 
-  useEffect(() => {
+  useEffect(async () => {
     if (done) {
-      endQuizAction();
+      const res = await fetch(`${config.serverURL}/get_quiz/${path}/${courseId}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const body = await res.json();
+
+      if (path === "getUserQuestionsOfCourse" && !body.userHasPaid && body.userHasToPay) {
+        history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true });
+      } else {
+        endQuizAction();
+      }
     }
   }, [done]);
 

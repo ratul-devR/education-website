@@ -126,7 +126,7 @@ export default function BuyPackage() {
     );
   }
   return (
-    <Flex w="full" h="full" justify="center" align="center">
+    <Flex w="full" justify="center" align="center">
       <Flex
         as="form"
         onSubmit={handleSubmit}
@@ -140,11 +140,8 @@ export default function BuyPackage() {
         <Heading textAlign="center" mb={3} fontWeight="normal" fontSize="2xl" color="primary">
           {course.name}
         </Heading>
-        <Text mb={10}>
-          Hey, you completed the checking phase. Now the words and expressions you did not know are
-          stored in your personal data base. <br /><br />
-          There are {unknownQuestionsPack.length} words and expressions.<br /><br />
-          These are the ones you still need to learn! Buy your personal package to make sure you know everything in this learning field!
+        <Text whiteSpace="pre-wrap" mb={10}>
+          {course.lpPaymentMessage.replace("{{number}}", unknownQuestionsPack.length)}
         </Text>
         <CardElement
           onChange={(e) => (e.error ? setCheckoutError(e.error.message) : setCheckoutError())}

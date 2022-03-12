@@ -92,6 +92,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               categoryOF.cpPaymentMessage = body.category.cpPaymentMessage;
               categoryOF.courseTextSize = body.category.courseTextSize;
               categoryOF.cpPaymentMessageTextSize = body.category.cpPaymentMessageTextSize;
+              categoryOF.lpPaymentMessage = body.category.lpPaymentMessage;
             }
             return categoryOF;
           })
@@ -311,6 +312,24 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 <option>4xl</option>
                 <option>5xl</option>
               </Select>
+            </Flex>
+            <Flex
+              p={5}
+              rounded={5}
+              mb={5}
+              border="1px solid"
+              borderColor="gray.100"
+              direction="column"
+            >
+              <Text color="GrayText" mb={3}>
+                Learning phase payment text
+              </Text>
+              <Textarea
+                onChange={handleInputChange}
+                name="lpPaymentMessage"
+                placeholder="Learning phase payment text"
+                value={category.lpPaymentMessage}
+              />
             </Flex>
             <Flex
               p={5}

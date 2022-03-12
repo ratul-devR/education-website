@@ -43,6 +43,7 @@ const Categories = () => {
       cpPaymentMessage,
       courseTextSize,
       cpPaymentMessageTextSize,
+      lpPaymentMessage,
     },
     setInput,
   ] = useState({
@@ -58,6 +59,7 @@ const Categories = () => {
     cpPaymentMessage: "",
     courseTextSize: "",
     cpPaymentMessageTextSize: "",
+    lpPaymentMessage: "",
   });
   const [prerequisites, setPrerequisites] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -133,6 +135,7 @@ const Categories = () => {
         cpPaymentMessage,
         courseTextSize,
         cpPaymentMessageTextSize,
+        lpPaymentMessage,
       }),
       credentials: "include",
     });
@@ -325,6 +328,13 @@ const Categories = () => {
                 <option>4xl</option>
                 <option>5xl</option>
               </Select>
+              <Textarea
+                name="lpPaymentMessage"
+                onChange={HandleInputChange}
+                value={lpPaymentMessage}
+                placeholder="Payment message shown while paying for learning-phase"
+                mb={3}
+              />
               <Flex mb={3}>
                 <Checkbox
                   onChange={() =>
