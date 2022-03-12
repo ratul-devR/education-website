@@ -75,21 +75,25 @@ module.exports = {
       if (newUser.phone) {
       }
 
-      // send a confirmation email to the user
+      const emailConfirmationMessage = (await Settings.findOne({})).emailConfirmationMessage;
+      const emailConfirmationSubject = emailConfirmationMessage.split("\n")[0];
+      let messageHTML = emailConfirmationMessage
+        .split("\n")
+        .filter((_, index) => index !== 0)
+        .join("<br />");
       const domain = req.protocol + "://" + req.get("host");
+      const linkHTML = `<a href="${
+        domain + `/get_auth/confirmEmail/${newUser._id}`
+      }">Confirm Email</a>`;
+      messageHTML = messageHTML.replace("{{name}}", newUser.firstName);
+      messageHTML = messageHTML.replace("{{link}}", linkHTML);
+
+      // send a confirmation email to the user
       await transporter.sendMail({
         from: `EDconsulting<${process.env.EMAIL}>`,
         to: newUser.email,
-        subject: "Confirm Your Email address",
-        html: `
-          <p>Hello ${newUser.firstName}</p>
-          <p>You have successfully registered for the learning-system</p>
-          <p>In order to continue please confirm your email address by clicking on the following link:</p>
-          <a href="${domain + `/get_auth/confirmEmail/${newUser._id}`}">Confirm Email</a>
-          <br />
-          <p>We wish you a good learning experience and - have fun!</p>
-          <p>Your Check2Learn team</p>
-        `,
+        subject: emailConfirmationSubject,
+        html: messageHTML,
       });
 
       const oneDay = 86400000; // one day = that amount of ms
@@ -97,10 +101,13 @@ module.exports = {
       const repeatingDays = (await Settings.findOne({})).reminderDuration || 1;
 
       for (let i = 1; i <= repeatingDays; i++) {
-        const duration = new Date().getTime() + oneDay * notificationDuration * i;
-        await agenda.schedule(duration, "sendWAMessage", {
-          userId: newUser._id,
-        });
+        await agenda.schedule(
+          new Date().getTime() + oneDay * notificationDuration * i,
+          "sendWAMessage",
+          {
+            userId: newUser._id,
+          }
+        );
       }
 
       const userCreated = await User.findOne({ _id: newUser._id }).lean({ defaults: true });

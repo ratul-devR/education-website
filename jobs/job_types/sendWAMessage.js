@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const User = require("../../models/people");
-const Settings = require("../../models/settings")
+const Settings = require("../../models/settings");
 
 const transporter = require("../../utils/emailTransporter");
 
@@ -26,7 +26,15 @@ module.exports = (agenda) => {
 				return;
 			}
 
-			const emailText = (await Settings.findOne({})).reminderMessage
+			let emailText = (await Settings.findOne({})).reminderMessage.replace(
+				"{{name}}",
+				user.firstName
+			);
+			const emailSubject = emailText.split("\n")[0];
+			emailText = emailText
+				.split("\n")
+				.filter((_, index) => index !== 0)
+				.join("\n");
 
 			// if the user has provided whatsapp number then we will send a whatsApp message otherwise
 			// email will be sent
@@ -35,7 +43,7 @@ module.exports = (agenda) => {
 			await transporter.sendMail({
 				from: `EDconsulting<${process.env.EMAIL}>`,
 				to: user.email,
-				subject: "Login reminder",
+				subject: emailSubject,
 				text: emailText,
 			});
 			// }

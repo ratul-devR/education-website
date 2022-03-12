@@ -7,6 +7,7 @@ const dataSchema = new mongoose.Schema({
   reminderMessage: String,
   requestMessage: String,
   reminderDuration: Number, // in days
+  emailConfirmationMessage: String,
 });
 
 const Settings = new mongoose.model("Setting", dataSchema);

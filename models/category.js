@@ -11,9 +11,11 @@ const dataSchema = new mongoose.Schema({
   quizIns: String,
   concertIns: String,
 
-  lpPaymentMessage: String,
+  // checking phase payment message
   cpPaymentMessage: String,
+  // font-size for the course shown in dashboard
   courseTextSize: String,
+  // checking phase payment message font-size
   cpPaymentMessageTextSize: String,
 
   prerequisites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],

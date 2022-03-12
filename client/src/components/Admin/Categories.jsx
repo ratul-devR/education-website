@@ -40,7 +40,6 @@ const Categories = () => {
       quizIns,
       concertIns,
       checkingPhasePaid,
-      lpPaymentMessage,
       cpPaymentMessage,
       courseTextSize,
       cpPaymentMessageTextSize,
@@ -56,7 +55,6 @@ const Categories = () => {
     learningPhasePaid: false,
     checkingPhasePaid: false,
 
-    lpPaymentMessage: "",
     cpPaymentMessage: "",
     courseTextSize: "",
     cpPaymentMessageTextSize: "",
@@ -132,7 +130,6 @@ const Categories = () => {
         checkingPhasePaid: checkingPhasePaid || false,
         quizIns,
         concertIns,
-        lpPaymentMessage,
         cpPaymentMessage,
         courseTextSize,
         cpPaymentMessageTextSize,
@@ -306,13 +303,6 @@ const Categories = () => {
                 mb={3}
               />
               <Textarea
-                name="lpPaymentMessage"
-                onChange={HandleInputChange}
-                value={lpPaymentMessage}
-                placeholder="Payment message shown while paying for learning-phase"
-                mb={3}
-              />
-              <Textarea
                 name="cpPaymentMessage"
                 onChange={HandleInputChange}
                 value={cpPaymentMessage}
@@ -371,7 +361,7 @@ const Categories = () => {
         </Modal>
 
         {categories && categories.length > 0 ? (
-          <Table colorScheme="gray" minW="1000px">
+          <Table colorScheme="gray" minW="1300px">
             <Thead>
               <Th>Category name</Th>
               <Th>Price</Th>
@@ -406,7 +396,7 @@ const Categories = () => {
                         <span>No Prerequisites</span>
                       )}
                     </Td>
-                    <Td>
+                    <Td w={250}>
                       <IconButton
                         color="#fff"
                         colorScheme="red"

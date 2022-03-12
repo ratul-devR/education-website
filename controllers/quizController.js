@@ -331,6 +331,13 @@ module.exports = {
         }
       }
 
+      // now mark as the user that he has already checked that course
+      const course = await Category.findOne({ _id: category._id });
+      course.checkedBy = course.checkedBy.map((user) => user.toString());
+      if (!course.checkedBy.includes(user._id.toString())) {
+        await Category.updateOne({ _id: course._id }, { $push: { checkedBy: user._id } });
+      }
+
       res.status(200).json({ msg: "done" });
     } catch (err) {
       next(err);

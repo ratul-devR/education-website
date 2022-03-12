@@ -39,13 +39,19 @@ module.exports = function (agenda) {
 
 				This repetition applies to the product, '${product.name}'
 			`;
-			const emailText = (await Settings.findOne({})).requestMessage + productDetails;
+			const emailText =
+				(await Settings.findOne({})).requestMessage
+					.replace("{{name}}", user.firstName)
+					.split("\n")
+					.filter((_, index) => index !== 0)
+					.join("\n") + productDetails;
+			const emailSubject = (await Settings.findOne({})).requestMessage.split("\n")[0];
 
 			// after all send the user a reminder about it through mail
 			await transporter.sendMail({
 				from: `EDconsulting<${process.env.EMAIL}>`,
 				to: user.email,
-				subject: "Space-Repetition",
+				subject: emailSubject,
 				text: emailText,
 			});
 

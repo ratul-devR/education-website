@@ -135,7 +135,7 @@ const Quiz = ({ path }) => {
     }
   }
 
-  // calling it when the quiz is ending up
+  // calling it when the quiz is ending up if the phase is Activation, then we send the known questions for repetition
   async function endQuizAction() {
     try {
       if (path === "getUserUnknownQuestions") {

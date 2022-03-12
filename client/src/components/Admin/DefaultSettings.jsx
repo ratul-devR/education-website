@@ -22,6 +22,7 @@ export default function DefaultSettings() {
       reminderMessage,
       requestMessage,
       reminderDuration,
+      emailConfirmationMessage
     },
     setInput,
   ] = useState({
@@ -31,6 +32,7 @@ export default function DefaultSettings() {
     reminderMessage: "",
     requestMessage: "",
     reminderDuration: "",
+    emailConfirmationMessage: ""
   });
   const [languages, setLanguages] = useState({});
   const [newSettings, editSettings] = ["newSettings", "editSettings"];
@@ -85,6 +87,7 @@ export default function DefaultSettings() {
             requestMessage,
             reminderMessage,
             reminderDuration,
+            emailConfirmationMessage
           }),
         }
       );
@@ -195,6 +198,13 @@ export default function DefaultSettings() {
         value={reminderDuration}
         onChange={handleInputChange}
         placeholder="How long should we send reminders? (day)"
+      />
+      <Textarea
+        placeholder="Confirmation email message"
+        name="emailConfirmationMessage"
+        value={emailConfirmationMessage}
+        onChange={handleInputChange}
+        mb={3}
       />
       <Button disabled={processing} onClick={handleClick} colorScheme="secondary" color="black">
         {processing ? "Processing..." : "Save changes"}

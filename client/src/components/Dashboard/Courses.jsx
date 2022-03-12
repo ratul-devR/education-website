@@ -58,7 +58,7 @@ const UserCourses = ({ title, path }) => {
   return (
     <Flex direction="column" w="full" h="full">
       <Heading color="primary" fontWeight="normal" fontSize="xl" mb={5}>
-        {t(title)}
+        {t("choose_learning_programme")}
       </Heading>
 
       {courses && courses.length > 0 ? (
@@ -81,7 +81,7 @@ const UserCourses = ({ title, path }) => {
           })}
         </SimpleGrid>
       ) : (
-        <NoMessage message="You don't own any course" />
+        <NoMessage message="Now courses available" />
       )}
     </Flex>
   );

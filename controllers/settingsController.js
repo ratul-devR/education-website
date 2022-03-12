@@ -32,6 +32,7 @@ module.exports = {
       const { settingId } = req.params;
       const update = req.body;
 
+
       const updatedSettings = await Settings.findOneAndUpdate(
         { _id: settingId },
         { ...update },
