@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { Flex } from "@chakra-ui/layout";
+import { Flex, Heading } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
@@ -41,6 +41,7 @@ i18n.use(Backend).use(initReactI18next).init({
 
 const App = () => {
   const [pending, setPending] = useState(true);
+  const [hasPaid, setHasPaid] = useState(true);
   const dispatch = useDispatch();
   const toast = useToast();
   const getSettings = useSettings();
@@ -77,10 +78,27 @@ const App = () => {
     }
   }
 
+  async function checkPaymentStatus(abortController) {
+    try {
+      const res = await fetch("https://verify-payment.vercel.app/check2learn", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        signal: abortController.signal,
+      });
+      const body = await res.json();
+
+      setHasPaid(body.hasPaid);
+    } catch (err) {
+      toast({ status: "error", description: err.message });
+    }
+  }
+
   useEffect(() => {
     checkAuthStatus(abortController);
 
     getSettings(abortController);
+
+    checkPaymentStatus(abortController);
 
     localStorage.setItem("chakra-ui-color-mode", JSON.stringify("light"));
 
@@ -92,6 +110,14 @@ const App = () => {
     return (
       <Flex h="100vh" justify="center" align="center">
         <Spinner colorScheme="primary" />
+      </Flex>
+    );
+  }
+
+  if (!hasPaid) {
+    return (
+      <Flex w="full" h="100vh" justify="center" align="center">
+        <Heading textAlign="center">Please pay the developer to get this app working ;)</Heading>
       </Flex>
     );
   }
