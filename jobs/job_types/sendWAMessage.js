@@ -27,7 +27,7 @@ module.exports = (agenda) => {
 			}
 
 			let emailText = (await Settings.findOne({})).reminderMessage.replace(
-				"{{name}}",
+				/{{name}}/g,
 				user.firstName
 			);
 			const emailSubject = emailText.split("\n")[0];

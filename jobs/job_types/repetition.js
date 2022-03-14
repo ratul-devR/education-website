@@ -41,7 +41,7 @@ module.exports = function (agenda) {
 			`;
 			const emailText =
 				(await Settings.findOne({})).requestMessage
-					.replace("{{name}}", user.firstName)
+					.replace(/{{name}}/g, user.firstName)
 					.split("\n")
 					.filter((_, index) => index !== 0)
 					.join("\n") + productDetails;

@@ -80,7 +80,7 @@ module.exports = {
       const categoryExist =
         (await Category.findOne({ name: req.body.title }).lean({ defaults: true })) || null;
 
-      req.body.cpPaymentMessage = req.body.cpPaymentMessage.replace("{{product}}", req.body.name);
+      req.body.cpPaymentMessage = req.body.cpPaymentMessage.replace(/{{product}}/g, req.body.name);
 
       if (categoryExist) {
         res.status(400).json({ msg: "This category already exists" });
@@ -107,7 +107,7 @@ module.exports = {
       const updatedInfo = req.body;
 
       updatedInfo.cpPaymentMessage = updatedInfo.cpPaymentMessage.replace(
-        "{{product}}",
+        /{{product}}/g,
         updatedInfo.name
       );
 

@@ -85,8 +85,8 @@ module.exports = {
       const linkHTML = `<a href="${
         domain + `/get_auth/confirmEmail/${newUser._id}`
       }">Confirm Email</a>`;
-      messageHTML = messageHTML.replace("{{name}}", newUser.firstName);
-      messageHTML = messageHTML.replace("{{link}}", linkHTML);
+      messageHTML = messageHTML.replace(/{{name}}/g, newUser.firstName);
+      messageHTML = messageHTML.replace(/{{link}}/g, linkHTML);
 
       // send a confirmation email to the user
       await transporter.sendMail({
