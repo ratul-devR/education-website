@@ -76,7 +76,9 @@ module.exports = {
       }
 
       const emailConfirmationMessage = (await Settings.findOne({})).emailConfirmationMessage;
-      const emailConfirmationSubject = emailConfirmationMessage.split("\n")[0];
+      const emailConfirmationSubject = emailConfirmationMessage
+        .split("\n")[0]
+        .replace(/{{name}}/g, newUser.firstName);
       let messageHTML = emailConfirmationMessage
         .split("\n")
         .filter((_, index) => index !== 0)
