@@ -140,9 +140,11 @@ export default function BuyPackage() {
         <Heading textAlign="center" mb={3} fontWeight="normal" fontSize="2xl" color="primary">
           {course.name}
         </Heading>
-        <Text whiteSpace="pre-wrap" mb={10}>
-          {course.lpPaymentMessage.replace("{{number}}", unknownQuestionsPack.length)}
-        </Text>
+        {course.lpPaymentMessage && (
+          <Text whiteSpace="pre-wrap" mb={10}>
+            {course.lpPaymentMessage.replace("{{number}}", unknownQuestionsPack.length)}
+          </Text>
+        )}
         <CardElement
           onChange={(e) => (e.error ? setCheckoutError(e.error.message) : setCheckoutError())}
         />

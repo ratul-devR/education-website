@@ -9,10 +9,12 @@ import CopyToClipBoard from "react-copy-to-clipboard";
 import { useEffect } from "react";
 import config from "../config";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 export default function OrgDashboard() {
   const org = JSON.parse(localStorage.getItem("org"));
   const { appSubTitle } = useSelector((state) => state.settingsReducer);
+  const { t } = useTranslation();
   const logout = useLogout();
   useEffect(() => {
     document.title = `${config.appName} - Organization Dashboard`;
@@ -25,21 +27,23 @@ export default function OrgDashboard() {
           {appSubTitle && <Text>{appSubTitle}</Text>}
         </Flex>
         <Button onClick={logout} colorScheme="blue">
-          Log Out
+          {t("logout")}
         </Button>
       </Flex>
       <Container maxW="container.xl" py={10}>
         <InputGroup size="lg" mb={10}>
-          <InputLeftAddon>Affiliate Link</InputLeftAddon>
+          <InputLeftAddon>{t("affiliate_link")}</InputLeftAddon>
           <Input readOnly value={org.affiliateLink} />
           <CopyToClipBoard text={org.affiliateLink}>
             <Button colorScheme="blue" cursor="pointer" as={InputRightAddon}>
-              Copy Link
+              {t("copy_link")}
             </Button>
           </CopyToClipBoard>
         </InputGroup>
         <Table variant="simple">
-          <TableCaption>Users you have referred ({org.refers.length})</TableCaption>
+          <TableCaption>
+            {t("users_you_have_referred")} ({org.refers.length})
+          </TableCaption>
           <Thead>
             <Tr>
               <Th>First Name</Th>
@@ -62,8 +66,8 @@ export default function OrgDashboard() {
               })
             ) : (
               <Tr>
-                <Td textAlign="center" fontSize="2xl" p={10} color="GrayText" colSpan={3}>
-                  No Refers Yet
+                <Td textAlign="center" fontSize="2xl" p={10} color="GrayText" colSpan={4}>
+                  {t("no_refers_yet")}
                 </Td>
               </Tr>
             )}

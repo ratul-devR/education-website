@@ -222,29 +222,6 @@ module.exports = {
         });
       }
 
-      /* // for repetition phase this question will be shown again in the checking phase after several time
-      const after1Day = new Date().getTime() + 86400000;
-      const after7Day = new Date().getTime() + after1Day * 7;
-      const after16Day = new Date().getTime() + after1Day * 16;
-      const after35Day = new Date().getTime() + after1Day * 35;
-
-      agenda.schedule(after1Day, "repetition", {
-        userId: user._id,
-        question: questionId,
-      });
-      agenda.schedule(after7Day, "repetition", {
-        userId: user._id,
-        question: questionId,
-      });
-      agenda.schedule(after16Day, "repetition", {
-        userId: user._id,
-        question: questionId,
-      });
-      agenda.schedule(after35Day, "repetition", {
-        userId: user._id,
-        question: questionId,
-      }); */
-
       res.status(201).json({ msg: "done" });
     } catch (err) {
       next(err);

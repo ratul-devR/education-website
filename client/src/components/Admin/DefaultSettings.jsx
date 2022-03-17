@@ -22,7 +22,9 @@ export default function DefaultSettings() {
       reminderMessage,
       requestMessage,
       reminderDuration,
-      emailConfirmationMessage
+      emailConfirmationMessage,
+      resetPasswordMessage,
+      affiliateLinkMessage,
     },
     setInput,
   ] = useState({
@@ -32,7 +34,9 @@ export default function DefaultSettings() {
     reminderMessage: "",
     requestMessage: "",
     reminderDuration: "",
-    emailConfirmationMessage: ""
+    emailConfirmationMessage: "",
+    resetPasswordMessage: "",
+    affiliateLinkMessage: "",
   });
   const [languages, setLanguages] = useState({});
   const [newSettings, editSettings] = ["newSettings", "editSettings"];
@@ -87,7 +91,9 @@ export default function DefaultSettings() {
             requestMessage,
             reminderMessage,
             reminderDuration,
-            emailConfirmationMessage
+            emailConfirmationMessage,
+            resetPasswordMessage,
+            affiliateLinkMessage,
           }),
         }
       );
@@ -178,6 +184,13 @@ export default function DefaultSettings() {
         mb={3}
         name="notificationTimeSpan"
       />
+      <Input
+        mb={3}
+        name="reminderDuration"
+        value={reminderDuration}
+        onChange={handleInputChange}
+        placeholder="How many times should we send reminders?"
+      />
       <Textarea
         placeholder="Reminder message"
         name="reminderMessage"
@@ -192,17 +205,24 @@ export default function DefaultSettings() {
         onChange={handleInputChange}
         mb={3}
       />
-      <Input
-        mb={3}
-        name="reminderDuration"
-        value={reminderDuration}
-        onChange={handleInputChange}
-        placeholder="How long should we send reminders? (day)"
-      />
       <Textarea
         placeholder="Confirmation email message"
         name="emailConfirmationMessage"
         value={emailConfirmationMessage}
+        onChange={handleInputChange}
+        mb={3}
+      />
+      <Textarea
+        placeholder="Reset password email message"
+        name="resetPasswordMessage"
+        value={resetPasswordMessage}
+        onChange={handleInputChange}
+        mb={3}
+      />
+      <Textarea
+        placeholder="Affiliate Link email message"
+        name="affiliateLinkMessage"
+        value={affiliateLinkMessage}
         onChange={handleInputChange}
         mb={3}
       />

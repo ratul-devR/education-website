@@ -76,17 +76,24 @@ module.exports = {
       }
 
       const emailConfirmationMessage = (await Settings.findOne({})).emailConfirmationMessage;
+
       const emailConfirmationSubject = emailConfirmationMessage
         .split("\n")[0]
         .replace(/{{name}}/g, newUser.firstName);
+
+      const linkText = JSON.parse(emailConfirmationMessage.split("\n")[1]).link;
+
       let messageHTML = emailConfirmationMessage
         .split("\n")
-        .filter((_, index) => index !== 0)
+        .filter((_, index) => index !== 0 && index !== 1)
         .join("<br />");
+
       const domain = req.protocol + "://" + req.get("host");
+
       const linkHTML = `<a href="${
         domain + `/get_auth/confirmEmail/${newUser._id}`
-      }">Confirm Email</a>`;
+      }">${linkText}</a>`;
+
       messageHTML = messageHTML.replace(/{{name}}/g, newUser.firstName);
       messageHTML = messageHTML.replace(/{{link}}/g, linkHTML);
 
@@ -187,15 +194,28 @@ module.exports = {
       await newOrg.save();
       await newOrg.populate("refers");
 
+      let emailText = (await Settings.findOne({})).affiliateLinkMessage
+        .replace(/{{name}}/g, newOrg.name)
+        .split("\n")
+        .filter((_, index) => index !== 0 && index !== 1)
+        .join("<br />");
+
+      const emailSubject = (await Settings.findOne({})).affiliateLinkMessage
+        .replace(/{{name}}/g, newOrg.name)
+        .split("\n")[0];
+
+      const emailLinkText = JSON.parse(
+        (await Settings.findOne({})).affiliateLinkMessage.split("\n")[1]
+      ).link;
+      const linkHTML = `<a href="${affiliateLink}">${emailLinkText}</a>`;
+
+      emailText = emailText.replace(/{{link}}/g, linkHTML);
+
       await transporter.sendMail({
         from: `EDconsulting<${process.env.EMAIL}>`,
         to: newOrg.email,
-        subject: "Here is your affiliate Link",
-        html: `
-          <h2>Thanks for registering for our affiliate program</h2>
-          <p>You can use this link to refer students</p>
-          <a href="${affiliateLink}">${affiliateLink}</a>
-        `,
+        subject: emailSubject,
+        html: emailText,
       });
 
       const token = await newOrg.generateToken();
@@ -266,14 +286,28 @@ module.exports = {
       if (!user) {
         res.status(400).json({ msg: "Your account doesn't exists" });
       } else {
+        let emailText = (await Settings.findOne({})).resetPasswordMessage
+          .replace(/{{name}}/g, user.firstName)
+          .split("\n")
+          .filter((_, index) => index !== 0 && index !== 1)
+          .join("<br />");
+
+        const emailSubject = (await Settings.findOne({})).resetPasswordMessage
+          .replace(/{{name}}/g, user.firstName)
+          .split("\n")[0];
+
+        const emailLinkText = JSON.parse(
+          (await Settings.findOne({})).resetPasswordMessage.split("\n")[1]
+        ).link;
+        const linkHTML = `<a href="${process.env.APP_URL}/auth/resetPass/${user._id}">${emailLinkText}</a>`;
+
+        emailText = emailText.replace(/{{link}}/g, linkHTML);
+
         await transporter.sendMail({
           from: `EDconsulting<${process.env.EMAIL}>`,
           to: user.email,
-          subject: "Reset password",
-          html: `
-          <p>You can use this link to reset password</p>
-          <a href="${process.env.APP_URL}/auth/resetPass/${user._id}">Reset Password</a>
-        `,
+          subject: emailSubject,
+          html: emailText,
         });
 
         res.status(200).json({ msg: "We sent you an email" });

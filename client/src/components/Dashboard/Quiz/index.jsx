@@ -226,6 +226,7 @@ const Quiz = ({ path }) => {
     }
   }, [timer, currentIndex, path]);
 
+  // when the user is done with the quiz
   useEffect(async () => {
     if (done) {
       const res = await fetch(`${config.serverURL}/get_quiz/${path}/${courseId}`, {
@@ -236,7 +237,9 @@ const Quiz = ({ path }) => {
       const body = await res.json();
 
       if (path === "getUserQuestionsOfCourse" && !body.userHasPaid && body.userHasToPay) {
-        history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true });
+        setTimeout(() => {
+          history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true });
+        }, 5000);
       } else {
         endQuizAction();
       }
