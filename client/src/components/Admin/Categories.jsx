@@ -216,14 +216,14 @@ const Categories = () => {
                 value={title}
                 onChange={HandleInputChange}
                 name="title"
-                placeholder="Enter the category name"
+                placeholder="Enter Product name"
                 mb={3}
               />
               <Select
                 onChange={HandleInputChange}
                 name="courseTextSize"
                 value={courseTextSize}
-                placeholder="Product font-size"
+                placeholder="Product font size of product name"
                 mb={3}
               >
                 <option>sm</option>
@@ -271,7 +271,7 @@ const Categories = () => {
                   disabled
                   value=""
                 >
-                  Prerequisites for this category/course
+                  Prerequisites for this product
                 </option>
                 {categories.map((category, index) => {
                   return (
@@ -309,14 +309,14 @@ const Categories = () => {
                 name="cpPaymentMessage"
                 onChange={HandleInputChange}
                 value={cpPaymentMessage}
-                placeholder="Payment message shown while paying for checking-phase"
+                placeholder="Payment before checking phase message"
                 mb={3}
               />
               <Select
                 onChange={HandleInputChange}
                 name="cpPaymentMessageTextSize"
                 value={cpPaymentMessageTextSize}
-                placeholder="Payment message for checking phase font-size"
+                placeholder="Payment before checking phase text size"
                 mb={3}
               >
                 <option>sm</option>
@@ -332,7 +332,7 @@ const Categories = () => {
                 name="lpPaymentMessage"
                 onChange={HandleInputChange}
                 value={lpPaymentMessage}
-                placeholder="Payment message shown while paying for learning-phase"
+                placeholder="Payment after checking phase message"
                 mb={3}
               />
               <Flex mb={3}>
@@ -373,7 +373,7 @@ const Categories = () => {
         {categories && categories.length > 0 ? (
           <Table colorScheme="gray" minW="1300px">
             <Thead>
-              <Th>Category name</Th>
+              <Th>Product name</Th>
               <Th>Price</Th>
               <Th>Total Questions</Th>
               <Th>Prerequisites</Th>

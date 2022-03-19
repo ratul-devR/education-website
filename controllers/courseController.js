@@ -50,7 +50,7 @@ module.exports = {
 
       const paymentIntent = await stripe.paymentIntents.create({
         amount,
-        currency: "usd",
+        currency: "eur",
         metadata: {
           courseId,
           userId,
@@ -69,7 +69,7 @@ module.exports = {
       const { amount, courseId, userId } = req.body;
       const paymentIntent = await stripe.paymentIntents.create({
         amount,
-        currency: "usd",
+        currency: "eur",
         metadata: { courseId, userId, type: "package" },
       });
       res.status(200).json({ client_secret: paymentIntent.client_secret });

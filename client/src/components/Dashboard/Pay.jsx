@@ -187,7 +187,7 @@ const Pay = ({ location }) => {
           mt={5}
           p="auto"
         >
-          {processing ? t("processing") : `${t("purchase_button")} (${course.price}$)`}
+          {processing ? t("processing") : `${t("purchase_button")} (${course.price})€`}
         </Button>
         {checkoutError && (
           <Badge

@@ -10,6 +10,7 @@ import { Spinner } from "@chakra-ui/spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Text } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 
 import {
   LOAD_QUESTIONS,
@@ -43,6 +44,7 @@ export default function Alc() {
   const getSettings = useSettings();
   const history = useHistory();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   // fetching the learning track
   async function fetchItem(abortController) {
@@ -119,7 +121,7 @@ export default function Alc() {
     return (
       <Flex justify="center" align="center">
         <Heading color="GrayText" fontSize="2xl" fontWeight="normal">
-          You don't have all requirements to access this course
+          {t("dont_have_all_prerequisites")}
         </Heading>
       </Flex>
     );
@@ -127,7 +129,7 @@ export default function Alc() {
     return (
       <Flex justify="center" align="center" direction="column" mb={5} w="full" h="full">
         <Heading mb={5} color="GrayText" fontWeight="normal">
-          No new words to learn
+          {t("no_words_to_learn_message")}
         </Heading>
         <Button
           colorScheme="secondary"
@@ -135,7 +137,7 @@ export default function Alc() {
           as={Link}
           to={`/dashboard/activation_phase/${courseId}`}
         >
-          Start Activation Phase
+          {t("start_activation_phase")}
         </Button>
       </Flex>
     );
@@ -143,13 +145,13 @@ export default function Alc() {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
         <Heading mb={5} color="primary" fontWeight="normal">
-          Instruction
+          {t("instruction")}
         </Heading>
         <Text color="GrayText" mb={5} fontSize={25} whiteSpace="pre-wrap">
           {course.concertIns}
         </Text>
         <Button onClick={() => dispatch(START_CONCERT())} colorScheme="secondary" color="black">
-          Get Started
+          {t("get_started")}
         </Button>
       </Flex>
     );
@@ -157,14 +159,14 @@ export default function Alc() {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
         <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
-          Active learning concert has been ended
+          {t("active_learning_concert_has_been_ended")}
         </Heading>
         <Button
           onClick={() => dispatch(START_PASSIVE_LEARNING())}
           colorScheme="secondary"
           color="black"
         >
-          Passive learning concert
+          {t("passive_learning_concert")}
         </Button>
       </Flex>
     );
@@ -172,14 +174,14 @@ export default function Alc() {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
         <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
-          Passive learning concert has been ended
+          {t("passive_learning_concert_has_been_ended")}
         </Heading>
         <Button
           colorScheme="secondary"
           color="black"
           onClick={() => dispatch(START_ACTIVE_LEARNING())}
         >
-          Active learning concert
+          {t("active_learning_concert")}
         </Button>
       </Flex>
     );
@@ -187,7 +189,7 @@ export default function Alc() {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
         <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
-          The concert has been ended
+          {t("concert_has_been_ended")}
         </Heading>
         <Button
           colorScheme="secondary"
@@ -195,7 +197,7 @@ export default function Alc() {
           as={Link}
           to={`/dashboard/activation_phase/${courseId}`}
         >
-          Start Activation Phase
+          {t("start_activation_phase")}
         </Button>
       </Flex>
     );

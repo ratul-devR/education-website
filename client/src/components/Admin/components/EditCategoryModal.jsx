@@ -136,12 +136,12 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               direction="column"
             >
               <Text color="GrayText" mb={3}>
-                Edit category name
+                Edit Product name
               </Text>
               <Input
                 onChange={handleInputChange}
                 name="name"
-                placeholder="Edit category name"
+                placeholder="Edit product name"
                 value={category.name}
               />
             </Flex>
@@ -154,13 +154,13 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               direction="column"
             >
               <Text color="GrayText" mb={3}>
-                Edit Product font-size
+                Edit product font size of product name
               </Text>
               <Select
                 onChange={handleInputChange}
                 name="courseTextSize"
                 value={category.courseTextSize}
-                placeholder="Product font-size"
+                placeholder="Edit product font size of product name"
                 mb={3}
               >
                 <option>sm</option>
@@ -276,12 +276,12 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               direction="column"
             >
               <Text color="GrayText" mb={3}>
-                Checking phase payment text
+                Edit Payment before checking phase message
               </Text>
               <Textarea
                 onChange={handleInputChange}
                 name="cpPaymentMessage"
-                placeholder="Checking phase payment text"
+                placeholder="Payment before checking phase message"
                 value={category.cpPaymentMessage}
               />
             </Flex>
@@ -294,13 +294,13 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               direction="column"
             >
               <Text color="GrayText" mb={3}>
-                Checking-phase payment message font-size
+                Edit Payment before checking phase text size
               </Text>
               <Select
                 onChange={handleInputChange}
                 name="cpPaymentMessageTextSize"
                 value={category.cpPaymentMessageTextSize}
-                placeholder="Checking-phase payment message font-size"
+                placeholder="Edit Payment before checking phase text size"
                 mb={3}
               >
                 <option>sm</option>
@@ -322,12 +322,12 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               direction="column"
             >
               <Text color="GrayText" mb={3}>
-                Learning phase payment text
+                Edit Payment after checking phase message
               </Text>
               <Textarea
                 onChange={handleInputChange}
                 name="lpPaymentMessage"
-                placeholder="Learning phase payment text"
+                placeholder="Edit Payment after checking phase message"
                 value={category.lpPaymentMessage}
               />
             </Flex>

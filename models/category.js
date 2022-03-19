@@ -11,9 +11,9 @@ const dataSchema = new mongoose.Schema({
   quizIns: String,
   concertIns: String,
 
-  // checking phase payment message
+  // payment before checking phase message
   cpPaymentMessage: String,
-  // learning-phase payment message
+  // payment after checking phase message
   lpPaymentMessage: String,
   // font-size for the course shown in dashboard
   courseTextSize: String,

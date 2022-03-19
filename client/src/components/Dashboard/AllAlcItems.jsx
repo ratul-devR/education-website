@@ -6,11 +6,13 @@ import config from "../../config";
 import { Spinner } from "@chakra-ui/spinner";
 import { Button } from "@chakra-ui/button";
 import { Link, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function AllAlcItems() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { courseId } = useParams();
+  const { t } = useTranslation();
   const toast = useToast();
 
   async function fetchAlcItems(abortController) {
@@ -67,7 +69,7 @@ export default function AllAlcItems() {
   return (
     <Flex direction="column">
       <Heading fontSize="2xl" fontWeight="normal" mb={5} color="primary">
-        Tracks
+        {t("audio_tracks")}
       </Heading>
       <SimpleGrid columns={[1, 1, 2, 3]} spacing={5}>
         {items.map((item) => {

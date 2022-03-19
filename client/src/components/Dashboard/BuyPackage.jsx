@@ -11,6 +11,7 @@ import { CardElement } from "@stripe/react-stripe-js";
 import { useStripe, useElements } from "@stripe/react-stripe-js";
 import { Button } from "@chakra-ui/button";
 import { Badge } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 
 export default function BuyPackage() {
   const [course, setCourse] = useState();
@@ -25,6 +26,7 @@ export default function BuyPackage() {
   const toast = useToast();
   const stripe = useStripe();
   const elements = useElements();
+  const { t } = useTranslation();
   // for fetching course info
   async function fetchCourseInfo(abortController) {
     try {
@@ -142,7 +144,9 @@ export default function BuyPackage() {
         </Heading>
         {course.lpPaymentMessage && (
           <Text whiteSpace="pre-wrap" mb={10}>
-            {course.lpPaymentMessage.replace("{{number}}", unknownQuestionsPack.length)}
+            {course.lpPaymentMessage
+              .replace(/{{number}}/g, unknownQuestionsPack.length)
+              .replace(/{{product}}/g, course.name)}
           </Text>
         )}
         <CardElement
@@ -155,7 +159,7 @@ export default function BuyPackage() {
           colorScheme="secondary"
           color="black"
         >
-          {processing ? "Processing..." : `Purchase By Paying (${course.price}$)`}
+          {processing ? "Processing..." : `${t("purchase_button")} (${course.price}€)`}
         </Button>
         {checkoutError && (
           <Badge

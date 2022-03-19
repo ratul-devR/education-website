@@ -238,8 +238,8 @@ const Quiz = ({ path }) => {
 
       if (path === "getUserQuestionsOfCourse" && !body.userHasPaid && body.userHasToPay) {
         setTimeout(() => {
-          history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true });
-        }, 5000);
+          history.push(`/dashboard/buyPackage/${courseId}`, { fromCheckingPhase: true });
+        }, 10000);
       } else {
         endQuizAction();
       }
