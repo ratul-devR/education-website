@@ -66,7 +66,7 @@ export default function BuyPackage() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          amount: course.price * 100,
+          amount: course.price,
           courseId: course._id,
           userId: user._id,
         }),
@@ -94,17 +94,17 @@ export default function BuyPackage() {
           history.push("/dashboard/paymentSuccess", {
             course,
             phase: "learning",
-            subMessage: "Now you can start learning these words",
+            subMessage: "payment_success_sub_message_learning",
             button: {
-              text: "Start Learning",
+              text: "payment_success_button_learning",
               url: `/dashboard/alcs/${course._id}`,
             },
           });
         }
         toast({
           status: "success",
-          title: "Success",
-          description: "Your purchase of the package has been succeeded",
+          title: t("payment_success_toast_message_title"),
+          description: t("payment_success_toast_message_description"),
         });
       }
     } catch (err) {
