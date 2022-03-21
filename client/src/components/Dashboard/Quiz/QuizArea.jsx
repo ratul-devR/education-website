@@ -134,9 +134,9 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
       onCorrectAnswer();
     } else {
       setClassName("option wrong");
+      userDoesNotKnowTheAnswer(questionId, true, false);
       dispatch(WRONG_ANSWER());
       // because the user has given the wrong answer, mark it as he doesn't knows that
-      userDoesNotKnowTheAnswer(questionId, true);
       toast({
         status: "warning",
         description: t("wrong_answer"),

@@ -34,27 +34,36 @@ module.exports = function (agenda) {
 
       const product = await Category.findOne({ questions: { $in: questions } });
 
-      const productDetails = `
+      let emailText = (await Settings.findOne({})).requestMessage
+        .replace(/{{name}}/g, user.firstName)
+        .replace(/{{product}}/g, product.name)
+        .split("\n")
+        .filter((_, index) => index !== 0)
+        .join("<br />");
 
-
-				This repetition applies to the product, '${product.name}'
-			`;
-      const emailText =
-        (await Settings.findOne({})).requestMessage
-          .replace(/{{name}}/g, user.firstName)
-          .split("\n")
-          .filter((_, index) => index !== 0)
-          .join("\n") + productDetails;
       const emailSubject = (await Settings.findOne({})).requestMessage
         .replace(/{{name}}/g, user.firstName)
         .split("\n")[0];
+
+      // for inserting a link in the {{link}} placeholder
+      const { link, linkText } = JSON.parse(emailText.split("<br />")[0]) || {
+        link: process.env.APP_URL,
+        linkText: "Visit webpage",
+      };
+      const linkHTML = `<a href="${link}">${linkText}</a>`;
+
+      emailText = emailText
+        .replace(/{{link}}/g, linkHTML)
+        .split("<br />")
+        .filter((_, index) => index !== 0)
+        .join("<br />");
 
       // after all send the user a reminder about it through mail
       await transporter.sendMail({
         from: `EDconsulting<${process.env.EMAIL}>`,
         to: user.email,
         subject: emailSubject,
-        text: emailText,
+        html: emailText,
       });
 
       done();
