@@ -77,12 +77,13 @@ export default function Alc() {
       const body = await res.json();
 
       if (res.ok) {
+        // if the user has questions in his learning pack and if he doesn't have anything to learn, then ask for payment
         if (body.unknownQuestionsPack.length > 0 && !body.learningQuestions.length) {
           history.push(`/dashboard/buyPackage/${courseId}`, { phase: "learning" });
         } else {
           dispatch(LOAD_QUESTIONS({ questions: body.learningQuestions, course: body.course }));
           setHasAllPrerequisites(body.hasAllPrerequisites);
-          // change the sub title with the course description
+          // change the sub title with the course description in the nav bar
           dispatch(CHANGE_SUB_TITLE(body.course.description));
         }
       } else {

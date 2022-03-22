@@ -11,7 +11,7 @@ import { Badge } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-const Pay = ({ location }) => {
+const Pay = () => {
   const [course, setCourse] = useState();
   const [loading, setLoading] = useState(true);
   const [checkoutError, setCheckoutError] = useState();
@@ -109,20 +109,10 @@ const Pay = ({ location }) => {
           setProcessing(false);
           history.push("/dashboard/paymentSuccess", {
             course,
-            phase: location.state.phase,
-            subMessage:
-              location.state.phase === "learning"
-                ? "payment_success_sub_message_learning"
-                : "payment_success_sub_message_checking",
+            subMessage: "payment_success_sub_message_checking",
             button: {
-              text:
-                location.state.phase === "learning"
-                  ? "payment_success_button_learning"
-                  : "payment_success_button_checking",
-              url:
-                location.state.phase === "learning"
-                  ? `/dashboard/alcs/${course._id}`
-                  : `/dashboard/quiz/${course._id}`,
+              text: "payment_success_button_checking",
+              url: `/dashboard/quiz/${course._id}`,
             },
           });
           toast({

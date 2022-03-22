@@ -236,19 +236,19 @@ module.exports = {
       const after1Day = 86400000;
 
       if (questions.length) {
-        agenda.schedule(new Date().getTime() + after1Day, "repetition", {
+        await agenda.schedule(new Date().getTime() + after1Day, "repetition", {
           userId: user._id,
           questions,
         });
-        agenda.schedule(new Date().getTime() + after1Day * 7, "repetition", {
+        await agenda.schedule(new Date().getTime() + after1Day * 7, "repetition", {
           userId: user._id,
           questions,
         });
-        agenda.schedule(new Date().getTime() + after1Day * 16, "repetition", {
+        await agenda.schedule(new Date().getTime() + after1Day * 16, "repetition", {
           userId: user._id,
           questions,
         });
-        agenda.schedule(new Date().getTime() + after1Day * 35, "repetition", {
+        await agenda.schedule(new Date().getTime() + after1Day * 35, "repetition", {
           userId: user._id,
           questions,
         });

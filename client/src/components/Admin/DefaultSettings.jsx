@@ -3,6 +3,7 @@ import { Flex, Heading } from "@chakra-ui/layout";
 import { Text } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/input";
 import { Button } from "@chakra-ui/button";
+import { FormLabel as Label } from "@chakra-ui/form-control";
 import useToast from "../../hooks/useToast";
 import { Textarea } from "@chakra-ui/textarea";
 import config from "../../config";
@@ -147,13 +148,14 @@ export default function DefaultSettings() {
   }
 
   return (
-    <Flex w="full" maxW="500px" h="auto" alignSelf="center" direction="column">
+    <Flex w="full" maxW="700px" h="auto" alignSelf="center" direction="column">
       <Heading color="primary" mb={3} fontWeight="normal" fontSize="2xl">
         Default Settings
       </Heading>
       <Text color="GrayText" mb={10}>
         Some handy settings
       </Text>
+      <Label mb={2}>Application Subtitle</Label>
       <Input
         name="appSubTitle"
         onChange={handleInputChange}
@@ -161,6 +163,8 @@ export default function DefaultSettings() {
         placeholder="Application subtitle"
         mb={3}
       />
+
+      <Label mb={2}>Language in the template</Label>
       <Select
         mb={3}
         name="lang"
@@ -177,6 +181,8 @@ export default function DefaultSettings() {
           );
         })}
       </Select>
+
+      <Label mb={2}>Reminder time span</Label>
       <Input
         placeholder="Reminder time span (day)"
         value={notificationTimeSpan}
@@ -184,6 +190,8 @@ export default function DefaultSettings() {
         mb={3}
         name="notificationTimeSpan"
       />
+
+      <Label mb={2}>Reminder duration (How many times should it be sent)</Label>
       <Input
         mb={3}
         name="reminderDuration"
@@ -191,41 +199,57 @@ export default function DefaultSettings() {
         onChange={handleInputChange}
         placeholder="How many times should we send reminders?"
       />
+
+      <Label mb={2}>Reminder message</Label>
       <Textarea
         placeholder="Reminder message"
         name="reminderMessage"
         value={reminderMessage}
         onChange={handleInputChange}
         mb={3}
+        minH={200}
       />
+
+      <Label mb={2}>Request message</Label>
       <Textarea
         placeholder="Request message"
         name="requestMessage"
         value={requestMessage}
         onChange={handleInputChange}
         mb={3}
+        minH={200}
       />
+
+      <Label mb={2}>Confirmation email message</Label>
       <Textarea
         placeholder="Confirmation email message"
         name="emailConfirmationMessage"
         value={emailConfirmationMessage}
         onChange={handleInputChange}
         mb={3}
+        minH={200}
       />
+
+      <Label mb={2}>Reset password email message</Label>
       <Textarea
         placeholder="Reset password email message"
         name="resetPasswordMessage"
         value={resetPasswordMessage}
         onChange={handleInputChange}
         mb={3}
+        minH={200}
       />
+
+      <Label mb={2}>Affiliate Link email message</Label>
       <Textarea
         placeholder="Affiliate Link email message"
         name="affiliateLinkMessage"
         value={affiliateLinkMessage}
         onChange={handleInputChange}
         mb={3}
+        minH={200}
       />
+
       <Button disabled={processing} onClick={handleClick} colorScheme="secondary" color="black">
         {processing ? "Processing..." : "Save changes"}
       </Button>
