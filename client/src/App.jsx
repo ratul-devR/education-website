@@ -6,7 +6,6 @@ import { Flex, Heading } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import Backend from "i18next-locize-backend";
 
 import useToast from "./hooks/useToast";
 import useSettings from "./hooks/useSettings";
@@ -27,16 +26,23 @@ import Admin from "./pages/Admin";
 import Registration from "./pages/Registration";
 import OrgDashboard from "./pages/OrgDashboard";
 
-const locizeOptions = {
-  projectId: import.meta.env.VITE_APP_LOCIZE_PROJECT_ID,
-  apiKey: import.meta.env.VITE_APP_LOCIZE_API_KEY,
-  referenceLng: "en",
-};
+// translations
+import en from "./locales/en-US/translation.json";
+import es from "./locales/es/translation.json";
 
-i18n.use(Backend).use(initReactI18next).init({
+i18n.use(initReactI18next).init({
   fallbackLng: "en",
-  backend: locizeOptions,
-  saveMissing: true,
+  interpolation: {
+    escapeValue: false, // not needed for react as it escapes by default
+  },
+  resources: {
+    en: {
+      translation: en,
+    },
+    es: {
+      translation: es,
+    },
+  },
 });
 
 const App = () => {

@@ -8,10 +8,11 @@ const {
   logout,
   registerOrg,
   confirmEmail,
+  confirmEmailFromMobile,
   loginOrg,
   getRefererInfo,
   resetPasswordSendEmail,
-  resetPass
+  resetPass,
 } = require("../controllers/authController");
 
 const checkEmailExistence = require("../middlewares/auth/checkEmailExistence");
@@ -30,22 +31,25 @@ router.post("/login", login);
 router.post("/registerOrg", checkOrgEmailExistence, registerOrg);
 
 // for logging in the org's
-router.post("/loginOrg", loginOrg)
+router.post("/loginOrg", loginOrg);
 
 // for sending email to reset password
-router.post("/resetPasswordSendEmail", resetPasswordSendEmail)
+router.post("/resetPasswordSendEmail", resetPasswordSendEmail);
 
 // for resetting the password
-router.post("/resetPassword/:userId", resetPass)
+router.post("/resetPassword/:userId", resetPass);
 
 // for confirming an email address
 router.get("/confirmEmail/:accountId", confirmEmail);
+
+// for confirming an email without redirecting
+router.get("/confirmEmailFromMobile/:accountId", confirmEmailFromMobile);
 
 // for checking if the user is authenticated or not
 router.get("/checkLogin", checkLogin, sendResponseIfLoggedIn);
 
 // for fetching the referer info
-router.get("/getRefererInfo/org/:orgId", getRefererInfo)
+router.get("/getRefererInfo/org/:orgId", getRefererInfo);
 
 // for logging out the authenticated user
 router.get("/logout", logout);

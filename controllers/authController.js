@@ -155,6 +155,27 @@ module.exports = {
     }
   },
 
+  confirmEmailFromMobile: async function (req, res, next) {
+    try {
+      const { accountId } = req.params;
+
+      if (mongoose.isValidObjectId(accountId)) {
+        const user = await User.findOneAndUpdate({ _id: accountId }, { verified: true }).lean({
+          defaults: true,
+        });
+        if (!user) {
+          res.status(404).json({ msg: "User not found" });
+        } else {
+          res.status(201).json({ msg: "Verification successful", user });
+        }
+      } else {
+        res.status(400).json({ msg: "failed. client error" });
+      }
+    } catch (err) {
+      next(err);
+    }
+  },
+
   registerOrg: async function (req, res, next) {
     try {
       const {
@@ -228,7 +249,7 @@ module.exports = {
 
       res
         .status(201)
-        .json({ affiliateLink, msg: "We just emailed you the affiliate Link", org: newOrg });
+        .json({ affiliateLink, msg: "We just emailed you the affiliate Link", org: newOrg, token });
     } catch (err) {
       next(err);
     }
@@ -258,7 +279,7 @@ module.exports = {
         signed: true,
       });
 
-      res.status(200).json({ msg: "Login Successful", org });
+      res.status(200).json({ msg: "Login Successful", org, token });
     } catch (err) {
       next(err);
     }

@@ -39,7 +39,10 @@ export default function DefaultSettings() {
     resetPasswordMessage: "",
     affiliateLinkMessage: "",
   });
-  const [languages, setLanguages] = useState({});
+  const [languages] = useState({
+    en: "en-US",
+    es: "es",
+  });
   const [newSettings, editSettings] = ["newSettings", "editSettings"];
   const [processing, setProcessing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -118,24 +121,9 @@ export default function DefaultSettings() {
     }
   }
 
-  async function fetchLanguages() {
-    try {
-      i18n.services.backendConnector.backend.getLanguages((err, langs) => {
-        if (err) {
-          toast({ status: "error", description: err.message });
-        } else {
-          setLanguages(langs);
-        }
-      });
-    } catch (err) {
-      toast({ status: "error", description: err.message });
-    }
-  }
-
   useEffect(() => {
     const abortController = new AbortController();
     fetchSettings(abortController);
-    fetchLanguages();
     return () => abortController.abort();
   }, []);
 
@@ -176,7 +164,7 @@ export default function DefaultSettings() {
         {Object.keys(languages).map((language, index) => {
           return (
             <option key={index} value={language}>
-              {languages[language].nativeName}
+              {languages[language]}
             </option>
           );
         })}
