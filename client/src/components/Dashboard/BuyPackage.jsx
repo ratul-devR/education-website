@@ -144,9 +144,10 @@ export default function BuyPackage() {
         </Heading>
         {course.lpPaymentMessage && (
           <Text whiteSpace="pre-wrap" mb={10}>
-            {course.lpPaymentMessage
-              .replace(/{{number}}/g, unknownQuestionsPack.length)
-              .replace(/{{product}}/g, course.name)}
+            {course.lpPaymentMessage &&
+              course.lpPaymentMessage
+                .replace(/{{number}}/g, unknownQuestionsPack.length)
+                .replace(/{{product}}/g, course.name)}
           </Text>
         )}
         <CardElement
