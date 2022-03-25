@@ -66,7 +66,7 @@ export default function BuyPackage() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          amount: course.price,
+          amount: course.price * 100,
           courseId: course._id,
           userId: user._id,
         }),
