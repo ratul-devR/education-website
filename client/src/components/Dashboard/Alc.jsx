@@ -144,7 +144,7 @@ export default function Alc() {
     );
   } else if (!concertStarted && course.concertIns) {
     return (
-      <Flex w="full" h="full" justify="center" align="center" direction="column">
+      <Flex w="full" justify="center" align="center" direction="column">
         <Heading mb={5} color="primary" fontWeight="normal">
           {t("instruction")}
         </Heading>
