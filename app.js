@@ -27,7 +27,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://dreamy-raman-769ff4.netlify.app"],
+    origin: ["http://localhost:3000", "http://adorable-heliotrope-1e39fe.netlify.app"],
     credentials: true,
   })
 );
