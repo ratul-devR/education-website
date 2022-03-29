@@ -44,6 +44,7 @@ const Categories = () => {
       courseTextSize,
       cpPaymentMessageTextSize,
       lpPaymentMessage,
+      unknownQuestionLimitForPurchase,
     },
     setInput,
   ] = useState({
@@ -60,6 +61,7 @@ const Categories = () => {
     courseTextSize: "",
     cpPaymentMessageTextSize: "",
     lpPaymentMessage: "",
+    unknownQuestionLimitForPurchase: "",
   });
   const [prerequisites, setPrerequisites] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -136,6 +138,7 @@ const Categories = () => {
         courseTextSize,
         cpPaymentMessageTextSize,
         lpPaymentMessage,
+        unknownQuestionLimitForPurchase: unknownQuestionLimitForPurchase || 0,
       }),
       credentials: "include",
     });
@@ -353,6 +356,14 @@ const Categories = () => {
               >
                 Learning phase is paid
               </Checkbox>
+              <Input
+                mt={3}
+                placeholder="Unknown question number for purchase"
+                type={"number"}
+                onChange={HandleInputChange}
+                name="unknownQuestionLimitForPurchase"
+                value={unknownQuestionLimitForPurchase}
+              />
             </ModalBody>
             <ModalFooter>
               <Button mr={3} onClick={onClose} colorScheme="blue">

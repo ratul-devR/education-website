@@ -68,7 +68,13 @@ const Quiz = ({ path }) => {
       if (res.ok) {
         if (!body.hasAllPrerequisites) {
           setHasAllPrerequisites(false);
-        } else if (path === "getUserQuestionsOfCourse" && !body.userHasPaid && body.userHasToPay) {
+        } else if (
+          path === "getUserQuestionsOfCourse" &&
+          !body.userHasPaid &&
+          body.userHasToPay &&
+          body.courseQuestions.length &&
+          body.unknownQuestions.length >= (body.course.unknownQuestionLimitForPurchase || 0)
+        ) {
           history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true });
         }
 
@@ -229,16 +235,20 @@ const Quiz = ({ path }) => {
   // when the user is done with the quiz
   useEffect(async () => {
     if (done) {
-      const res = await fetch(`${config.serverURL}/get_quiz/${path}/${courseId}`, {
+      const res = await fetch(`${config.serverURL}/get_quiz/getUserUnknownQuestions/${courseId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
       const body = await res.json();
 
-      if (path === "getUserQuestionsOfCourse" && !body.userHasPaid && body.userHasToPay) {
+      if (
+        path === "getUserQuestionsOfCourse" &&
+        body.unknownQuestionsPack.length > 0 &&
+        !body.learningQuestions.length
+      ) {
         setTimeout(() => {
-          history.push(`/dashboard/buyPackage/${courseId}`, { fromCheckingPhase: true });
+          history.push(`/dashboard/buyPackage/${courseId}`);
         }, 10000);
       } else {
         endQuizAction();

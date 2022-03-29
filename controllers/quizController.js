@@ -79,9 +79,27 @@ module.exports = {
         }
       }
 
-      res
-        .status(200)
-        .json({ courseQuestions, course, hasAllPrerequisites, userHasPaid, userHasToPay });
+      // questions the user doesn't know
+      let unknownQuestions = [];
+
+      if (course.learningPhasePaid) {
+        unknownQuestions = await Question.find({
+          $and: [{ category: course._id }, { packUsers: { $in: [user._id] } }],
+        }).lean({ defaults: true });
+      } else {
+        unknownQuestions = await Question.find({
+          $and: [{ category: course._id }, { unknownUsers: { $in: [user._id] } }],
+        }).lean({ defaults: true });
+      }
+
+      res.status(200).json({
+        courseQuestions,
+        course,
+        hasAllPrerequisites,
+        userHasPaid,
+        userHasToPay,
+        unknownQuestions,
+      });
     } catch (err) {
       next(err);
     }

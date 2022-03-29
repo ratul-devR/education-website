@@ -92,7 +92,8 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               categoryOF.cpPaymentMessage = body.category.cpPaymentMessage;
               categoryOF.courseTextSize = body.category.courseTextSize;
               categoryOF.cpPaymentMessageTextSize = body.category.cpPaymentMessageTextSize;
-              categoryOF.lpPaymentMessage = body.category.lpPaymentMessage;
+              categoryOF.unknownQuestionLimitForPurchase =
+                body.category.unknownQuestionLimitForPurchase;
             }
             return categoryOF;
           })
@@ -370,7 +371,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 Checking phase is paid
               </Checkbox>
             </Flex>
-            <Flex>
+            <Flex mb={3}>
               <Checkbox
                 checked={!!category.learningPhasePaid}
                 defaultChecked={!!category.learningPhasePaid}
@@ -380,6 +381,18 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               >
                 Learning phase is paid
               </Checkbox>
+            </Flex>
+            <Flex p={5} rounded={5} border="1px solid" borderColor="gray.100" direction="column">
+              <Text color="GrayText" mb={3}>
+                After how many unknown questions the user should be asked for payment after checking
+                phase?
+              </Text>
+              <Input
+                onChange={handleInputChange}
+                name="unknownQuestionLimitForPurchase"
+                type="number"
+                value={category.unknownQuestionLimitForPurchase}
+              />
             </Flex>
           </ModalBody>
           <ModalFooter>

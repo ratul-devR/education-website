@@ -19,6 +19,8 @@ const dataSchema = new mongoose.Schema({
   courseTextSize: String,
   // checking phase payment message font-size
   cpPaymentMessageTextSize: String,
+  // once the user reaches that, then he will be asked for payment after checking phase
+  unknownQuestionLimitForPurchase: Number,
 
   prerequisites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],

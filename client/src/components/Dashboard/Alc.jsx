@@ -77,7 +77,9 @@ export default function Alc() {
       const body = await res.json();
 
       if (res.ok) {
-        // if the user has questions in his learning pack and if he doesn't have anything to learn, then ask for payment
+        // if the user has questions in his learning pack and if he doesn't have anything to learn
+        // if the user has the number of questions that is determined by the admin in his not known DB,
+        // then ask for payment
         if (body.unknownQuestionsPack.length > 0 && !body.learningQuestions.length) {
           history.push(`/dashboard/buyPackage/${courseId}`, { phase: "learning" });
         } else {
