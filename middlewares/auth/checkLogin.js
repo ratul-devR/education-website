@@ -7,7 +7,7 @@ module.exports = async function (req, res, next) {
     const cookies =
       Object.keys(req.signedCookies).length > 0
         ? req.signedCookies
-        : req.headers.authorization.split(" ")[1];
+        : req.headers.authorization && req.headers.authorization.split(" ")[1];
 
     if (cookies) {
       const token = typeof cookies === "object" ? cookies[process.env.COOKIE_NAME] : cookies;

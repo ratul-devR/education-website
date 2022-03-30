@@ -38,6 +38,7 @@ module.exports = {
 
       if (!course) {
         res.status(404).json({ msg: "Course Not Found! Please stop navigating with Urls" });
+        return;
       }
 
       // questions the user hasn't checked yet will be shown in the checking phase
@@ -115,6 +116,11 @@ module.exports = {
       const course = await Category.findOne({ _id: courseId })
         .lean({ defaults: true })
         .populate("prerequisites");
+
+      if (!course) {
+        res.status(404).json({ msg: "This course was not found" });
+        return;
+      }
 
       // questions the user doesn't know
       const courseQuestions = await Question.find({
