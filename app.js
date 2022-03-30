@@ -30,7 +30,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "http://adorable-heliotrope-1e39fe.netlify.app",
-      "https://js-3xalan.stackblitz.io",
+      "http://js-3xalan.stackblitz.io",
     ],
     credentials: true,
   })
