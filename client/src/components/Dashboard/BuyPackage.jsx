@@ -160,7 +160,7 @@ export default function BuyPackage() {
           colorScheme="secondary"
           color="black"
         >
-          {processing ? "Processing..." : `${t("purchase_button")} (${course.price}€)`}
+          {processing ? "Processing..." : `${t("purchase_button")} (${course.displayPrice}€)`}
         </Button>
         {checkoutError && (
           <Badge

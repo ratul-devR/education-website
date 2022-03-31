@@ -5,6 +5,7 @@ const dataSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true, trim: true },
   description: { type: String, required: true, trim: true },
   price: { type: Number, required: true },
+  displayPrice: { type: String, required: true },
   passPercentage: { type: Number, required: true },
   learningPhasePaid: { type: Boolean, required: true },
   checkingPhasePaid: { type: Boolean, required: true },

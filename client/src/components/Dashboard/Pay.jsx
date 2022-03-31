@@ -177,7 +177,7 @@ const Pay = () => {
           mt={5}
           p="auto"
         >
-          {processing ? t("processing") : `${t("purchase_button")} (${course.price})€`}
+          {processing ? t("processing") : `${t("purchase_button")} (${course.displayPrice})€`}
         </Button>
         {checkoutError && (
           <Badge

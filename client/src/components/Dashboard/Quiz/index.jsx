@@ -242,6 +242,8 @@ const Quiz = ({ path }) => {
       });
       const body = await res.json();
 
+      // if the user has got some unknown questions then ask him for payment to purchase them
+      // it will be asked at the end of the quiz after 10 seconds
       if (
         path === "getUserQuestionsOfCourse" &&
         body.unknownQuestionsPack.length > 0 &&
@@ -255,6 +257,29 @@ const Quiz = ({ path }) => {
       }
     }
   }, [done]);
+
+  useEffect(async () => {
+    const res = await fetch(`${config.serverURL}/get_quiz/getUserQuestionsOfCourse/${courseId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+    const body = await res.json();
+
+    // console.log(body);
+    // console.log(questionsDontKnow + questionsWrong, body.course.unknownQuestionLimitForPurchase);
+
+    // check if the user has reached that amount of questions in his unknown words database
+    if (
+      path === "getUserQuestionsOfCourse" &&
+      !body.userHasPaid &&
+      body.userHasToPay &&
+      body.courseQuestions.length &&
+      questionsDontKnow + questionsWrong >= (body.course.unknownQuestionLimitForPurchase || 0)
+    ) {
+      history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true });
+    }
+  }, [questionsDontKnow, questionsWrong]);
 
   if (loading) {
     return (

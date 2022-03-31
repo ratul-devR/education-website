@@ -92,6 +92,7 @@ module.exports = {
       } else {
         const newCategory = new Category({
           ...req.body,
+          displayPrice: req.body.price,
         });
 
         await newCategory.save();
@@ -110,6 +111,8 @@ module.exports = {
     try {
       const { categoryId } = req.params;
       const updatedInfo = req.body;
+
+      updatedInfo.displayPrice = updatedInfo.price
 
       if (updatedInfo.cpPaymentMessage) {
         updatedInfo.cpPaymentMessage = updatedInfo.cpPaymentMessage.replace(

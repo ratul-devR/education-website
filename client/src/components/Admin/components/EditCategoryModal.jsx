@@ -94,6 +94,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               categoryOF.cpPaymentMessageTextSize = body.category.cpPaymentMessageTextSize;
               categoryOF.unknownQuestionLimitForPurchase =
                 body.category.unknownQuestionLimitForPurchase;
+              categoryOF.displayPrice = body.category.displayPrice;
             }
             return categoryOF;
           })

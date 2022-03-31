@@ -1,6 +1,6 @@
-import { Box, Flex, Heading, SimpleGrid } from "@chakra-ui/layout";
+import { Flex, Heading, SimpleGrid } from "@chakra-ui/layout";
 import { Link } from "react-router-dom";
-import { Text, Spinner } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
 import { useEffect, useState } from "react";
 import config from "../../config";
@@ -67,11 +67,13 @@ const UserCourses = ({ title, path }) => {
             return (
               <Button
                 as={Link}
+                key={course._id}
                 to={`/dashboard/${path}/${course._id}`}
                 colorScheme="secondary"
                 color="black"
                 p={10}
                 whiteSpace="normal"
+                textAlign="center"
                 fontSize={course.courseTextSize || "lg"}
                 height="auto"
               >
@@ -81,7 +83,7 @@ const UserCourses = ({ title, path }) => {
           })}
         </SimpleGrid>
       ) : (
-        <NoMessage message="Now courses available" />
+        <NoMessage message="No courses available" />
       )}
     </Flex>
   );

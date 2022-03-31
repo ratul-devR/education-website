@@ -400,7 +400,7 @@ const Categories = () => {
                         {category.name}
                       </ChakraLink>
                     </Td>
-                    <Td>{category.price}</Td>
+                    <Td>{category.displayPrice}</Td>
                     <Td>{category.questions.length}</Td>
                     <Td>
                       {category.prerequisites.length > 0 ? (
