@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import {useSelector} from "react-redux";
-import {Flex, Heading, Button, Text} from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+import { Flex, Heading, Button, Text } from "@chakra-ui/react";
 
 import config from "../config";
 
@@ -24,8 +24,8 @@ import useLogout from "../hooks/useLogout";
 const stripePromise = loadStripe(import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY);
 
 const Dashboard = () => {
-  const {user} = useSelector((state) => state.authReducer);
-  const {path} = useRouteMatch();
+  const { user } = useSelector((state) => state.authReducer);
+  const { path } = useRouteMatch();
   const logout = useLogout();
 
   useEffect(() => {
@@ -45,9 +45,6 @@ const Dashboard = () => {
         <Heading mb={3} fontSize="md" color="GrayText" fontWeight="normal">
           {user.email}
         </Heading>
-        <Button colorScheme="blue" onClick={logout}>
-          Log Out
-        </Button>
       </Flex>
     );
   } else if (user.loginRequired) {

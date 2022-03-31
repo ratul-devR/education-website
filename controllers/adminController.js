@@ -112,8 +112,6 @@ module.exports = {
       const { categoryId } = req.params;
       const updatedInfo = req.body;
 
-      updatedInfo.displayPrice = updatedInfo.price
-
       if (updatedInfo.cpPaymentMessage) {
         updatedInfo.cpPaymentMessage = updatedInfo.cpPaymentMessage.replace(
           /{{product}}/g,

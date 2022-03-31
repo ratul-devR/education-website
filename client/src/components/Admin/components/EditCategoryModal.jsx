@@ -221,6 +221,25 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               direction="column"
             >
               <Text color="GrayText" mb={3}>
+                Edit Display Price
+              </Text>
+              <Input
+                onChange={handleInputChange}
+                name="displayPrice"
+                type="number"
+                placeholder="Edit display price"
+                value={category.displayPrice}
+              />
+            </Flex>
+            <Flex
+              p={5}
+              rounded={5}
+              mb={5}
+              border="1px solid"
+              borderColor="gray.100"
+              direction="column"
+            >
+              <Text color="GrayText" mb={3}>
                 Edit Pass Percentage
               </Text>
               <Input

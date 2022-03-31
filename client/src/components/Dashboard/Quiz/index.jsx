@@ -252,7 +252,7 @@ const Quiz = ({ path }) => {
         setTimeout(() => {
           history.push(`/dashboard/buyPackage/${courseId}`);
         }, 10000);
-      } else {
+      } else if (path === "getUserUnknownQuestions") {
         endQuizAction();
       }
     }
@@ -278,6 +278,7 @@ const Quiz = ({ path }) => {
       questionsDontKnow + questionsWrong >= (body.course.unknownQuestionLimitForPurchase || 0)
     ) {
       history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true });
+      window.location.reload();
     }
   }, [questionsDontKnow, questionsWrong]);
 
