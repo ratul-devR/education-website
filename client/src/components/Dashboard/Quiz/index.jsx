@@ -249,8 +249,8 @@ const Quiz = ({ path }) => {
       // it will be asked at the end of the quiz after 10 seconds
       if (
         path === "getUserQuestionsOfCourse" &&
-        body.unknownQuestionsPack.length > 0 &&
-        !body.learningQuestions.length
+        body.unknownQuestionsPack.length &&
+        body.unknownQuestionsPack.length >= (body.course.unknownQuestionLimitForPurchase || 0)
       ) {
         setTimeout(() => {
           history.push(`/dashboard/buyPackage/${courseId}`);
