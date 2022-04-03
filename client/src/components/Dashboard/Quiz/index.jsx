@@ -75,7 +75,10 @@ const Quiz = ({ path }) => {
           body.courseQuestions.length &&
           body.unknownQuestions.length >= (body.course.unknownQuestionLimitForPurchase || 0)
         ) {
-          history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true });
+          history.push(`/dashboard/pay/${courseId}`, {
+            fromCheckingPhase: true,
+            showOptions: true,
+          });
         }
 
         document.title = `${config.appName} - ${
@@ -277,7 +280,7 @@ const Quiz = ({ path }) => {
       body.courseQuestions.length &&
       questionsDontKnow + questionsWrong >= (body.course.unknownQuestionLimitForPurchase || 0)
     ) {
-      history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true });
+      history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true, showOptions: true });
       window.location.reload();
     }
   }, [questionsDontKnow, questionsWrong]);

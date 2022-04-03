@@ -110,6 +110,7 @@ const Pay = ({ location }) => {
           history.push("/dashboard/paymentSuccess", {
             course,
             phase: location.state.phase,
+            showOptions: location.state.showOptions,
             subMessage:
               location.state.phase === "learning"
                 ? "payment_success_sub_message_learning"
