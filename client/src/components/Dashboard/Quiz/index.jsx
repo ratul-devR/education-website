@@ -77,7 +77,6 @@ const Quiz = ({ path }) => {
         ) {
           history.push(`/dashboard/pay/${courseId}`, {
             fromCheckingPhase: true,
-            showOptions: true,
           });
         }
 
@@ -275,12 +274,15 @@ const Quiz = ({ path }) => {
     // check if the user has reached that amount of questions in his unknown words database
     if (
       path === "getUserQuestionsOfCourse" &&
-      !body.userHasPaid &&
-      body.userHasToPay &&
+      // !body.userHasPaid &&
+      // body.userHasToPay &&
       body.courseQuestions.length &&
       questionsDontKnow + questionsWrong >= (body.course.unknownQuestionLimitForPurchase || 0)
     ) {
-      history.push(`/dashboard/pay/${courseId}`, { fromCheckingPhase: true, showOptions: true });
+      history.push(`/dashboard/buyPackage/${courseId}`, {
+        fromCheckingPhase: true,
+        showOptions: true,
+      });
       window.location.reload();
     }
   }, [questionsDontKnow, questionsWrong]);

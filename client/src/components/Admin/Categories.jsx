@@ -345,7 +345,7 @@ const Categories = () => {
                   }
                   checked={checkingPhasePaid}
                 >
-                  Checking phase is paid
+                  Payment before checking phase
                 </Checkbox>
               </Flex>
               <Checkbox
@@ -354,7 +354,7 @@ const Categories = () => {
                 }
                 checked={learningPhasePaid}
               >
-                Learning phase is paid
+                Payment after checking phase
               </Checkbox>
               <Input
                 mt={3}

@@ -188,26 +188,6 @@ export default function DefaultSettings() {
         placeholder="How many times should we send reminders?"
       />
 
-      <Label mb={2}>Reminder message</Label>
-      <Textarea
-        placeholder="Reminder message"
-        name="reminderMessage"
-        value={reminderMessage}
-        onChange={handleInputChange}
-        mb={3}
-        minH={200}
-      />
-
-      <Label mb={2}>Request message</Label>
-      <Textarea
-        placeholder="Request message"
-        name="requestMessage"
-        value={requestMessage}
-        onChange={handleInputChange}
-        mb={3}
-        minH={200}
-      />
-
       <Label mb={2}>Confirmation email message</Label>
       <Textarea
         placeholder="Confirmation email message"
@@ -215,7 +195,8 @@ export default function DefaultSettings() {
         value={emailConfirmationMessage}
         onChange={handleInputChange}
         mb={3}
-        minH={200}
+        minH={350}
+        fontSize={25}
       />
 
       <Label mb={2}>Reset password email message</Label>
@@ -225,7 +206,8 @@ export default function DefaultSettings() {
         value={resetPasswordMessage}
         onChange={handleInputChange}
         mb={3}
-        minH={200}
+        minH={350}
+        fontSize={25}
       />
 
       <Label mb={2}>Affiliate Link email message</Label>
@@ -235,7 +217,30 @@ export default function DefaultSettings() {
         value={affiliateLinkMessage}
         onChange={handleInputChange}
         mb={3}
-        minH={200}
+        minH={350}
+        fontSize={25}
+      />
+
+      <Label mb={2}>Request message</Label>
+      <Textarea
+        placeholder="Request message"
+        name="requestMessage"
+        value={requestMessage}
+        onChange={handleInputChange}
+        mb={3}
+        minH={350}
+        fontSize={25}
+      />
+
+      <Label mb={2}>Reminder message</Label>
+      <Textarea
+        placeholder="Reminder message"
+        name="reminderMessage"
+        value={reminderMessage}
+        onChange={handleInputChange}
+        mb={3}
+        minH={350}
+        fontSize={25}
       />
 
       <Button disabled={processing} onClick={handleClick} colorScheme="secondary" color="black">

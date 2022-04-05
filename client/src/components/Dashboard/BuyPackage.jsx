@@ -13,7 +13,7 @@ import { Button } from "@chakra-ui/button";
 import { Badge } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
-export default function BuyPackage() {
+export default function BuyPackage({ location }) {
   const [course, setCourse] = useState();
   const [unknownQuestionsPack, setUnknownQuestionsPack] = useState([]);
   const [checkoutError, setCheckoutError] = useState();
@@ -94,6 +94,7 @@ export default function BuyPackage() {
           history.push("/dashboard/paymentSuccess", {
             course,
             phase: "learning",
+            showOptions: location.state.showOptions,
             subMessage: "payment_success_sub_message_learning",
             button: {
               text: "payment_success_button_learning",

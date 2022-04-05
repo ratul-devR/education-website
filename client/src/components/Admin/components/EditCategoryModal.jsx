@@ -388,7 +388,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                   setCategory((pre) => ({ ...pre, checkingPhasePaid: !category.checkingPhasePaid }))
                 }
               >
-                Checking phase is paid
+                Payment before checking phase
               </Checkbox>
             </Flex>
             <Flex mb={3}>
@@ -399,7 +399,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                   setCategory((pre) => ({ ...pre, learningPhasePaid: !category.learningPhasePaid }))
                 }
               >
-                Learning phase is paid
+                Payment after checking phase
               </Checkbox>
             </Flex>
             <Flex p={5} rounded={5} border="1px solid" borderColor="gray.100" direction="column">
