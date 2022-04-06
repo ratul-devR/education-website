@@ -276,7 +276,9 @@ const Quiz = ({ path }) => {
       path === "getUserQuestionsOfCourse" &&
       // !body.userHasPaid &&
       // body.userHasToPay &&
+      body.course.learningPhasePaid &&
       body.courseQuestions.length &&
+      body.course.unknownQuestionLimitForPurchase &&
       questionsDontKnow + questionsWrong >= (body.course.unknownQuestionLimitForPurchase || 0)
     ) {
       history.push(`/dashboard/buyPackage/${courseId}`, {
