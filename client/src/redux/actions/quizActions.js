@@ -13,6 +13,10 @@ export function NEXT_QUESTION() {
   return { type: "NEXT_QUESTION" };
 }
 
+export function END_QUIZ() {
+  return { type: "END_QUIZ" };
+}
+
 export function CHANGE_SCORE(payload) {
   return { type: "CHANGE_SCORE", payload };
 }

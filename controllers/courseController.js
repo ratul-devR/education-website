@@ -101,6 +101,10 @@ module.exports = {
                 $pull: { packUsers: user._id },
               }
             );
+
+            if (course.unknownQuestionLimitForPurchase) {
+              await Category.updateOne({ _id: course._id }, { $push: { purchasedBy: user._id } });
+            }
           }
 
           res.status(201).json({ msg: "The work has been done" });

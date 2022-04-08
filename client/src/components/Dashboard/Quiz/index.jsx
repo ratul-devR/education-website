@@ -23,6 +23,7 @@ import {
   NEXT_QUESTION,
   RESET_QUIZ,
   DONT_KNOW,
+  END_QUIZ,
 } from "../../../redux/actions/quizActions";
 import { CHANGE_SUB_TITLE } from "../../../redux/actions/settingsActions";
 
@@ -52,6 +53,7 @@ const Quiz = ({ path }) => {
   const [timer, setTimer] = useState(0);
   const [negativeAudio, setNegativeAudio] = useState();
   const [userCommitted, setUserCommitted] = useState(false);
+  const [quizStarted, setQuizStarted] = useState(false);
   const [timerInterval, setTimerInterval] = useState();
 
   // for fetching all the Quiz details
@@ -201,7 +203,7 @@ const Quiz = ({ path }) => {
         questions.length > 0
       ) {
         setTimer((pre) => pre + 1);
-      } else if (questions.length > 0 && questions[currentIndex].type === "text") {
+      } else if (questions.length > 0 && questions[currentIndex].type === "text" && quizStarted) {
         setTimer((pre) => pre + 1);
       }
     }, 1000);
@@ -212,7 +214,7 @@ const Quiz = ({ path }) => {
       setTimer(0);
       setTimerInterval(null);
     };
-  }, [currentIndex, path, loading, userCommitted]);
+  }, [currentIndex, path, loading, userCommitted, quizStarted]);
 
   useEffect(() => {
     if (
@@ -252,7 +254,9 @@ const Quiz = ({ path }) => {
         body.unknownQuestionsPack.length >= (body.course.unknownQuestionLimitForPurchase || 0)
       ) {
         setTimeout(() => {
-          history.push(`/dashboard/buyPackage/${courseId}`);
+          history.push(`/dashboard/buyPackage/${courseId}`, {
+            showOptions: !!body.course.unknownQuestionLimitForPurchase,
+          });
         }, 10000);
       } else if (path === "getUserUnknownQuestions") {
         endQuizAction();
@@ -274,18 +278,29 @@ const Quiz = ({ path }) => {
     // check if the user has reached that amount of questions in his unknown words database
     if (
       path === "getUserQuestionsOfCourse" &&
-      // !body.userHasPaid &&
-      // body.userHasToPay &&
-      body.course.learningPhasePaid &&
       body.courseQuestions.length &&
       body.course.unknownQuestionLimitForPurchase &&
       questionsDontKnow + questionsWrong >= (body.course.unknownQuestionLimitForPurchase || 0)
     ) {
-      history.push(`/dashboard/buyPackage/${courseId}`, {
-        fromCheckingPhase: true,
-        showOptions: true,
-      });
-      window.location.reload();
+      if (questions[currentIndex].type === "text") {
+        setTimeout(() => {
+          dispatch(END_QUIZ());
+        }, 2000);
+      } else {
+        dispatch(END_QUIZ());
+      }
+      setTimeout(() => {
+        if (!body.userHasPaid && body.userHasToPay) {
+          history.push(`/dashboard/buyPackage/${courseId}`, {
+            fromCheckingPhase: true,
+            showOptions: true,
+          });
+          window.location.reload();
+        } else {
+          history.push("/dashboard/paymentSuccess", { showOptions: true, course });
+          window.location.reload();
+        }
+      }, 10000);
     }
   }, [questionsDontKnow, questionsWrong]);
 
@@ -396,7 +411,28 @@ const Quiz = ({ path }) => {
   }
 
   return (
-    <Flex direction="column" align="center" gridRowGap={5} py={10}>
+    <Flex direction="column" position={"relative"} align="center" gridRowGap={5} py={10}>
+      {questions[currentIndex].type === "text" && !quizStarted && (
+        <Flex
+          justify={"center"}
+          align="center"
+          w="full"
+          zIndex={5}
+          backdropFilter="blur(2px)"
+          h="full"
+          position={"absolute"}
+        >
+          <Button
+            p={10}
+            onClick={() => setQuizStarted(true)}
+            fontSize={50}
+            colorScheme={"secondary"}
+            color="black"
+          >
+            {t("start")}
+          </Button>
+        </Flex>
+      )}
       {/* quiz header */}
       <Flex direction="column" maxW="800px" justify="center" w="full" align="center">
         <Heading

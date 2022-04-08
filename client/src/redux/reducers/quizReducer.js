@@ -44,6 +44,10 @@ const quizReducer = (state = initialState, action) => {
       }
     }
 
+    case "END_QUIZ": {
+      return { ...state, done: true };
+    }
+
     // for updating the timeLimit of the quiz
     case "UPDATE_TIME": {
       return { ...state, timeLimit: state.timeLimit + 1 };

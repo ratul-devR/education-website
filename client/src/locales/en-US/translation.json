@@ -89,8 +89,9 @@
   "your_name": "Your name",
   "your_position": "Your position",
   "your_purchase_for": "Your purchase for",
-  "options_header": "Thanks for purchasing",
+  "options_header": "Thanks for learning",
   "options_text": "Now you have two options to choose between",
   "options_btn1_text": "Continue with Checking phase",
-  "options_btn2_text": "Continue with Learning phase"
+  "options_btn2_text": "Continue with Learning phase",
+  "start": "Start"
 }

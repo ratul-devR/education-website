@@ -155,7 +155,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
   }, []);
 
   useEffect(() => {
-    if (inputRef.current) {
+    if (inputRef.current && currentIndex !== 0) {
       inputRef.current.focus();
     }
     return () => {

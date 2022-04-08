@@ -35,7 +35,7 @@ export default function PaymentSuccess({ location }) {
     }
   }
 
-  if (location.state.showOptions) {
+  if (location?.state?.showOptions) {
     return (
       <Flex direction={"column"} w={"full"} h="full" justify={"center"} align="center">
         <Heading mb={3} color="primary">
@@ -64,17 +64,17 @@ export default function PaymentSuccess({ location }) {
         </SimpleGrid>
       </Flex>
     );
+  } else {
+    return (
+      <Flex w="full" h="full" justify="center" align="center" direction="column">
+        <Heading mb={3} fontSize="2xl" fontWeight="normal" textAlign="center">
+          {t("payment_success_message")} "{course.name}"{" "}
+        </Heading>
+        <Text mb={5}>{t(subMessage)}</Text>
+        <Button onClick={startLearning} colorScheme="secondary" color="black">
+          {t(button.text)}
+        </Button>
+      </Flex>
+    );
   }
-
-  return (
-    <Flex w="full" h="full" justify="center" align="center" direction="column">
-      <Heading mb={3} fontSize="2xl" fontWeight="normal" textAlign="center">
-        {t("payment_success_message")} "{course.name}"{" "}
-      </Heading>
-      <Text mb={5}>{t(subMessage)}</Text>
-      <Button onClick={startLearning} colorScheme="secondary" color="black">
-        {t(button.text)}
-      </Button>
-    </Flex>
-  );
 }

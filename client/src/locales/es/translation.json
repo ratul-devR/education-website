@@ -89,8 +89,9 @@
   "your_name": "Tu nombre",
   "your_position": "Tu posición",
   "your_purchase_for": "tu compra por",
-  "options_header": "gracias por comprar",
+  "options_header": "gracias por aprender",
   "options_text": "Ahora tienes dos opciones para elegir entre",
   "options_btn1_text": "Continuar con la fase de Comprobación",
-  "options_btn2_text": "Continuar con la fase de aprendizaje"
+  "options_btn2_text": "Continuar con la fase de aprendizaje",
+  "start": "Empezar"
 }

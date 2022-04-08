@@ -94,7 +94,7 @@ export default function BuyPackage({ location }) {
           history.push("/dashboard/paymentSuccess", {
             course,
             phase: "learning",
-            showOptions: location.state.showOptions,
+            showOptions: location?.state?.showOptions || null,
             subMessage: "payment_success_sub_message_learning",
             button: {
               text: "payment_success_button_learning",

@@ -311,7 +311,7 @@ module.exports = {
         });
       }*/
 
-      if (category.learningPhasePaid) {
+      async function packUser() {
         question.packUsers = question.packUsers.map((user) => user.toString());
         const alreadyUnknown = question.packUsers.includes(user._id.toString());
         if (!alreadyUnknown) {
@@ -324,12 +324,31 @@ module.exports = {
             }
           );
         }
-      } else {
+      }
+
+      async function unknownUser() {
         question.unknownUsers = question.unknownUsers.map((user) => user.toString());
         const alreadyUnknown = question.unknownUsers.includes(user._id.toString());
         if (!alreadyUnknown) {
           await Question.updateOne({ _id: question._id }, { $push: { unknownUsers: user._id } });
         }
+      }
+
+      if (category.learningPhasePaid) {
+        if (category.unknownQuestionLimitForPurchase) {
+          category.purchasedBy = category.purchasedBy.map((user) => user._id.toString());
+          const userHasPaid = category.purchasedBy.includes(user._id.toString());
+
+          if (userHasPaid) {
+            unknownUser();
+          } else {
+            packUser();
+          }
+        } else {
+          packUser();
+        }
+      } else {
+        unknownUser();
       }
 
       // now mark as the user that he has already checked that course
