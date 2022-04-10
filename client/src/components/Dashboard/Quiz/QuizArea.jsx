@@ -11,7 +11,13 @@ import { useTranslation } from "react-i18next";
 
 import { CHANGE_SCORE, NEXT_QUESTION, WRONG_ANSWER } from "../../../redux/actions/quizActions";
 
-const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommitted }) => {
+const QuizArea = ({
+  path,
+  timerInterval,
+  userDoesNotKnowTheAnswer,
+  setUserCommitted,
+  quizStarted,
+}) => {
   const [userKnowsAnswer, setUserKnowsAnswer] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [className, setClassName] = useState("option");
@@ -217,7 +223,7 @@ const QuizArea = ({ path, timerInterval, userDoesNotKnowTheAnswer, setUserCommit
                   variant="flushed"
                   value={input}
                   ref={inputRef}
-                  disabled={selectedAnswer !== undefined}
+                  disabled={selectedAnswer !== undefined || !quizStarted}
                   onChange={(e) => setInput(e.target.value)}
                 />
               );

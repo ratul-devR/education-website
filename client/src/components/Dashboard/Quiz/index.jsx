@@ -467,6 +467,7 @@ const Quiz = ({ path }) => {
           timerInterval={timerInterval}
           path={path}
           setUserCommitted={setUserCommitted}
+          quizStarted={quizStarted}
         />
       </Flex>
 
