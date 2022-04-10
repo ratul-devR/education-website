@@ -411,28 +411,7 @@ const Quiz = ({ path }) => {
   }
 
   return (
-    <Flex direction="column" position={"relative"} align="center" gridRowGap={5} py={10}>
-      {questions[currentIndex].type === "text" && !quizStarted && (
-        <Flex
-          justify={"center"}
-          align="center"
-          w="full"
-          zIndex={5}
-          backdropFilter="blur(2px)"
-          h="full"
-          position={"absolute"}
-        >
-          <Button
-            p={10}
-            onClick={() => setQuizStarted(true)}
-            fontSize={50}
-            colorScheme={"secondary"}
-            color="black"
-          >
-            {t("start")}
-          </Button>
-        </Flex>
-      )}
+    <Flex direction="column" align="center" gridRowGap={5} py={10}>
       {/* quiz header */}
       <Flex direction="column" maxW="800px" justify="center" w="full" align="center">
         <Heading
@@ -492,10 +471,20 @@ const Quiz = ({ path }) => {
       </Flex>
 
       {/* the footer containing the buttons and question count */}
-      <Flex wrap="wrap" w="full" justify="center" mt={5}>
-        <Heading fontSize="2xl" color="blue.500" fontWeight="normal">
+      <Flex wrap="wrap" direction={"column"} w="full" align={"center"} justify="center" mt={5}>
+        <Heading fontSize="2xl" mb={5} color="blue.500" fontWeight="normal">
           {currentIndex + 1} of {questions.length} {t("questions")}
         </Heading>
+        {questions[currentIndex].type === "text" && !quizStarted && (
+          <Button
+            minW={200}
+            onClick={() => setQuizStarted(true)}
+            colorScheme={"secondary"}
+            color="black"
+          >
+            {t("start")}
+          </Button>
+        )}
       </Flex>
     </Flex>
   );
