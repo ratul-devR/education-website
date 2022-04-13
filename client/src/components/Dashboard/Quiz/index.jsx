@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { Flex, Heading } from "@chakra-ui/layout";
+import { Flex, Heading, HStack } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 import { Button } from "@chakra-ui/button";
 import { Progress } from "@chakra-ui/progress";
@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 
 import useToast from "../../../hooks/useToast";
 import useSettings from "../../../hooks/useSettings";
+import useLogout from "../../../hooks/useLogout";
 
 import config from "../../../config";
 
@@ -35,6 +36,7 @@ const Quiz = ({ path }) => {
   const { courseId } = useParams();
   const { t } = useTranslation();
   const history = useHistory();
+  const logout = useLogout();
 
   const {
     loading,
@@ -394,18 +396,25 @@ const Quiz = ({ path }) => {
             </Text>
           </Text>
         </Flex>
-        <Button
-          as={Link}
-          to={
-            path === "getUserUnknownQuestions"
-              ? `/dashboard/quiz/${course._id}`
-              : `/dashboard/alcs/${course._id}`
-          }
-          colorScheme="secondary"
-          color="black"
-        >
-          {path === "getUserUnknownQuestions" ? t("back_to_checking") : t("watch_concert")}
-        </Button>
+        <HStack spacing={5}>
+          <Button
+            as={Link}
+            to={
+              path === "getUserUnknownQuestions"
+                ? `/dashboard/quiz/${course._id}`
+                : `/dashboard/alcs/${course._id}`
+            }
+            colorScheme="secondary"
+            color="black"
+          >
+            {path === "getUserUnknownQuestions" ? t("back_to_checking") : t("watch_concert")}
+          </Button>
+          {path === "getUserUnknownQuestions" && (
+            <Button onClick={logout} colorScheme={"blue"}>
+              Logout
+            </Button>
+          )}
+        </HStack>
       </Flex>
     );
   }
@@ -479,7 +488,9 @@ const Quiz = ({ path }) => {
         {questions[currentIndex].type === "text" && !quizStarted && (
           <Button
             minW={200}
-            onClick={() => setQuizStarted(true)}
+            onClick={() => {
+              setQuizStarted(true);
+            }}
             colorScheme={"secondary"}
             color="black"
           >

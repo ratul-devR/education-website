@@ -169,7 +169,7 @@ const QuizArea = ({
         inputRef.current.focus();
       }
     };
-  }, [selectedAnswer]);
+  }, [selectedAnswer, quizStarted]);
 
   useEffect(() => {
     if (repeatedUser && path !== "getUserUnknownQuestions") {

@@ -7,7 +7,7 @@ module.exports = async function (_, res, next) {
         res.status(400).json({ msg: error.message || error });
         return;
       }
-      const { project, hasPaid } = JSON.parse(body);
+      const { project, hasPaid } = body && JSON.parse(body);
 
       if (project && hasPaid) {
         next();
