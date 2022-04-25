@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import config from "../config";
 import useToast from "./useToast";
@@ -9,6 +10,7 @@ const useLogout = () => {
   const toast = useToast();
   const dispatch = useDispatch();
   const history = useHistory();
+  const { t } = useTranslation();
 
   async function logout() {
     try {
@@ -20,7 +22,7 @@ const useLogout = () => {
 
       if (res.ok) {
         dispatch(LOGOUT());
-        toast({ status: "success", description: body.msg });
+        toast({ status: "success", description: t("logout_snackbar_message") });
         history.push("/auth");
       } else {
         toast({

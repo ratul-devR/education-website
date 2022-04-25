@@ -72,7 +72,9 @@ const Login = () => {
         history.push(body.user.role === "admin" ? "/admin" : "dashboard");
         toast({ status: "success", description: t("welcome_back") });
       } else if (res.status === 400) {
-        toast({ status: "error", description: body.msg || "We have an error" });
+        toast({ status: "error", description: t("invalid_credentials") });
+      } else if (res.status === 404) {
+        toast({ status: "error", description: t("email_not_found") });
       }
     } catch (err) {
       toast({ status: "error", description: err.message || "We are having unexpected errors" });
@@ -107,12 +109,12 @@ const Login = () => {
           />
           <InputRightElement w="4rem">
             <Button colorScheme="blue" onClick={() => setShowPass((pre) => !pre)} size="xs">
-              {showPass ? "hide" : "show"}
+              {showPass ? t("passwordButtonHide") : t("passwordButtonShow")}
             </Button>
           </InputRightElement>
         </InputGroup>
         <Button onClick={ValidateInputInfo} colorScheme="secondary" color="black" mb={3}>
-          {t("sign_in")}
+          {t("sign_in_button")}
         </Button>
         <Text mb={2} fontSize="md" textAlign="center">
           {t("dont_have_an_account")}{" "}

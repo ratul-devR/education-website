@@ -108,7 +108,7 @@ const CreateOrg = () => {
         if (res.ok) {
           toast({
             status: "info",
-            description: body.msg,
+            description: t("register_org_success_snackbar"),
           });
           setRegistered(body.org);
           setProcessing(false);
@@ -174,10 +174,10 @@ const CreateOrg = () => {
         >
           <option value="Escuela privada">Escuela privada</option>
           <option value="escuela concertada">escuela concertada</option>
-          <option value="State school">State school</option>
+          <option value="State school">{t("state_school")}</option>
           <option value="Academia">Academia</option>
           <option value="Centro de formación profesional">Centro de formación profesional</option>
-          <option value="Other">Other</option>
+          <option value="Other">{t("other")}</option>
         </Select>
         <InputField placeholder={t("your_name")} name="yourName" onChange={handleInputChange} />
         <InputField
@@ -230,7 +230,7 @@ const CreateOrg = () => {
       <Flex>
         {t("already_have_an_account")}{" "}
         <ChakraLink ml={2} color="primary" as={Link} textAlign="center" to="/auth/loginOrg">
-          {t("sign_in")}
+          {t("sign_in_button")}
         </ChakraLink>
       </Flex>
     </Flex>

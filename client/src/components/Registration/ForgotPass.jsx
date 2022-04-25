@@ -5,11 +5,15 @@ import { Button } from "@chakra-ui/button";
 import config from "../../config";
 import useToast from "../../hooks/useToast";
 import validator from "validator";
+import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
 
 export default function ForgotPass() {
   const [email, setEmail] = useState("");
   const [processing, setProcessing] = useState(false);
   const toast = useToast();
+  const { t } = useTranslation();
+  const history = useHistory();
 
   async function getEmailForReset() {
     setProcessing(true);
@@ -21,7 +25,8 @@ export default function ForgotPass() {
     });
     const body = await res.json();
     if (res.ok) {
-      toast({ status: "success", description: body.msg });
+      history.push("/auth");
+      toast({ status: "success", description: t("forgot_password_success_snackbar") });
       setProcessing(false);
       setEmail("");
     } else {
@@ -33,13 +38,13 @@ export default function ForgotPass() {
   return (
     <Flex w="full" h="full" justify="center" direction="column" align="center">
       <Heading fontSize="2xl" fontWeight="normal" color="primary" mb={5}>
-        Forgot Password
+        {t("forgot_password_page_heading")}
       </Heading>
       <Input
         onChange={(e) => setEmail(e.target.value)}
         value={email}
         mb={3}
-        placeholder="Enter your email"
+        placeholder={t("forgot_password_email_placeholder")}
         maxW="400px"
         type="email"
       />
@@ -50,7 +55,7 @@ export default function ForgotPass() {
         colorScheme="secondary"
         onClick={getEmailForReset}
       >
-        {processing ? "Processing..." : "Get email"}
+        {processing ? t("processing") : t("forgot_password_page_button")}
       </Button>
     </Flex>
   );

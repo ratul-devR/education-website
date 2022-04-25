@@ -97,7 +97,7 @@ export default function BuyPackage({ location }) {
             showOptions: location?.state?.showOptions || null,
             subMessage: "payment_success_sub_message_learning",
             button: {
-              text: "payment_success_button_learning",
+              text: "start",
               url: `/dashboard/alcs/${course._id}`,
             },
           });

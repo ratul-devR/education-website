@@ -34,14 +34,13 @@ const Registration = () => {
           <ListItem listStyleType="none">
             {t("new_org")}{" "}
             <Link as={NavLink} color="primary" exact to={`${path}/createOrg`}>
-              {t("register")}
+              {t("to_get_started")}
             </Link>{" "}
-            {t("to_get_started")}
           </ListItem>
         </UnorderedList>
       </Flex>
 
-      <Flex direction="column" overflowX="hidden" h="full" w="full">
+      <Flex direction="column" py={10} overflowX="hidden" h="full" w="full">
         <Switch>
           <Route path={path} exact component={Login} />
           <Route path={`${path}/register`} component={Register} />

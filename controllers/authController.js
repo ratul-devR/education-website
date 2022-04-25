@@ -32,7 +32,7 @@ module.exports = {
           res.status(400).json({ msg: "Invalid credentials" });
         }
       } else {
-        res.status(400).json({ msg: "Your email doesn't exists" });
+        res.status(404).json({ msg: "Your email doesn't exists" });
       }
     } catch (err) {
       next(err);
