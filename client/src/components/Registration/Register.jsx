@@ -53,21 +53,21 @@ const Register = () => {
   const { t } = useTranslation();
 
   const ages = [
-    "10 - 15 years",
-    "16 - 20 years",
-    "21 - 25 years",
-    "26 - 30 years",
-    "31 - 35 years",
-    "36 - 40 years",
-    "41 - 45 years",
-    "46 - 50 years",
-    "51 - 55 years",
-    "56 - 60 years",
-    "61 - 65 years",
-    "66 - 70 years",
-    "71 - 75 years ",
-    "76 - 80 years",
-    "> 81 years",
+    "10 - 15",
+    "16 - 20",
+    "21 - 25",
+    "26 - 30",
+    "31 - 35",
+    "36 - 40",
+    "41 - 45",
+    "46 - 50",
+    "51 - 55",
+    "56 - 60",
+    "61 - 65",
+    "66 - 70",
+    "71 - 75",
+    "76 - 80",
+    "> 81",
   ];
 
   const query = useQuery();
@@ -205,7 +205,7 @@ const Register = () => {
           {ages.map((age, index) => {
             return (
               <option value={age} key={index}>
-                {age}
+                {age} {t("years")}
               </option>
             );
           })}
@@ -233,7 +233,7 @@ const Register = () => {
           />
           <InputRightElement w="4rem">
             <Button onClick={() => setShowPass((pre) => !pre)} colorScheme="blue" size="xs">
-              {showPass ? "hide" : "show"}
+              {showPass ? t("passwordButtonHide") : t("passwordButtonShow")}
             </Button>
           </InputRightElement>
         </InputGroup>
@@ -247,7 +247,7 @@ const Register = () => {
           />
           <InputRightElement w="4rem">
             <Button onClick={() => setShowConPass((pre) => !pre)} colorScheme="blue" size="xs">
-              {showConPass ? "hide" : "show"}
+              {showConPass ? t("passwordButtonHide") : t("passwordButtonShow")}
             </Button>
           </InputRightElement>
         </InputGroup>
@@ -262,7 +262,7 @@ const Register = () => {
         {org && refererId && (
           <Alert mt={3} rounded={5} status="info">
             <AlertIcon />
-            {t("you_are_being_referred_by")} {org.name}
+            {org.name} {t("you_are_being_referred_by")}
           </Alert>
         )}
         <Text fontSize="md" mt={3} textAlign="center">

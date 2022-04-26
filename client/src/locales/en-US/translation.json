@@ -57,11 +57,11 @@
   "province": "Province",
   "purchase_button": "Purchase by paying",
   "questions": "Questions",
-  "questions_known": "Questions known",
-  "questions_not_known": "Questions not known",
+  "questions_known": "Words/expressions you knew",
+  "questions_not_known": "Words/expressions you did not know",
   "quiz_dont_know": "You don't know the answer",
   "quiz_fib_placeholder": "Enter answer > press ↵",
-  "quiz_results": "Quiz Results",
+  "quiz_results": "Results",
   "quiz_time_up": "Time up!",
   "register": "Register",
   "score": "Score",
@@ -111,5 +111,6 @@
   "state_school": "State School",
   "register_org_success_snackbar": "We just emailed you the affiliate link",
   "invalid_credentials": "Invalid Credentials",
-  "email_not_found": "Your email doesn't exists"
+  "email_not_found": "Your email doesn't exists",
+  "years": "years"
 }
