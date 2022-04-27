@@ -38,8 +38,8 @@ export default function PaymentSuccess({ location }) {
   if (location?.state?.showOptions) {
     return (
       <Flex direction={"column"} w={"full"} h="full" justify={"center"} align="center">
-        <Heading mb={3} color="primary">
-          {t("options_header")} "{course.name}"
+        <Heading textAlign={"center"} mb={3} color="primary">
+          {t("options_header")} "{course.name}".
         </Heading>
         <Text mb={5} color="GrayText">
           {t("options_text")}
