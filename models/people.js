@@ -12,27 +12,7 @@ const dataSchema = new mongoose.Schema(
     role: { type: String, enum: ["user", "admin"], default: "user" },
     verified: { type: Boolean, default: false },
     phone: String,
-    age: {
-      type: String,
-      required: true,
-      enum: [
-        "10 - 15 years",
-        "16 - 20 years",
-        "21 - 25 years",
-        "26 - 30 years",
-        "31 - 35 years",
-        "36 - 40 years",
-        "41 - 45 years",
-        "46 - 50 years",
-        "51 - 55 years",
-        "56 - 60 years",
-        "61 - 65 years",
-        "66 - 70 years",
-        "71 - 75 years ",
-        "76 - 80 years",
-        "> 81 years",
-      ],
-    },
+    age: { type: String, required: true },
     loginRequired: Boolean,
 
     // if any org has referred him
