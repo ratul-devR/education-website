@@ -83,7 +83,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               categoryOF.name = body.category.name;
               categoryOF.description = body.category.description;
               categoryOF.price = body.category.price;
-              categoryOF.prerequisites = body.category.prerequisites;
+              categoryOF.prerequisites = body.category.prerequisites.map((i) => i._id);
               categoryOF.passPercentage = body.category.passPercentage;
               categoryOF.learningPhasePaid = body.category.learningPhasePaid;
               categoryOF.checkingPhasePaid = body.category.checkingPhasePaid;
@@ -371,13 +371,15 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 name="prerequisites"
               >
                 {categories &&
-                  categories.map((category) => {
-                    return (
-                      <option key={category._id} style={{ padding: 5 }} value={category._id}>
-                        {category.name}
-                      </option>
-                    );
-                  })}
+                  categories
+                    .filter((i) => i._id !== category._id)
+                    .map((category) => {
+                      return (
+                        <option key={category._id} style={{ padding: 5 }} value={category._id}>
+                          {category.name}
+                        </option>
+                      );
+                    })}
               </select>
             </Flex>
             <Flex mb={3}>
