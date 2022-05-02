@@ -387,7 +387,6 @@ const Categories = () => {
               <Th>Product name</Th>
               <Th>Price</Th>
               <Th>Total Questions</Th>
-              <Th>Prerequisites</Th>
               <Th>Actions</Th>
             </Thead>
             <Tbody>
@@ -402,21 +401,6 @@ const Categories = () => {
                     </Td>
                     <Td>{category.displayPrice}</Td>
                     <Td>{category.questions.length}</Td>
-                    <Td>
-                      {category.prerequisites.length > 0 ? (
-                        <Flex gridGap={3} wrap="wrap">
-                          {category.prerequisites.map((prerequisite, index) => {
-                            return (
-                              <Badge textTransform="none" colorScheme="purple" key={index}>
-                                {prerequisite.name}
-                              </Badge>
-                            );
-                          })}
-                        </Flex>
-                      ) : (
-                        <span>No Prerequisites</span>
-                      )}
-                    </Td>
                     <Td w={250}>
                       <IconButton
                         color="#fff"
