@@ -161,7 +161,7 @@ export default function Alc() {
   } else if (activeLearningEnded) {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
-        <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
+        <Heading fontSize="2xl" color="GrayText" fontWeight="normal" whiteSpace={"normal"} mb={5}>
           {t("active_learning_concert_has_been_ended")}
         </Heading>
         <Button
@@ -191,7 +191,7 @@ export default function Alc() {
   } else if (ended) {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
-        <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
+        <Heading whiteSpace={"nowrap"} fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
           {t("concert_has_been_ended")}
         </Heading>
         <Button
