@@ -39,7 +39,8 @@ export default function PaymentSuccess({ location }) {
     return (
       <Flex direction={"column"} w={"full"} h="full" justify={"center"} align="center">
         <Heading textAlign={"center"} mb={3} color="primary">
-          {t("options_header")} "{course.name}".
+          {t("options_header")}
+          <br />"{course.name}".
         </Heading>
         <Text mb={5} color="GrayText">
           {t("options_text")}

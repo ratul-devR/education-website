@@ -176,7 +176,7 @@ export default function Alc() {
   } else if (passiveLearningEnded) {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
-        <Heading fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
+        <Heading whiteSpace={"pre-wrap"} fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
           {t("passive_learning_concert_has_been_ended")}
         </Heading>
         <Button
