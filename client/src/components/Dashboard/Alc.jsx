@@ -150,7 +150,7 @@ export default function Alc() {
         <Heading mb={5} color="primary" fontWeight="normal">
           {t("instruction")}
         </Heading>
-        <Text color="GrayText" mb={5} fontSize={25} whiteSpace="pre-wrap">
+        <Text color="GrayText" mb={5} fontSize={25} textAlign="center" whiteSpace="pre-wrap">
           {course.concertIns}
         </Text>
         <Button onClick={() => dispatch(START_CONCERT())} colorScheme="secondary" color="black">
@@ -161,7 +161,14 @@ export default function Alc() {
   } else if (activeLearningEnded) {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
-        <Heading fontSize="2xl" color="GrayText" fontWeight="normal" whiteSpace={"normal"} mb={5}>
+        <Heading
+          fontSize="2xl"
+          color="GrayText"
+          fontWeight="normal"
+          textAlign="center"
+          whiteSpace={"normal"}
+          mb={5}
+        >
           {t("active_learning_concert_has_been_ended")}
         </Heading>
         <Button
@@ -176,7 +183,14 @@ export default function Alc() {
   } else if (passiveLearningEnded) {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
-        <Heading whiteSpace={"pre-wrap"} fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
+        <Heading
+          textAlign="center"
+          whiteSpace={"pre-wrap"}
+          fontSize="2xl"
+          color="GrayText"
+          fontWeight="normal"
+          mb={5}
+        >
           {t("passive_learning_concert_has_been_ended")}
         </Heading>
         <Button
@@ -191,7 +205,14 @@ export default function Alc() {
   } else if (ended) {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
-        <Heading whiteSpace={"nowrap"} fontSize="2xl" color="GrayText" fontWeight="normal" mb={5}>
+        <Heading
+          textAlign="center"
+          whiteSpace={"nowrap"}
+          fontSize="2xl"
+          color="GrayText"
+          fontWeight="normal"
+          mb={5}
+        >
           {t("concert_has_been_ended")}
         </Heading>
         <Button
