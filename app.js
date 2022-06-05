@@ -27,12 +27,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "http://adorable-heliotrope-1e39fe.netlify.app",
-      "http://js-3xalan.stackblitz.io",
-      "http://localhost:5000",
-    ],
+    origin: "*",
     credentials: true,
   })
 );
