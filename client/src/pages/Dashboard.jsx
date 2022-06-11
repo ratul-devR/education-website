@@ -18,6 +18,7 @@ import Alc from "../components/Dashboard/Alc";
 import PaymentSuccess from "../components/Dashboard/PaymentSuccess";
 import BuyPackage from "../components/Dashboard/BuyPackage";
 import AllAlcItems from "../components/Dashboard/AllAlcItems";
+import Package from "../components/Dashboard/Package";
 
 import useLogout from "../hooks/useLogout";
 
@@ -88,6 +89,7 @@ const Dashboard = () => {
             <Route path={`${path}/activation_phase/:courseId`}>
               <Quiz path={"getUserUnknownQuestions"} />
             </Route>
+            <Route path={`${path}/package/:packageId`} component={Package} />
             <Route path={`${path}/pay/:courseId/`} component={Pay} />
             <Route path={`${path}/buyPackage/:courseId`} component={BuyPackage} />
             <Route path={`${path}/paymentSuccess`} component={PaymentSuccess} />

@@ -13,6 +13,28 @@ module.exports = {
     }
   },
 
+  getPackageById: async function (req, res, next) {
+    try {
+      const { packageId } = req.params;
+
+      if (!mongoose.isValidObjectId(packageId)) {
+        res.status(403).json({ msg: "Invalid ID" });
+        return;
+      }
+
+      const package = await Package.findOne({ _id: packageId }).populate("products");
+
+      if (!package) {
+        res.status(404).json({ msg: "This package with the id " + packageId + " was not found" });
+        return;
+      }
+
+      res.status(200).json({ package });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   createPackage: async function (req, res, next) {
     try {
       const { name, description, price, products } = req.body;

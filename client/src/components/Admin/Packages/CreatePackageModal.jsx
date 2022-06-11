@@ -52,6 +52,7 @@ export default function CreatePackageModal({ setPackages }) {
   }
 
   async function createPackage() {
+    setProcessing(true);
     try {
       const res = await fetch(`${config.serverURL}/package_api/create_package`, {
         method: "POST",
@@ -71,6 +72,7 @@ export default function CreatePackageModal({ setPackages }) {
     } catch (err) {
       toast({ status: "error", description: err.message });
     }
+    setProcessing(false);
   }
 
   function handleInputChange(e) {
@@ -170,7 +172,7 @@ export default function CreatePackageModal({ setPackages }) {
               onClick={createPackage}
               colorScheme={"blue"}
             >
-              Save
+              {processing ? "Processing..." : "Save"}
             </Button>
           </ModalFooter>
         </ModalContent>

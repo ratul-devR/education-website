@@ -1,4 +1,9 @@
-const { getPackages, createPackage, deletePackage } = require("../controllers/packageController");
+const {
+  getPackages,
+  createPackage,
+  deletePackage,
+  getPackageById,
+} = require("../controllers/packageController");
 
 const checkLogin = require("../middlewares/auth/checkLogin");
 const authorizeAdmin = require("../middlewares/auth/authorizeAdmin");
@@ -7,6 +12,12 @@ const requireFields = require("../middlewares/common/requireFields");
 const router = require("express").Router();
 
 router.get("/", checkLogin, getPackages);
+router.get(
+  "/:packageId",
+  requireFields({ fields: ["packageId"], property: "params" }),
+  checkLogin,
+  getPackageById
+);
 router.post(
   "/create_package",
   authorizeAdmin,

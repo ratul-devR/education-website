@@ -10,6 +10,9 @@ const theme = extendTheme({
   initialColorMode: "dark",
   colors: {
     primary: "#FF218D",
+    packageButton: {
+      500: "#FF218D",
+    },
     secondary: {
       500: "#FFD800",
     },

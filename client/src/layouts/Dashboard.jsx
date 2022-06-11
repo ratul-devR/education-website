@@ -1,15 +1,13 @@
 import { Button, IconButton } from "@chakra-ui/button";
-import { Flex, HStack, VStack } from "@chakra-ui/layout";
-import { Text } from "@chakra-ui/react";
+import { Flex, HStack, VStack, Heading } from "@chakra-ui/layout";
+import { Text, Link } from "@chakra-ui/react";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { MdQuiz } from "react-icons/md";
 import { NavLink, useRouteMatch } from "react-router-dom";
 import { FaAssistiveListeningSystems } from "react-icons/fa";
 import { GiBrain } from "react-icons/gi";
 import useLogout from "../hooks/useLogout";
-import { Select } from "@chakra-ui/select";
 import { useSelector } from "react-redux";
-import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 
 import Logo from "../assets/logo.png";
@@ -124,6 +122,16 @@ const Dashboard = ({ children }) => {
               rounded={5}
             >
               {children}
+            </Flex>
+
+            <Flex py={2} justify={"center"} align="center">
+              <Heading size={"sm"} fontWeight="normal" color={"GrayText"}>
+                Have any suggestions? Please{" "}
+                <Link as={"a"} href="mailto:support@check2learn.com">
+                  Mail
+                </Link>{" "}
+                us
+              </Heading>
             </Flex>
           </Flex>
         </Flex>
