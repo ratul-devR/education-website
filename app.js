@@ -14,6 +14,7 @@ const coursesRouter = require("./routes/coursesRouter");
 const quizRouter = require("./routes/quizRouter");
 const alcRouter = require("./routes/alcRouter");
 const settingsRouter = require("./routes/settingsRouter");
+const packageRouter = require("./routes/packageRouter");
 
 // middleware's
 const { notFoundHandler, errorHandler } = require("./middlewares/common/errorHandler");
@@ -27,7 +28,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "*",
+    origin: process.env.NODE_ENV === "development" ? ["http://localhost:3000"] : "*",
     credentials: true,
   })
 );
@@ -54,6 +55,8 @@ app.use("/get_quiz", checkLogin, quizRouter);
 app.use("/active_learning_concert", checkLogin, alcRouter);
 // for handling some settings related things in the admin panel
 app.use("/get_settings", settingsRouter);
+// for handling package related operations
+app.use("/package_api", packageRouter);
 
 // for production
 if (process.env.NODE_ENV === "production") {

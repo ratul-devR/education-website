@@ -3,6 +3,7 @@ import { Flex, HStack, VStack } from "@chakra-ui/layout";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { FaChartPie, FaUserFriends, FaAssistiveListeningSystems } from "react-icons/fa";
 import { AiOutlineCloudUpload } from "react-icons/ai";
+import { FiPackage } from "react-icons/fi";
 import { SiConvertio } from "react-icons/si";
 import { GrOrganization } from "react-icons/gr";
 import { FiSettings } from "react-icons/fi";
@@ -41,6 +42,17 @@ const Admin = ({ children }) => {
             to={url}
             activeStyle={{ background: "#FF218D", color: "#fff" }}
             icon={<FaChartPie />}
+          />
+        </Tooltip>
+        <Tooltip label="Packages" placement="right" hasArrow>
+          <IconButton
+            rounded={0}
+            bg="white"
+            as={NavLink}
+            exact
+            to={"/admin/packages"}
+            activeStyle={{ background: "#FF218D", color: "#fff" }}
+            icon={<FiPackage />}
           />
         </Tooltip>
         <Tooltip

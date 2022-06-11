@@ -11,6 +11,7 @@ import config from "../config";
 
 // pages
 import Categories from "../components/Admin/Categories";
+import Packages from "../components/Admin/Packages";
 import Users from "../components/Admin/Users";
 import Organizations from "../components/Admin/Organizations";
 import Questions from "../components/Admin/Questions";
@@ -53,6 +54,7 @@ const Admin = () => {
     <Layout>
       <Switch>
         <Route path={path} exact component={Categories} />
+        <Route path={`${path}/packages`} component={Packages} />
         <Route path={`${path}/users`} component={Users} />
         <Route path={`${path}/organizations`} component={Organizations} />
         <Route path={`${path}/alc`} component={Alc} />
