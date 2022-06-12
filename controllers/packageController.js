@@ -51,6 +51,33 @@ module.exports = {
     }
   },
 
+  updatePackage: async function (req, res, next) {
+    try {
+      const { packageId } = req.params;
+      const { updatedPackage } = req.body;
+
+      if (!mongoose.isValidObjectId(packageId)) {
+        res.status(403).json({ msg: "Invalid ID" });
+        return;
+      }
+
+      const package = await Package.findOneAndUpdate(
+        { _id: packageId },
+        { $set: { ...updatedPackage } },
+        { new: true }
+      ).populate("products");
+
+      if (!package) {
+        res.status(404).json({ msg: `Package with the id ${packageId} was not found` });
+        return;
+      }
+
+      res.status(200).json({ msg: "Updated Successfully", package });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   deletePackage: async function (req, res, next) {
     try {
       const { packageId } = req.params;

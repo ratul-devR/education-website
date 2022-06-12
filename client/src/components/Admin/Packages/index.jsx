@@ -8,6 +8,7 @@ import useToast from "../../../hooks/useToast";
 import config from "../../../config";
 import { useState } from "react";
 import { FiTrash as DeleteIcon } from "react-icons/fi";
+import EditPackageModal from "./EditPackageModal";
 
 export default function Packages() {
   const [allPackages, setPackages] = useState([]);
@@ -108,11 +109,15 @@ export default function Packages() {
                   })}
                 </Td>
                 <Td>{item.price}</Td>
-                <Td>
+                <Td style={{ display: "flex", gap: 5 }}>
                   <IconButton
                     onClick={() => deletePackage(item._id)}
                     colorScheme={"red"}
                     icon={<DeleteIcon />}
+                  />
+                  <EditPackageModal
+                    item={{ ...item, products: item.products.map((product) => product._id) }}
+                    setPackages={setPackages}
                   />
                 </Td>
               </Tr>

@@ -3,6 +3,7 @@ const {
   createPackage,
   deletePackage,
   getPackageById,
+  updatePackage,
 } = require("../controllers/packageController");
 
 const checkLogin = require("../middlewares/auth/checkLogin");
@@ -23,6 +24,13 @@ router.post(
   authorizeAdmin,
   requireFields({ fields: ["name", "description", "price", "products"], property: "body" }),
   createPackage
+);
+router.put(
+  "/update_package/:packageId",
+  authorizeAdmin,
+  requireFields({ fields: ["updatedPackage"], property: "body" }),
+  requireFields({ fields: ["packageId"], property: "params" }),
+  updatePackage
 );
 router.delete(
   "/delete_package/:packageId",
