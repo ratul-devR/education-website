@@ -112,5 +112,6 @@
   "register_org_success_snackbar": "Te hemos enviado un correo electronico",
   "invalid_credentials": "Credenciales no válidas",
   "email_not_found": "El correo electrónico no existe",
-  "years": "años"
+  "years": "años",
+  "package_heading": "Si quieres ahorrar dinero y conseguir un conjunto de productos, elige aquí"
 }

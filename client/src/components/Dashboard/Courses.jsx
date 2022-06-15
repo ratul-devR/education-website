@@ -115,7 +115,7 @@ const UserCourses = ({ title, path }) => {
 
       <Flex direction={"column"}>
         <Heading color="primary" fontWeight="normal" fontSize="xl" mb={5}>
-          If you like to save money and get a bunch of products choose here
+          {t("package_heading")}
         </Heading>
         {allPackages && allPackages.length ? (
           <SimpleGrid pb={5} columns={[1, 1, 2, 3]} spacing={5}>
@@ -130,6 +130,7 @@ const UserCourses = ({ title, path }) => {
                   whiteSpace="normal"
                   textAlign="center"
                   height="auto"
+                  style={{ fontSize: "0.9rem" }}
                 >
                   {item.name}
                 </Button>

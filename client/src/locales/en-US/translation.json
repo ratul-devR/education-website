@@ -112,5 +112,6 @@
   "register_org_success_snackbar": "We just emailed you the affiliate link",
   "invalid_credentials": "Invalid Credentials",
   "email_not_found": "Your email doesn't exists",
-  "years": "years"
+  "years": "years",
+  "package_heading": "If you like to save money and get a bunch of products choose here"
 }
