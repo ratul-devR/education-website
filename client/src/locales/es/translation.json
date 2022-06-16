@@ -113,5 +113,7 @@
   "invalid_credentials": "Credenciales no válidas",
   "email_not_found": "El correo electrónico no existe",
   "years": "años",
-  "package_heading": "Si quieres ahorrar dinero y conseguir un conjunto de productos, elige aquí"
+  "package_heading": "Si quieres ahorrar dinero y conseguir un conjunto de productos, elige aquí",
+  "footer_text_primary": "¿Tienes alguna sugerencia? Envíanos un",
+  "footer_text_secondary": "  correo electrónico."
 }

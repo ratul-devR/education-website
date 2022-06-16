@@ -126,11 +126,10 @@ const Dashboard = ({ children }) => {
 
             <Flex py={2} justify={"center"} align="center">
               <Heading size={"sm"} fontWeight="normal" color={"GrayText"}>
-                Have any suggestions? Please{" "}
+                {t("footer_text_primary")}{" "}
                 <Link as={"a"} href="mailto:support@check2learn.com">
-                  Mail
+                  {t("footer_text_secondary")}
                 </Link>{" "}
-                us
               </Heading>
             </Flex>
           </Flex>

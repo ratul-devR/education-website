@@ -113,5 +113,7 @@
   "invalid_credentials": "Invalid Credentials",
   "email_not_found": "Your email doesn't exists",
   "years": "years",
-  "package_heading": "If you like to save money and get a bunch of products choose here"
+  "package_heading": "If you like to save money and get a bunch of products choose here",
+  "footer_text_primary": "Have any suggestion?",
+  "footer_text_secondary": "Mail us"
 }

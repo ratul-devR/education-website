@@ -118,7 +118,7 @@ const UserCourses = ({ title, path }) => {
           {t("package_heading")}
         </Heading>
         {allPackages && allPackages.length ? (
-          <SimpleGrid pb={5} columns={[1, 1, 2, 3]} spacing={5}>
+          <SimpleGrid pb={5} columns={[1, 2, 3, 4]} spacing={5}>
             {allPackages.map((item) => {
               return (
                 <Button
@@ -126,7 +126,7 @@ const UserCourses = ({ title, path }) => {
                   key={item._id}
                   to={`/dashboard/package/${item._id}`}
                   colorScheme="packageButton"
-                  p={10}
+                  p={7}
                   whiteSpace="normal"
                   textAlign="center"
                   height="auto"

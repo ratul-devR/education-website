@@ -20,7 +20,7 @@ const packageRouter = require("./routes/packageRouter");
 const { notFoundHandler, errorHandler } = require("./middlewares/common/errorHandler");
 const authorizeAmin = require("./middlewares/auth/authorizeAdmin");
 const checkLogin = require("./middlewares/auth/checkLogin");
-const checkPaymentStatus = require("./middlewares/common/checkPaymentStatus");
+// const checkPaymentStatus = require("./middlewares/common/checkPaymentStatus");
 
 const app = express();
 
@@ -35,7 +35,7 @@ app.use(
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(checkPaymentStatus);
+// app.use(checkPaymentStatus);
 
 // database connection
 mongoose
