@@ -239,7 +239,10 @@ const QuizArea = ({
             </Button>
             <Button
               flex={1}
-              onClick={() => userDoesNotKnowTheAnswer(questions[currentIndex]._id, false)}
+              onClick={() => {
+                playFeedBackAudio(false);
+                userDoesNotKnowTheAnswer(questions[currentIndex]._id, false);
+              }}
               colorScheme="red"
             >
               {t("idk")}
