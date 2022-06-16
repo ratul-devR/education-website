@@ -14,6 +14,7 @@ import Logo from "../assets/logo.png";
 
 // this is the layout of the dashboard page
 const Dashboard = ({ children }) => {
+  const { user } = useSelector((state) => state.authReducer);
   const { appSubTitle } = useSelector((state) => state.settingsReducer);
   const { url } = useRouteMatch();
   const { t } = useTranslation();
@@ -96,9 +97,12 @@ const Dashboard = ({ children }) => {
               </Text>
             )}
           </Flex>
-          <Button onClick={logout} minW="150px" colorScheme="blue">
-            {t("logout")}
-          </Button>
+          <Flex justify="center" align={"center"} gridGap={3}>
+            <Text>{user && user?.firstName + " " + user?.lastName}</Text>
+            <Button onClick={logout} minW="150px" colorScheme="blue">
+              {t("logout")}
+            </Button>
+          </Flex>
         </Flex>
         {/* all the contents */}
         <Flex bg="gray.100" direction="column" flex={1} w="full" overflowX="hidden">
