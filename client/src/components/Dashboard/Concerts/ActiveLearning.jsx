@@ -189,10 +189,16 @@ export default function ActiveLearning() {
 
       {/* the audio which plays the question sound */}
       <audio
-        autoPlay
         onEnded={handleAudioEnd}
         src={questions[currentIndex].activeLearningVoice}
         ref={learningAudioRef}
+        onCanPlay={(e) => {
+          // play the audio after 2 second so the user can enjoy the bg audio a bit
+          e.target.pause();
+          setTimeout(() => {
+            e.target.play();
+          }, 3000);
+        }}
       />
 
       {/* the background music */}

@@ -119,8 +119,14 @@ export default function PassiveLearning() {
         onPlay={(e) => {
           setWasPlaying(e.target);
         }}
+        onCanPlay={(e) => {
+          // play the 1st audio after 2 seconds so the user can enjoy bg sound
+          e.target.pause();
+          setTimeout(() => {
+            e.target.play();
+          }, 2000);
+        }}
         onEnded={handleMaleAudioEnd}
-        autoPlay
         ref={learningMaleAudioRef}
       />
       <audio
