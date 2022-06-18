@@ -150,7 +150,14 @@ const Admin = ({ children }) => {
           </Button>
         </Flex>
         {/* all the contents */}
-        <Flex bg="gray.100" direction="column" flex={1} w="full" overflowX="hidden">
+        <Flex
+          bg="gray.100"
+          direction="column"
+          flex={1}
+          w="full"
+          overflowX="hidden"
+          overflowY={"auto"}
+        >
           <Flex
             w="full"
             h="full"

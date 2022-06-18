@@ -12,7 +12,9 @@ module.exports = async function (req, res, next) {
     if (cookies) {
       const token = typeof cookies === "object" ? cookies[process.env.COOKIE_NAME] : cookies;
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findOne({ _id: decoded._id }).lean({ defaults: true });
+      const user = await User.findOne({ _id: decoded._id })
+        .select("-password")
+        .lean({ defaults: true });
       const org = await Org.findOne({ _id: decoded._id })
         .lean({ defaults: true })
         .populate("refers");

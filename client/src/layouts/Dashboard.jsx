@@ -105,7 +105,14 @@ const Dashboard = ({ children }) => {
           </Flex>
         </Flex>
         {/* all the contents */}
-        <Flex bg="gray.100" direction="column" flex={1} w="full" overflowX="hidden">
+        <Flex
+          bg="gray.100"
+          direction="column"
+          flex={1}
+          w="full"
+          overflowX="hidden"
+          overflowY={"auto"}
+        >
           <Flex
             w="full"
             h="full"
@@ -119,6 +126,7 @@ const Dashboard = ({ children }) => {
               p={[5, 10, 10, 10]}
               w="full"
               overflowX="hidden"
+              overflowY={"auto"}
               flexDirection="column"
               h="full"
               bg="white"

@@ -40,7 +40,7 @@ const Registration = () => {
         </UnorderedList>
       </Flex>
 
-      <Flex direction="column" py={10} overflowX="hidden" h="full" w="full">
+      <Flex direction="column" py={10} overflowX="hidden" overflowY={"auto"} h="full" w="full">
         <Switch>
           <Route path={path} exact component={Login} />
           <Route path={`${path}/register`} component={Register} />

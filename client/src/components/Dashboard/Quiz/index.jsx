@@ -441,7 +441,7 @@ const Quiz = ({ path }) => {
         <Progress
           colorScheme="secondary"
           mt={5}
-          w="100%"
+          w="full"
           rounded={5}
           value={timer}
           max={questions[currentIndex].timeLimit}
