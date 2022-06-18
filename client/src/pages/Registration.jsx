@@ -1,4 +1,4 @@
-import { VStack, Flex } from "@chakra-ui/layout";
+import { VStack, Flex, Box } from "@chakra-ui/layout";
 import { NavLink, useRouteMatch, Switch, Route } from "react-router-dom";
 import { UnorderedList, ListItem, Link, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
@@ -40,7 +40,7 @@ const Registration = () => {
         </UnorderedList>
       </Flex>
 
-      <Flex direction="column" py={10} overflowX="hidden" overflowY={"auto"} h="full" w="full">
+      <Box py={10} overflowX="hidden" overflowY={"auto"} h="full" w="full">
         <Switch>
           <Route path={path} exact component={Login} />
           <Route path={`${path}/register`} component={Register} />
@@ -49,7 +49,7 @@ const Registration = () => {
           <Route path={`${path}/resetPass/:userId`} component={ResetPass} />
           <Route path={`${path}/forgotPass`} component={ForgotPass} />
         </Switch>
-      </Flex>
+      </Box>
     </VStack>
   );
 };

@@ -1,5 +1,5 @@
 import { Button, IconButton } from "@chakra-ui/button";
-import { Flex, HStack, VStack, Heading } from "@chakra-ui/layout";
+import { Flex, HStack, VStack, Heading, Box } from "@chakra-ui/layout";
 import { Text, Link } from "@chakra-ui/react";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { MdQuiz } from "react-icons/md";
@@ -105,14 +105,7 @@ const Dashboard = ({ children }) => {
           </Flex>
         </Flex>
         {/* all the contents */}
-        <Flex
-          bg="gray.100"
-          direction="column"
-          flex={1}
-          w="full"
-          overflowX="hidden"
-          overflowY={"auto"}
-        >
+        <Box bg="gray.100" flex={1} w="full" overflowX="hidden" overflowY={"auto"}>
           <Flex
             w="full"
             h="full"
@@ -122,19 +115,18 @@ const Dashboard = ({ children }) => {
             align="center"
             p={3}
           >
-            <Flex
+            <Box
               p={[5, 10, 10, 10]}
               w="full"
               overflowX="hidden"
               overflowY={"auto"}
-              flexDirection="column"
               h="full"
               bg="white"
               boxShadow="md"
               rounded={5}
             >
               {children}
-            </Flex>
+            </Box>
 
             <Flex py={2} justify={"center"} align="center">
               <Heading size={"sm"} fontWeight="normal" color={"GrayText"}>
@@ -145,7 +137,7 @@ const Dashboard = ({ children }) => {
               </Heading>
             </Flex>
           </Flex>
-        </Flex>
+        </Box>
       </VStack>
     </HStack>
   );

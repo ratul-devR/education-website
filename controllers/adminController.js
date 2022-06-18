@@ -147,7 +147,8 @@ module.exports = {
   uploadQuizAssets: async function (req, res, next) {
     try {
       const { positive_sound, negative_sound } = req.files;
-      const domain = req.protocol + "://" + req.get("host") + "/";
+      const domain =
+        process.env.NODE_ENV === "development" ? "http" : "https://" + req.get("host") + "/";
 
       const asset = new QuizAsset({
         positive_sound: {

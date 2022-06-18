@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Flex, Heading } from "@chakra-ui/layout";
+import { Flex, Heading, Box } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { Link } from "react-router-dom";
 import useToast from "../../hooks/useToast";
@@ -146,17 +146,31 @@ export default function Alc() {
     );
   } else if (!concertStarted && course.concertIns) {
     return (
-      <Flex w="full" justify="center" align="center" direction="column">
-        <Heading mb={5} color="primary" fontWeight="normal">
+      <Box>
+        <Heading textAlign={"center"} mb={5} color="primary" fontWeight="normal">
           {t("instruction")}
         </Heading>
-        <Text color="GrayText" mb={5} fontSize={25} textAlign="center" whiteSpace="pre-wrap">
+        <Text
+          w="full"
+          maxW={"900px"}
+          margin="auto"
+          color="GrayText"
+          mb={5}
+          fontSize={25}
+          whiteSpace="pre-wrap"
+        >
           {course.concertIns}
         </Text>
-        <Button onClick={() => dispatch(START_CONCERT())} colorScheme="secondary" color="black">
+        <Button
+          margin={"auto"}
+          display="block"
+          onClick={() => dispatch(START_CONCERT())}
+          colorScheme="secondary"
+          color="black"
+        >
           {t("get_started")}
         </Button>
-      </Flex>
+      </Box>
     );
   } else if (activeLearningEnded) {
     return (
@@ -227,9 +241,9 @@ export default function Alc() {
     );
   } else {
     return (
-      <Flex direction="column" w="full" h="full" rounded={5} overflow="hidden">
+      <Box w="full" h="full" rounded={5} overflow="hidden">
         {currentPhase === "active" ? <ActiveLearning /> : <PassiveLearning />}
-      </Flex>
+      </Box>
     );
   }
 }
