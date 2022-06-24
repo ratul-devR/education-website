@@ -1,4 +1,4 @@
-import { Flex, Heading, SimpleGrid } from "@chakra-ui/layout";
+import { Flex, Heading, SimpleGrid, Box } from "@chakra-ui/layout";
 import { Link } from "react-router-dom";
 import { Spinner } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
@@ -74,8 +74,8 @@ const UserCourses = ({ title, path }) => {
   }
 
   return (
-    <Flex direction="column" w="full" h="full">
-      <Flex direction={"column"}>
+    <Box overflowX={"hidden"} w="full" h="full">
+      <Box>
         <Heading color="primary" fontWeight="normal" fontSize="xl" mb={5}>
           {t("choose_learning_programme")}
         </Heading>
@@ -104,9 +104,9 @@ const UserCourses = ({ title, path }) => {
         ) : (
           <NoMessage message="No courses available" />
         )}
-      </Flex>
+      </Box>
 
-      <Flex direction={"column"}>
+      <Box>
         <Heading color="primary" fontWeight="normal" fontSize="xl" mb={5}>
           {t("package_heading")}
         </Heading>
@@ -133,8 +133,8 @@ const UserCourses = ({ title, path }) => {
         ) : (
           <NoMessage message={"No Packages Found"} />
         )}
-      </Flex>
-    </Flex>
+      </Box>
+    </Box>
   );
 };
 
