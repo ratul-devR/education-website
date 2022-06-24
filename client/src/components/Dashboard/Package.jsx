@@ -16,13 +16,12 @@ export default function Package() {
 
   const packageProducts = (packageInfo && packageInfo.products) || [];
 
-  async function fetchPackageInfo(abortController) {
+  async function fetchPackageInfo() {
     try {
       const res = await fetch(`${config.serverURL}/package_api/${packageId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
 
@@ -38,11 +37,7 @@ export default function Package() {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-
-    fetchPackageInfo(abortController);
-
-    return () => abortController.abort();
+    fetchPackageInfo();
   }, []);
 
   if (loading) {

@@ -15,12 +15,11 @@ export default function AllAlcItems() {
   const { t } = useTranslation();
   const toast = useToast();
 
-  async function fetchAlcItems(abortController) {
+  async function fetchAlcItems() {
     try {
       const res = await fetch(`${config.serverURL}/active_learning_concert`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
-        signal: abortController.signal,
         credentials: "include",
       });
       const body = await res.json();
@@ -36,9 +35,7 @@ export default function AllAlcItems() {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-    fetchAlcItems(abortController);
-    return () => abortController.abort();
+    fetchAlcItems();
   }, []);
 
   if (loading) {

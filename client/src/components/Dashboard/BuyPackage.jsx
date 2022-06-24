@@ -28,13 +28,12 @@ export default function BuyPackage({ location }) {
   const elements = useElements();
   const { t } = useTranslation();
   // for fetching course info
-  async function fetchCourseInfo(abortController) {
+  async function fetchCourseInfo() {
     try {
       const res = await fetch(`${config.serverURL}/get_courses/course/${courseId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
       if (res.ok) {
@@ -114,10 +113,8 @@ export default function BuyPackage({ location }) {
     }
   }
   useEffect(() => {
-    const abortController = new AbortController();
-    fetchCourseInfo(abortController);
+    fetchCourseInfo();
     return () => {
-      abortController.abort();
       dispatch(RESET_QUIZ());
     };
   }, []);

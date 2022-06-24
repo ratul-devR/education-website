@@ -83,12 +83,11 @@ const Alc = () => {
     }
   }
 
-  async function fetchItems(abortController) {
+  async function fetchItems() {
     const res = await fetch(`${config.serverURL}/active_learning_concert`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      signal: abortController.signal,
     });
     const body = await res.json();
 
@@ -128,9 +127,7 @@ const Alc = () => {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-    fetchItems(abortController);
-    return () => abortController.abort();
+    fetchItems();
   }, []);
 
   useEffect(() => {

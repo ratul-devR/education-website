@@ -37,13 +37,12 @@ export default function Converter() {
     onClose();
   }
 
-  async function fetchFiles(abortController) {
+  async function fetchFiles() {
     try {
       const res = await fetch(`${config.serverURL}/get_admin/getConvertedFiles`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
       if (res.ok) {
@@ -110,9 +109,7 @@ export default function Converter() {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-    fetchFiles(abortController);
-    return () => abortController.abort();
+    fetchFiles();
   }, []);
 
   if (loading) {

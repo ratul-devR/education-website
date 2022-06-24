@@ -38,13 +38,12 @@ const QuizArea = ({
   const repeatedUser = questions[currentIndex].repeatedUsers.includes(user._id);
 
   // fetch all the audio assets for the quiz
-  async function fetchAudioAssets(abortController) {
+  async function fetchAudioAssets() {
     try {
       const res = await fetch(`${config.serverURL}/get_quiz/get_assets`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
       if (res.ok && body.asset) {
@@ -155,9 +154,7 @@ const QuizArea = ({
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-    fetchAudioAssets(abortController);
-    return () => abortController.abort();
+    fetchAudioAssets();
   }, []);
 
   useEffect(() => {

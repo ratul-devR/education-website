@@ -24,14 +24,14 @@ const checkLogin = require("./middlewares/auth/checkLogin");
 const app = express();
 
 // default/global middleware's
-app.use(express.json());
+app.use(express.json({ limit: "500mb" }));
 app.use(
   cors({
     origin: process.env.NODE_ENV === "development" ? ["http://localhost:3000"] : "*",
     credentials: true,
   })
 );
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true, limit: "500mb" }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.static(path.join(__dirname, "public")));
 

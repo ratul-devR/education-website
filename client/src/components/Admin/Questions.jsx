@@ -33,13 +33,12 @@ const Questions = () => {
   const paginate = (number) => number >= 1 && number <= totalPages && setCurrentPage(number);
 
   // for fetching all the questions
-  async function fetchQuestions(abortController) {
+  async function fetchQuestions() {
     try {
       const res = await fetch(`${config.serverURL}/get_admin/category/${categoryId}/questions`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
 
@@ -84,11 +83,7 @@ const Questions = () => {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-
-    fetchQuestions(abortController);
-
-    return () => abortController.abort();
+    fetchQuestions();
   }, []);
 
   if (loading) {

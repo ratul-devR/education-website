@@ -15,13 +15,12 @@ export default function Packages() {
   const [loading, setLoading] = useState(true);
   const toast = useToast();
 
-  async function fetchPackages(abortController) {
+  async function fetchPackages() {
     try {
       const res = await fetch(`${config.serverURL}/package_api`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
 
@@ -60,11 +59,7 @@ export default function Packages() {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-
-    fetchPackages(abortController);
-
-    return () => abortController.abort();
+    fetchPackages();
   }, []);
 
   if (loading) {

@@ -51,13 +51,12 @@ export default function DefaultSettings() {
   const toast = useToast();
   const dispatch = useDispatch();
 
-  async function fetchSettings(abortController) {
+  async function fetchSettings() {
     try {
       const res = await fetch(`${config.serverURL}/get_settings`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
       if (res.ok) {
@@ -122,9 +121,7 @@ export default function DefaultSettings() {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-    fetchSettings(abortController);
-    return () => abortController.abort();
+    fetchSettings();
   }, []);
 
   if (loading) {

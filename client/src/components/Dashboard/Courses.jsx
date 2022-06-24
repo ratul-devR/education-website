@@ -18,13 +18,12 @@ const UserCourses = ({ title, path }) => {
   const { t } = useTranslation();
   const toast = useToast();
 
-  async function fetchCourses(abortController) {
+  async function fetchCourses() {
     try {
       const res = await fetch(`${config.serverURL}/get_courses`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
       if (res.ok) {
@@ -37,13 +36,12 @@ const UserCourses = ({ title, path }) => {
     }
   }
 
-  async function fetchPackages(abortController) {
+  async function fetchPackages() {
     try {
       const res = await fetch(`${config.serverURL}/package_api`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
 
@@ -58,16 +56,11 @@ const UserCourses = ({ title, path }) => {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-
-    fetchCourses(abortController).then(() =>
-      fetchPackages(abortController).then(() => setLoading(false))
-    );
+    fetchCourses().then(() => fetchPackages().then(() => setLoading(false)));
 
     document.title = `${config.appName} - ${t(title)}`;
 
     return () => {
-      abortController.abort();
       setLoading(true);
     };
   }, [title]);

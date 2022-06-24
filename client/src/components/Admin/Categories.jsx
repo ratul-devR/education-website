@@ -82,11 +82,10 @@ const Categories = () => {
   }
 
   // for fetching quiz assets
-  async function fetchQuizAssets(abortController) {
+  async function fetchQuizAssets() {
     const res = await fetch(`${config.serverURL}/get_admin/get_assets`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
-      signal: abortController.signal,
       credentials: "include",
     });
     const body = await res.json();
@@ -102,12 +101,11 @@ const Categories = () => {
   }
 
   // for fetching the categories
-  async function fetchCategories(abortController) {
+  async function fetchCategories() {
     const res = await fetch(`${config.serverURL}/get_admin/categories`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      signal: abortController.signal,
     });
     const body = await res.json();
 
@@ -179,12 +177,8 @@ const Categories = () => {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-
-    fetchCategories(abortController);
-    fetchQuizAssets(abortController);
-
-    return () => abortController.abort();
+    fetchCategories();
+    fetchQuizAssets();
   }, []);
 
   if (loading) {

@@ -32,13 +32,12 @@ export default function EditPackageModal({ item, setPackages }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
-  async function fetchProducts(abortController) {
+  async function fetchProducts() {
     try {
       const res = await fetch(`${config.serverURL}/get_admin/categories`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
 
@@ -111,11 +110,7 @@ export default function EditPackageModal({ item, setPackages }) {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-
-    fetchProducts(abortController);
-
-    return () => abortController.abort();
+    fetchProducts();
   }, []);
 
   return (

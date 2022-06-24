@@ -59,13 +59,12 @@ const Quiz = ({ path }) => {
   const [timerInterval, setTimerInterval] = useState();
 
   // for fetching all the Quiz details
-  async function fetchQuiz(abortController) {
+  async function fetchQuiz() {
     try {
       const res = await fetch(`${config.serverURL}/get_quiz/${path}/${courseId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
 
@@ -163,13 +162,12 @@ const Quiz = ({ path }) => {
     }
   }
 
-  async function fetchAudioAssets(abortController) {
+  async function fetchAudioAssets() {
     try {
       const res = await fetch(`${config.serverURL}/get_quiz/get_assets`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
       if (res.ok && body.asset) {
@@ -181,10 +179,8 @@ const Quiz = ({ path }) => {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-
-    fetchQuiz(abortController);
-    fetchAudioAssets(abortController);
+    fetchQuiz();
+    fetchAudioAssets();
 
     document.title = "Loading ...";
 
@@ -192,7 +188,6 @@ const Quiz = ({ path }) => {
       // reset the quiz
       dispatch(RESET_QUIZ());
       getSettings();
-      abortController.abort();
     };
   }, [path]);
 

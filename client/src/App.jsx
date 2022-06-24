@@ -50,16 +50,14 @@ const App = () => {
   const dispatch = useDispatch();
   const toast = useToast();
   const getSettings = useSettings();
-  const abortController = new AbortController();
 
   // for checking if the user is authenticated or not
-  async function checkAuthStatus(abortController) {
+  async function checkAuthStatus() {
     try {
       const res = await fetch(`${config.serverURL}/get_auth/checkLogin`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
 
@@ -84,13 +82,11 @@ const App = () => {
   }
 
   useEffect(() => {
-    checkAuthStatus(abortController);
+    checkAuthStatus();
 
-    getSettings(abortController);
+    getSettings();
 
     localStorage.setItem("chakra-ui-color-mode", JSON.stringify("light"));
-
-    return () => abortController.abort();
   }, []);
 
   // if the server response is pending this spinner should be shown

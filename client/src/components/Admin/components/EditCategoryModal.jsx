@@ -45,13 +45,12 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
   }
 
   // for fetching the categories
-  async function fetchCategories(abortController) {
+  async function fetchCategories() {
     try {
       const res = await fetch(`${config.serverURL}/get_admin/categories`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
 
@@ -111,13 +110,11 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
     setCategory({
       ...currentCategory,
       prerequisites: currentCategory.prerequisites.map((prerequisite) => prerequisite._id),
     });
-    fetchCategories(abortController);
-    return () => abortController.abort();
+    fetchCategories();
   }, []);
 
   return (

@@ -39,7 +39,6 @@ export default function UploadFiles() {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-  const abortController = new AbortController();
 
   const indexOfLastFile = currentPage * questionsPerPage;
   const indexOfFirstFile = indexOfLastFile - questionsPerPage;
@@ -79,8 +78,8 @@ export default function UploadFiles() {
 
     if (filterState === "") {
       setLoading(true);
-      setCurrentPage(1)
-      fetchFiles(abortController);
+      setCurrentPage(1);
+      fetchFiles();
     } else {
       setLoading(true);
       const res = await fetch(`${config.serverURL}/get_admin/get_files/categoryId/${filterState}`, {
@@ -90,7 +89,7 @@ export default function UploadFiles() {
       });
       const body = await res.json();
       if (res.ok) {
-        setCurrentPage(1)
+        setCurrentPage(1);
         setUploadedFiles(body.files || []);
         setLoading(false);
       } else {
@@ -105,8 +104,8 @@ export default function UploadFiles() {
 
     if (searchQuery === "") {
       setLoading(true);
-      setCurrentPage(1)
-      fetchFiles(abortController);
+      setCurrentPage(1);
+      fetchFiles();
     } else {
       setLoading(true);
       const res = await fetch(`${config.serverURL}/get_admin/searchFiles/${searchQuery}`, {
@@ -116,7 +115,7 @@ export default function UploadFiles() {
       });
       const body = await res.json();
       if (res.ok) {
-        setCurrentPage(1)
+        setCurrentPage(1);
         setUploadedFiles(body.files || []);
         setLoading(false);
       } else {
@@ -131,16 +130,15 @@ export default function UploadFiles() {
     onClose();
   }
 
-  async function fetchFiles(abortController) {
+  async function fetchFiles() {
     const res = await fetch(`${config.serverURL}/get_admin/getFiles`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
-      signal: abortController.signal,
       credentials: "include",
     });
     const body = await res.json();
     if (res.ok) {
-      setCurrentPage(1)
+      setCurrentPage(1);
       setUploadedFiles(body.files);
       setLoading(false);
       return body.files;
@@ -150,12 +148,11 @@ export default function UploadFiles() {
   }
 
   // for fetching the categories
-  async function fetchCategories(abortController) {
+  async function fetchCategories() {
     const res = await fetch(`${config.serverURL}/get_admin/categories`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      signal: abortController.signal,
     });
     const body = await res.json();
 
@@ -191,9 +188,7 @@ export default function UploadFiles() {
   }
 
   useEffect(() => {
-    fetchFiles(abortController);
-    fetchCategories(abortController);
-    return () => abortController.abort();
+    fetchCategories();
   }, []);
 
   if (loading) {

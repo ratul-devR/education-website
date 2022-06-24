@@ -8,13 +8,12 @@ export default function useSettings() {
   const toast = useToast();
   const dispatch = useDispatch();
 
-  async function getSettings(abortController) {
+  async function getSettings() {
     try {
       const res = await fetch(`${config.serverURL}/get_settings`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController && abortController.signal,
       });
       const body = await res.json();
       if (res.ok) {

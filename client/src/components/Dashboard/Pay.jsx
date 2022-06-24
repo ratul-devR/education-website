@@ -27,13 +27,12 @@ const Pay = ({ location }) => {
   const elements = useElements();
 
   // for fetching the course information
-  async function fetchCourseData(abortController) {
+  async function fetchCourseData() {
     try {
       const res = await fetch(`${config.serverURL}/get_courses/course/${courseId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
 
@@ -140,9 +139,7 @@ const Pay = ({ location }) => {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-    fetchCourseData(abortController);
-    return () => abortController.abort();
+    fetchCourseData();
   }, []);
 
   if (!course && loading) {

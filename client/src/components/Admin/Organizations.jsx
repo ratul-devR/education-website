@@ -32,13 +32,12 @@ const Organizations = () => {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(months[new Date().getMonth()]);
 
-  async function fetchOrgs(abortController) {
+  async function fetchOrgs() {
     try {
       const res = await fetch(`${config.serverURL}/get_admin/organizations`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
 
@@ -54,9 +53,7 @@ const Organizations = () => {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-    fetchOrgs(abortController);
-    return () => abortController.abort();
+    fetchOrgs();
   }, []);
 
   if (loading) {

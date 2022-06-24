@@ -143,13 +143,12 @@ const Register = () => {
   }
 
   // for fetching the details of the referer organization
-  async function fetchOrgInfo(abortController) {
+  async function fetchOrgInfo() {
     try {
       const res = await fetch(`${config.serverURL}/get_auth/getRefererInfo/org/${refererId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
       if (res.ok) {
@@ -167,11 +166,9 @@ const Register = () => {
   }, []);
 
   useEffect(() => {
-    const abortController = new AbortController();
     if (refererId) {
-      fetchOrgInfo(abortController);
+      fetchOrgInfo();
     }
-    return () => abortController.abort();
   }, [refererId]);
 
   return (

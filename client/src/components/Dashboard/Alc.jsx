@@ -47,12 +47,11 @@ export default function Alc() {
   const { t } = useTranslation();
 
   // fetching the learning track
-  async function fetchItem(abortController) {
+  async function fetchItem() {
     try {
       const res = await fetch(`${config.serverURL}/active_learning_concert/getItem/${alcId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
-        signal: abortController.signal,
         credentials: "include",
       });
       const body = await res.json();
@@ -66,12 +65,11 @@ export default function Alc() {
     }
   }
 
-  async function fetchQuestions(abortController) {
+  async function fetchQuestions() {
     try {
       const res = await fetch(`${config.serverURL}/get_quiz/getUserUnknownQuestions/${courseId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
-        signal: abortController.signal,
         credentials: "include",
       });
       const body = await res.json();
@@ -98,11 +96,9 @@ export default function Alc() {
 
   useEffect(() => {
     dispatch(RESET_CONCERT());
-    const abortController = new AbortController();
-    fetchItem(abortController);
-    fetchQuestions(abortController);
+    fetchItem();
+    fetchQuestions();
     return () => {
-      abortController.abort();
       dispatch(RESET_CONCERT());
       getSettings();
     };

@@ -24,13 +24,12 @@ const Users = () => {
   const paginate = (number) => number >= 1 && number <= totalPages && setCurrentPage(number);
 
   // for fetching all the users
-  async function fetchUsers(abortController) {
+  async function fetchUsers() {
     try {
       const res = await fetch(`${config.serverURL}/get_admin/users`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        signal: abortController.signal,
       });
       const body = await res.json();
 
@@ -46,9 +45,7 @@ const Users = () => {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-    fetchUsers(abortController);
-    return () => abortController.abort();
+    fetchUsers();
   }, []);
 
   if (loading) {
