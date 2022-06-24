@@ -75,7 +75,7 @@ const UserCourses = ({ title, path }) => {
 
   return (
     <Box overflowX={"hidden"} w="full" h="full">
-      <Box>
+      <Box height={"auto"}>
         <Heading color="primary" fontWeight="normal" fontSize="xl" mb={5}>
           {t("choose_learning_programme")}
         </Heading>
@@ -106,7 +106,7 @@ const UserCourses = ({ title, path }) => {
         )}
       </Box>
 
-      <Box>
+      <Box height={"auto"}>
         <Heading color="primary" fontWeight="normal" fontSize="xl" mb={5}>
           {t("package_heading")}
         </Heading>
