@@ -32,14 +32,17 @@ const {
   getConvertedFiles,
   convertFile,
   deleteFileConvertedFile,
+  getRawCategories,
 } = require("../controllers/adminController");
 
 const router = express.Router();
 
 // all the routes in this file are protected, it means only the admin can access it
 
-// for getting all the categories
+// for getting all the categories with questions and prerequisites populated
 router.get("/categories", getCategories);
+// for getting all the categories without the questions and prerequisites populated
+router.get("/raw_categories", getRawCategories);
 // for adding a new category
 router.post("/post_category", postCategory);
 // for updating a category
@@ -59,7 +62,7 @@ router.get("/getFiles", getFiles);
 // for getting files of a specific category
 router.get("/get_files/categoryId/:categoryId", getFilesOfCategory);
 // for getting specific searched file
-router.get("/searchFiles/:searchQuery", searchFiles)
+router.get("/searchFiles/:searchQuery", searchFiles);
 // for deleting a file
 router.delete("/deleteFile/:fileId", deleteFile);
 

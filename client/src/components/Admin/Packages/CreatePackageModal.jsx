@@ -35,7 +35,7 @@ export default function CreatePackageModal({ setPackages }) {
 
   async function fetchProducts() {
     try {
-      const res = await fetch(`${config.serverURL}/get_admin/categories`, {
+      const res = await fetch(`${config.serverURL}/get_admin/raw_categories`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

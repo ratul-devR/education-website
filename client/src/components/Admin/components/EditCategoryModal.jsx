@@ -47,7 +47,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
   // for fetching the categories
   async function fetchCategories() {
     try {
-      const res = await fetch(`${config.serverURL}/get_admin/categories`, {
+      const res = await fetch(`${config.serverURL}/get_admin/raw_categories`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

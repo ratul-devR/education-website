@@ -28,13 +28,14 @@ import config from "../../../config";
 export default function EditPackageModal({ item, setPackages }) {
   const [packageInfo, setPackageInfo] = useState(item);
   const [products, setProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
   async function fetchProducts() {
     try {
-      const res = await fetch(`${config.serverURL}/get_admin/categories`, {
+      const res = await fetch(`${config.serverURL}/get_admin/raw_categories`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -43,6 +44,7 @@ export default function EditPackageModal({ item, setPackages }) {
 
       if (res.ok) {
         setProducts(body.categories);
+        setProductsLoading(false);
       }
     } catch (err) {
       toast({ status: "error", description: err.message });
@@ -147,7 +149,7 @@ export default function EditPackageModal({ item, setPackages }) {
             />
             <Flex direction={"column"}>
               <Heading mb={1} size={"sm"} fontWeight="normal" color={"GrayText"}>
-                Products
+                Products {productsLoading ? "(Loading products please wait...)" : null}
               </Heading>
               {products.map((product) => {
                 return (

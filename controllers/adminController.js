@@ -28,6 +28,16 @@ module.exports = {
     }
   },
 
+  getRawCategories: async function (req, res, next) {
+    try {
+      const categories = await Category.find({});
+
+      res.status(201).json({ categories });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   getUsers: async function (_req, res, next) {
     try {
       const users = await User.find({}).lean({ defaults: true }).populate("referer");

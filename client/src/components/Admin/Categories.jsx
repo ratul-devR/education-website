@@ -102,7 +102,7 @@ const Categories = () => {
 
   // for fetching the categories
   async function fetchCategories() {
-    const res = await fetch(`${config.serverURL}/get_admin/categories`, {
+    const res = await fetch(`${config.serverURL}/get_admin/raw_categories`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -202,7 +202,7 @@ const Categories = () => {
           Add new Product
         </Button>
 
-        {/* the modal which will be opened when the use click on the button */}
+        {/* the modal which will be opened when the user click on the button */}
         <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside">
           <ModalOverlay />
           <ModalContent>
