@@ -483,10 +483,12 @@ module.exports = {
             !question.passiveLearningVoice ||
             !question.passiveLearningMaleVoice)
         ) {
+          console.log(question);
           deleteFile();
           res.status(400).json({
             msg: "MCQ questions must contain these fields: question, option1_answer, option2, option3, option4, option5, activeLearningVoice, passiveLearningVoice, passiveLearningMaleVoice",
           });
+          return;
         } else if (
           type === "text" &&
           (!question.question ||
@@ -499,6 +501,7 @@ module.exports = {
           res.status(400).json({
             msg: "Text questions must contain these fields: question, answers, activeLearningVoice, passiveLearningVoice, passiveLearningMaleVoice",
           });
+          return;
         }
         // if everything is ok, then convert it into valid format
         else {

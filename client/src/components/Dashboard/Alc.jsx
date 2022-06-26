@@ -110,6 +110,20 @@ export default function Alc() {
     };
   }, [alcId, courseId]);
 
+  useEffect(() => {
+    return async () => {
+      const res = await fetch(`${config.serverURL}/get_quiz/reminder/${courseId}`, {
+        method: "POST",
+        credentials: "include",
+      });
+      console.log(res);
+      const body = await res.json();
+      if (!res.ok) {
+        toast({ status: "warning", description: body.msg });
+      }
+    };
+  }, [courseId]);
+
   if (loading) {
     return (
       <Flex w="full" h="full" justify="center" align="center">

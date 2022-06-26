@@ -199,6 +199,24 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               direction="column"
             >
               <Text color="GrayText" mb={3}>
+                Edit Front-page description
+              </Text>
+              <Textarea
+                onChange={handleInputChange}
+                name="frontPageText"
+                placeholder="Edit front-page description"
+                value={category.frontPageText}
+              />
+            </Flex>
+            <Flex
+              p={5}
+              rounded={5}
+              mb={5}
+              border="1px solid"
+              borderColor="gray.100"
+              direction="column"
+            >
+              <Text color="GrayText" mb={3}>
                 Edit Price
               </Text>
               <Input

@@ -14,6 +14,7 @@ const dataSchema = new mongoose.Schema(
     phone: String,
     age: { type: String, required: true },
     loginRequired: Boolean,
+    remindersSent: { type: Number, default: 0 },
 
     // if any org has referred him
     referer: { type: mongoose.Schema.Types.ObjectId, ref: "Org" },

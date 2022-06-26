@@ -6,6 +6,9 @@ const QuizAsset = require("../models/quizAsset");
 const Question = require("../models/question");
 
 const agenda = require("../jobs/agenda");
+const Settings = require("../models/settings");
+
+const ONE_DAY = 86400000;
 
 module.exports = {
   getUserInfo: async function (req, res, next) {
@@ -33,8 +36,9 @@ module.exports = {
 
       const user = await User.findById(req.user._id).lean({ defaults: true });
       const course = await Category.findOne({ _id: courseId })
-        .lean({ defaults: true })
-        .populate("questions prerequisites");
+        .select("-questions")
+        .populate("prerequisites")
+        .lean({ defaults: true });
 
       if (!course) {
         res.status(404).json({ msg: "Course Not Found! Please stop navigating with Urls" });
@@ -279,6 +283,41 @@ module.exports = {
       }
 
       res.sendStatus(201);
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  reminderHandler: async function (req, res, next) {
+    try {
+      const { productId } = req.params;
+      const user = req.user;
+
+      if (!mongoose.isValidObjectId(productId)) {
+        res.status(403).json({ msg: "Invalid Product" });
+        return;
+      }
+
+      const product = await Category.findOne({ _id: productId });
+
+      if (!product) {
+        res.status(404).json({ msg: "Product not found" });
+        return;
+      }
+
+      const remindersSent = user.remindersSent || 0;
+      const repeatCount = (await Settings.findOne({})).reminderDuration || 1;
+      const sendAfterNDays = (await Settings.findOne({})).notificationTimeSpan || 1;
+
+      if (remindersSent < repeatCount) {
+        await agenda.schedule(new Date().getTime() + sendAfterNDays * ONE_DAY, "sendWAMessage", {
+          userId: user._id,
+        });
+        await User.updateOne({ _id: user._id }, { remindersSent: (user.remindersSent += 1) });
+        console.log({ msg: "It has been set BRUH!" });
+      }
+
+      res.sendStatus(200);
     } catch (err) {
       next(err);
     }

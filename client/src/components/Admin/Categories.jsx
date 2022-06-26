@@ -34,6 +34,7 @@ const Categories = () => {
     {
       title,
       description,
+      frontPageText,
       price,
       passPercentage,
       learningPhasePaid,
@@ -50,6 +51,7 @@ const Categories = () => {
   ] = useState({
     title: "",
     description: "",
+    frontPageText: "",
     price: "",
     passPercentage: "",
     quizIns: "",
@@ -125,6 +127,7 @@ const Categories = () => {
       body: JSON.stringify({
         name: title,
         description,
+        frontPageText,
         price,
         passPercentage,
         prerequisites,
@@ -237,6 +240,13 @@ const Categories = () => {
                 onChange={HandleInputChange}
                 value={description}
                 placeholder="Product subtitle"
+                mb={3}
+              />
+              <Textarea
+                name="frontPageText"
+                onChange={HandleInputChange}
+                value={frontPageText}
+                placeholder="Front-page description"
                 mb={3}
               />
               <Input

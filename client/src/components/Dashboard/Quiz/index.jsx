@@ -42,13 +42,13 @@ const Quiz = ({ path }) => {
     loading,
     questions,
     currentIndex,
-    course,
     totalPercentage,
     done,
     score,
     questionsDontKnow,
     questionsWrong,
     knownQuestions,
+    course,
   } = useSelector((state) => state.quizReducer);
   const dispatch = useDispatch();
 
@@ -300,6 +300,19 @@ const Quiz = ({ path }) => {
       }, 10000);
     }
   }, [questionsDontKnow, questionsWrong]);
+
+  useEffect(() => {
+    return async () => {
+      const res = await fetch(`${config.serverURL}/get_quiz/reminder/${courseId}`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const body = await res.json();
+      if (!res.ok) {
+        toast({ status: "warning", description: body.msg });
+      }
+    };
+  }, [path]);
 
   if (loading) {
     return (

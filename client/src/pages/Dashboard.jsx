@@ -19,6 +19,7 @@ import PaymentSuccess from "../components/Dashboard/PaymentSuccess";
 import BuyPackage from "../components/Dashboard/BuyPackage";
 import AllAlcItems from "../components/Dashboard/AllAlcItems";
 import Package from "../components/Dashboard/Package";
+// import FrontPage from "../components/Dashboard/FrontPage";
 
 import useLogout from "../hooks/useLogout";
 
@@ -74,6 +75,8 @@ const Dashboard = () => {
             <Route path={`${path}/activation_phase`} exact>
               <Courses title="activation_phase" path="activation_phase" />
             </Route>
+
+            {/* <Route path={`${path}/product/:productId`} exact component={FrontPage} /> */}
 
             <Route path={`${path}/alc/:alcId/:courseId`} component={Alc} />
             <Route path={`${path}/alc`}>

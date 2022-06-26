@@ -6,7 +6,6 @@ const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
 const transporter = require("../utils/emailTransporter");
-const agenda = require("../jobs/agenda");
 
 module.exports = {
   login: async function (req, res, next) {
@@ -105,19 +104,19 @@ module.exports = {
         html: messageHTML,
       });
 
-      const oneDay = 86400000; // one day = that amount of ms
-      const notificationDuration = (await Settings.findOne({})).notificationTimeSpan || 1;
-      const repeatingDays = (await Settings.findOne({})).reminderDuration || 1;
+      // const oneDay = 86400000; // one day = that amount of ms
+      // const notificationDuration = (await Settings.findOne({})).notificationTimeSpan || 1;
+      // const repeatingDays = (await Settings.findOne({})).reminderDuration || 1;
 
-      for (let i = 1; i <= repeatingDays; i++) {
-        await agenda.schedule(
-          new Date().getTime() + oneDay * notificationDuration * i,
-          "sendWAMessage",
-          {
-            userId: newUser._id,
-          }
-        );
-      }
+      // for (let i = 1; i <= repeatingDays; i++) {
+      //   await agenda.schedule(
+      //     new Date().getTime() + oneDay * notificationDuration * i,
+      //     "sendWAMessage",
+      //     {
+      //       userId: newUser._id,
+      //     }
+      //   );
+      // }
 
       const userCreated = await User.findOne({ _id: newUser._id }).lean({ defaults: true });
 
