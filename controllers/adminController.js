@@ -186,7 +186,10 @@ module.exports = {
 
       const fileData = files.map((file) => ({
         name: file.filename,
-        url: req.protocol + "://" + req.get("host") + "/" + "uploads/" + "files/" + file.filename,
+        url:
+          process.env.NODE_ENV === "development"
+            ? req.protocol
+            : "https" + "://" + req.get("host") + "/" + "uploads/" + "files/" + file.filename,
         category,
       }));
 
@@ -303,7 +306,10 @@ module.exports = {
         });
       }
 
-      const url = req.protocol + "://" + req.get("host") + "/uploads/question-audios/";
+      const url =
+        process.env.NODE_ENV === "development"
+          ? req.protocol
+          : "https" + "://" + req.get("host") + "/uploads/question-audios/";
 
       newQuestion.activeLearningVoice = url + activeLearningVoice[0].filename;
       newQuestion.passiveLearningVoice = url + passiveLearningVoice[0].filename;
@@ -457,9 +463,9 @@ module.exports = {
     try {
       const file = req.file;
       const { type, timeLimit } = req.body;
-      const filePath = `${req.protocol}://${req.get("host")}/uploads/convertedFiles/${
-        file.filename
-      }`;
+      const filePath = `${
+        process.env.NODE_ENV === "development" ? req.protocol : "https"
+      }://${req.get("host")}/uploads/convertedFiles/${file.filename}`;
       const jsonData = await csvJson().fromStream(request.get(filePath));
 
       function deleteFile() {

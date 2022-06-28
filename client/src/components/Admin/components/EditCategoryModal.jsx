@@ -93,6 +93,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               categoryOF.cpPaymentMessageTextSize = body.category.cpPaymentMessageTextSize;
               categoryOF.unknownQuestionLimitForPurchase =
                 body.category.unknownQuestionLimitForPurchase;
+              categoryOF.cpLimit = body.category.cpLimit;
               categoryOF.displayPrice = body.category.displayPrice;
             }
             return categoryOF;
@@ -419,7 +420,14 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 Payment after checking phase
               </Checkbox>
             </Flex>
-            <Flex p={5} rounded={5} border="1px solid" borderColor="gray.100" direction="column">
+            <Flex
+              mb={3}
+              p={5}
+              rounded={5}
+              border="1px solid"
+              borderColor="gray.100"
+              direction="column"
+            >
               <Text color="GrayText" mb={3}>
                 After how many unknown questions the user should be asked for payment after checking
                 phase?
@@ -429,6 +437,17 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 name="unknownQuestionLimitForPurchase"
                 type="number"
                 value={category.unknownQuestionLimitForPurchase}
+              />
+            </Flex>
+            <Flex p={5} rounded={5} border="1px solid" borderColor="gray.100" direction="column">
+              <Text color="GrayText" mb={3}>
+                After how many unknown questions the user should be prompted before checking phase?
+              </Text>
+              <Input
+                onChange={handleInputChange}
+                name="cpLimit"
+                type="number"
+                value={category.cpLimit}
               />
             </Flex>
           </ModalBody>

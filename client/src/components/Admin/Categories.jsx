@@ -46,6 +46,7 @@ const Categories = () => {
       cpPaymentMessageTextSize,
       lpPaymentMessage,
       unknownQuestionLimitForPurchase,
+      cpLimit,
     },
     setInput,
   ] = useState({
@@ -58,7 +59,7 @@ const Categories = () => {
     concertIns: "",
     learningPhasePaid: false,
     checkingPhasePaid: false,
-
+    cpLimit: "",
     cpPaymentMessage: "",
     courseTextSize: "",
     cpPaymentMessageTextSize: "",
@@ -140,6 +141,7 @@ const Categories = () => {
         cpPaymentMessageTextSize,
         lpPaymentMessage,
         unknownQuestionLimitForPurchase: unknownQuestionLimitForPurchase || 0,
+        cpLimit,
       }),
       credentials: "include",
     });
@@ -362,11 +364,19 @@ const Categories = () => {
               </Checkbox>
               <Input
                 mt={3}
-                placeholder="Unknown question number for purchase"
+                mb={3}
+                placeholder="Question Limit After Checking Phase"
                 type={"number"}
                 onChange={HandleInputChange}
                 name="unknownQuestionLimitForPurchase"
                 value={unknownQuestionLimitForPurchase}
+              />
+              <Input
+                placeholder="Questions Limit Before Checking phase"
+                type={"number"}
+                onChange={HandleInputChange}
+                name="cpLimit"
+                value={cpLimit}
               />
             </ModalBody>
             <ModalFooter>

@@ -9,7 +9,10 @@ module.exports = {
       const { background_music, passive_image, passive_background_sound } = req.files;
       const { name } = req.body;
 
-      const domain = req.protocol + "://" + req.get("host") + "/uploads/alc/";
+      const domain =
+        process.env.NODE_ENV === "development"
+          ? req.protocol
+          : "https" + "://" + req.get("host") + "/uploads/alc/";
 
       // const alreadyHaveAConcertInCategory = await Alc.findOne({ category });
 

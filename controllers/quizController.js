@@ -312,9 +312,9 @@ module.exports = {
       if (remindersSent < repeatCount) {
         await agenda.schedule(new Date().getTime() + sendAfterNDays * ONE_DAY, "sendWAMessage", {
           userId: user._id,
+          product,
         });
         await User.updateOne({ _id: user._id }, { remindersSent: (user.remindersSent += 1) });
-        console.log({ msg: "It has been set BRUH!" });
       }
 
       res.sendStatus(200);

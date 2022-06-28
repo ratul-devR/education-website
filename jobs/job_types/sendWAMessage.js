@@ -9,27 +9,23 @@ module.exports = (agenda) => {
   agenda.define("sendWAMessage", async (job, done) => {
     await mongoose.connect(process.env.MONGO_URL);
 
-    const { userId } = job.attrs.data;
+    const { userId, product } = job.attrs.data;
 
     try {
-      const user = await User.findOneAndUpdate({ _id: userId }, { loginRequired: true });
+      const user = await User.findOneAndUpdate(
+        { $and: [{ _id: userId }, { role: "user" }] },
+        { loginRequired: true }
+      );
 
       if (!user) {
         done();
         return;
       }
 
-      if (user.role === "admin") {
-        user.loginRequired = false;
-        await user.save();
-        done();
-        return;
-      }
+      let emailText = (await Settings.findOne({})).reminderMessage
+        .replace(/{{name}}/g, user.firstName)
+        .replace(/{{product}}/g, product.name);
 
-      let emailText = (await Settings.findOne({})).reminderMessage.replace(
-        /{{name}}/g,
-        user.firstName
-      );
       const emailSubject = emailText.split("\n")[0];
       // remove the subject line from the email body
       emailText = emailText
