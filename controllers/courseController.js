@@ -23,12 +23,14 @@ module.exports = {
 
       if (!mongoose.isValidObjectId(courseId)) {
         res.sendStatus(404);
+        return;
       }
 
       const course = await Category.findOne({ _id: courseId }).lean({ defaults: true });
 
       if (!course) {
         res.sendStatus(404);
+        return;
       }
 
       course.purchasedBy = course.purchasedBy.map((user) => user.toString());
