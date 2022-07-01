@@ -88,7 +88,7 @@ module.exports = {
         .join("<br />");
 
       const domain =
-        process.env.NODE_ENV === "development" ? req.protocol : "https" + "://" + req.get("host");
+        (process.env.NODE_ENV === "development" ? req.protocol : "https") + "://" + req.get("host");
 
       const linkHTML = `<a href="${
         domain + `/get_auth/confirmEmail/${newUser._id}`

@@ -69,7 +69,7 @@ export default function PaymentSuccess({ location }) {
     return (
       <Flex w="full" h="full" justify="center" align="center" direction="column">
         <Heading mb={3} fontSize="2xl" fontWeight="normal" textAlign="center">
-          {t("payment_success_message")} "{course.name}"{" "}
+          {t("payment_success_message")} "{course.name}".
         </Heading>
         <Text mb={5}>{t(subMessage)}</Text>
         <Button onClick={startLearning} colorScheme="secondary" color="black">

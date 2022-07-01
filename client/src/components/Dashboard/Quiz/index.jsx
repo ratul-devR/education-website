@@ -71,7 +71,9 @@ const Quiz = ({ path }) => {
       if (res.ok) {
         if (!body.hasAllPrerequisites) {
           setHasAllPrerequisites(false);
-        } else if (
+        }
+        // payment after checking phase
+        else if (
           path === "getUserQuestionsOfCourse" &&
           !body.userHasPaid &&
           body.userHasToPay &&
@@ -82,6 +84,7 @@ const Quiz = ({ path }) => {
             fromCheckingPhase: true,
           });
         }
+        // payment before checking phase
 
         document.title = `${config.appName} - ${
           path === "getUserUnknownQuestions" ? "Activation Phase" : "Checking Phase"

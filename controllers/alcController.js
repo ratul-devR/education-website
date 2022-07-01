@@ -10,9 +10,10 @@ module.exports = {
       const { name } = req.body;
 
       const domain =
-        process.env.NODE_ENV === "development"
-          ? req.protocol
-          : "https" + "://" + req.get("host") + "/uploads/alc/";
+        (process.env.NODE_ENV === "development" ? req.protocol : "https") +
+        "://" +
+        req.get("host") +
+        "/uploads/alc/";
 
       // const alreadyHaveAConcertInCategory = await Alc.findOne({ category });
 

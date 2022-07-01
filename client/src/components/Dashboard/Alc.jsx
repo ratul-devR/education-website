@@ -116,7 +116,6 @@ export default function Alc() {
         method: "POST",
         credentials: "include",
       });
-      console.log(res);
       const body = await res.json();
       if (!res.ok) {
         toast({ status: "warning", description: body.msg });

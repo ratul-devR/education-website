@@ -19,6 +19,7 @@ import { Select } from "@chakra-ui/select";
 import { Checkbox } from "@chakra-ui/checkbox";
 import config from "../../../config";
 import useToast from "../../../hooks/useToast";
+import SelectList from "../../global/SelectList";
 
 export default function EditCategoryModal({ currentCategory, categoriesOF, setCategoriesOF }) {
   const [category, setCategory] = useState(currentCategory);
@@ -28,15 +29,8 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
   const toast = useToast();
 
   function handleInputChange(e) {
-    const { name, value, selectedOptions } = e.target;
-    if (name !== "prerequisites") {
-      setCategory((pre) => ({ ...pre, [name]: value }));
-    } else {
-      setCategory((pre) => ({
-        ...pre,
-        [name]: Array.from(selectedOptions).map((option) => option.value),
-      }));
-    }
+    const { name, value } = e.target;
+    setCategory((pre) => ({ ...pre, [name]: value }));
   }
 
   function closeModal() {
@@ -111,10 +105,10 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
   }
 
   useEffect(() => {
-    setCategory({
-      ...currentCategory,
-      prerequisites: currentCategory.prerequisites.map((prerequisite) => prerequisite._id),
-    });
+    // setCategory({
+    //   ...currentCategory,
+    //   prerequisites: currentCategory.prerequisites.map((prerequisite) => prerequisite._id),
+    // });
     fetchCategories();
   }, []);
 
@@ -368,7 +362,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 value={category.lpPaymentMessage}
               />
             </Flex>
-            <Flex
+            {/* <Flex
               p={5}
               rounded={5}
               mb={5}
@@ -397,7 +391,17 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                       );
                     })}
               </select>
-            </Flex>
+            </Flex> */}
+            <SelectList
+              listItems={categories.filter((i) => i._id !== category._id)}
+              listTitle="Prerequisites"
+              listDescription={
+                "Prerequisites the student must have in order to continue with this product"
+              }
+              styles={{ marginBottom: 20 }}
+              setStateAction={setCategory}
+              state={category}
+            />
             <Flex mb={3}>
               <Checkbox
                 checked={!!category.checkingPhasePaid}

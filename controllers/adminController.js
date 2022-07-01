@@ -187,9 +187,13 @@ module.exports = {
       const fileData = files.map((file) => ({
         name: file.filename,
         url:
-          process.env.NODE_ENV === "development"
-            ? req.protocol
-            : "https" + "://" + req.get("host") + "/" + "uploads/" + "files/" + file.filename,
+          (process.env.NODE_ENV === "development" ? req.protocol : "https") +
+          "://" +
+          req.get("host") +
+          "/" +
+          "uploads/" +
+          "files/" +
+          file.filename,
         category,
       }));
 
@@ -307,9 +311,10 @@ module.exports = {
       }
 
       const url =
-        process.env.NODE_ENV === "development"
-          ? req.protocol
-          : "https" + "://" + req.get("host") + "/uploads/question-audios/";
+        (process.env.NODE_ENV === "development" ? req.protocol : "https") +
+        "://" +
+        req.get("host") +
+        "/uploads/question-audios/";
 
       newQuestion.activeLearningVoice = url + activeLearningVoice[0].filename;
       newQuestion.passiveLearningVoice = url + passiveLearningVoice[0].filename;
@@ -362,7 +367,10 @@ module.exports = {
       const file = req.file;
       const { category } = req.body;
       const filePath =
-        req.protocol + "://" + req.get("host") + `/uploads/question-csv-files/${file.filename}`;
+        (process.env.NODE_ENV === "development" ? req.protocol : "https") +
+        "://" +
+        req.get("host") +
+        `/uploads/question-csv-files/${file.filename}`;
       // all the json data parsed from the csv file is here (parsed)
       const jsonData = await csvJson().fromStream(request.get(filePath));
 
@@ -489,7 +497,6 @@ module.exports = {
             !question.passiveLearningVoice ||
             !question.passiveLearningMaleVoice)
         ) {
-          console.log(question);
           deleteFile();
           res.status(400).json({
             msg: "MCQ questions must contain these fields: question, option1_answer, option2, option3, option4, option5, activeLearningVoice, passiveLearningVoice, passiveLearningMaleVoice",
