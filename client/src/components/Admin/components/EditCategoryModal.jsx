@@ -2,7 +2,7 @@ import { IconButton, Button } from "@chakra-ui/button";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { useState, useEffect } from "react";
 import { BiEditAlt } from "react-icons/bi";
-import { Flex } from "@chakra-ui/layout";
+import { Flex, Box } from "@chakra-ui/layout";
 import {
   Modal,
   ModalOverlay,
@@ -362,36 +362,6 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 value={category.lpPaymentMessage}
               />
             </Flex>
-            {/* <Flex
-              p={5}
-              rounded={5}
-              mb={5}
-              border="1px solid"
-              borderColor="gray.100"
-              direction="column"
-            >
-              <Text color="GrayText" mb={3}>
-                Edit Prerequisites
-              </Text>
-              <select
-                value={category.prerequisites}
-                style={{ outline: "none" }}
-                multiple
-                onChange={handleInputChange}
-                name="prerequisites"
-              >
-                {categories &&
-                  categories
-                    .filter((i) => i._id !== category._id)
-                    .map((category) => {
-                      return (
-                        <option key={category._id} style={{ padding: 5 }} value={category._id}>
-                          {category.name}
-                        </option>
-                      );
-                    })}
-              </select>
-            </Flex> */}
             <SelectList
               listItems={categories.filter((i) => i._id !== category._id)}
               listTitle="Prerequisites"
@@ -402,8 +372,9 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               setStateAction={setCategory}
               state={category}
             />
-            <Flex mb={3}>
+            <Box mb={5}>
               <Checkbox
+                mb={2}
                 checked={!!category.checkingPhasePaid}
                 defaultChecked={!!category.checkingPhasePaid}
                 onChange={() =>
@@ -412,9 +383,16 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               >
                 Payment before checking phase
               </Checkbox>
-            </Flex>
-            <Flex mb={3}>
+              <Input
+                onChange={handleInputChange}
+                name="cpLimit"
+                type="number"
+                value={category.cpLimit}
+              />
+            </Box>
+            <Box>
               <Checkbox
+                mb={2}
                 checked={!!category.learningPhasePaid}
                 defaultChecked={!!category.learningPhasePaid}
                 onChange={() =>
@@ -423,37 +401,13 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               >
                 Payment after checking phase
               </Checkbox>
-            </Flex>
-            <Flex
-              mb={3}
-              p={5}
-              rounded={5}
-              border="1px solid"
-              borderColor="gray.100"
-              direction="column"
-            >
-              <Text color="GrayText" mb={3}>
-                After how many unknown questions the user should be asked for payment after checking
-                phase?
-              </Text>
               <Input
                 onChange={handleInputChange}
                 name="unknownQuestionLimitForPurchase"
                 type="number"
                 value={category.unknownQuestionLimitForPurchase}
               />
-            </Flex>
-            <Flex p={5} rounded={5} border="1px solid" borderColor="gray.100" direction="column">
-              <Text color="GrayText" mb={3}>
-                After how many unknown questions the user should be prompted before checking phase?
-              </Text>
-              <Input
-                onChange={handleInputChange}
-                name="cpLimit"
-                type="number"
-                value={category.cpLimit}
-              />
-            </Flex>
+            </Box>
           </ModalBody>
           <ModalFooter>
             <Button onClick={closeModal} mr={3}>

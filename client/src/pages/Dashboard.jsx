@@ -20,6 +20,7 @@ import BuyPackage from "../components/Dashboard/BuyPackage";
 import AllAlcItems from "../components/Dashboard/AllAlcItems";
 import Package from "../components/Dashboard/Package";
 import FrontPage from "../components/Dashboard/FrontPage";
+import Continue from "../components/Dashboard/Continue";
 
 import useLogout from "../hooks/useLogout";
 
@@ -96,6 +97,7 @@ const Dashboard = () => {
             <Route path={`${path}/pay/:courseId/`} component={Pay} />
             <Route path={`${path}/buyPackage/:courseId`} component={BuyPackage} />
             <Route path={`${path}/paymentSuccess`} component={PaymentSuccess} />
+            <Route path={`${path}/continue/:productId`} component={Continue} />
           </Switch>
         </Elements>
       </Layout>

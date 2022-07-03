@@ -83,9 +83,9 @@ const Quiz = ({ path }) => {
           history.push(`/dashboard/pay/${courseId}`, {
             fromCheckingPhase: true,
           });
-        }
-        // payment before checking phase
-
+        } /* else if (body.userHasPaid && body.unknownQuestions.length >= (body.course.cpLimit || 0)) {
+          history.push(`/dashboard/continue/${courseId}`);
+        } */
         document.title = `${config.appName} - ${
           path === "getUserUnknownQuestions" ? "Activation Phase" : "Checking Phase"
         }: ${body.course.name}`;
@@ -272,9 +272,6 @@ const Quiz = ({ path }) => {
     });
     const body = await res.json();
 
-    // console.log(body);
-    // console.log(questionsDontKnow + questionsWrong, body.course.unknownQuestionLimitForPurchase);
-
     // check if the user has reached that amount of questions in his unknown words database
     if (
       path === "getUserQuestionsOfCourse" &&
@@ -301,6 +298,13 @@ const Quiz = ({ path }) => {
           window.location.reload();
         }
       }, 10000);
+    } else if (
+      path === "getUserQuestionsOfCourse" &&
+      body.courseQuestions.length &&
+      body.course.cpLimit &&
+      questionsDontKnow + questionsWrong >= (body.course.cpLimit || 0)
+    ) {
+      history.push(`/dashboard/continue/${courseId}`);
     }
   }, [questionsDontKnow, questionsWrong]);
 

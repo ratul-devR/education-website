@@ -1,5 +1,5 @@
 import { Button, IconButton } from "@chakra-ui/button";
-import { Flex } from "@chakra-ui/layout";
+import { Flex, Box } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
 import {
   Modal,
@@ -344,8 +344,9 @@ const Categories = () => {
                 placeholder="Payment after checking phase message"
                 mb={3}
               />
-              <Flex mb={3}>
+              <Box mb={5}>
                 <Checkbox
+                  mb={2}
                   onChange={() =>
                     setInput((pre) => ({ ...pre, checkingPhasePaid: !checkingPhasePaid }))
                   }
@@ -353,31 +354,33 @@ const Categories = () => {
                 >
                   Payment before checking phase
                 </Checkbox>
-              </Flex>
-              <Checkbox
-                onChange={() =>
-                  setInput((pre) => ({ ...pre, learningPhasePaid: !learningPhasePaid }))
-                }
-                checked={learningPhasePaid}
-              >
-                Payment after checking phase
-              </Checkbox>
-              <Input
-                mt={3}
-                mb={3}
-                placeholder="Question Limit After Checking Phase"
-                type={"number"}
-                onChange={HandleInputChange}
-                name="unknownQuestionLimitForPurchase"
-                value={unknownQuestionLimitForPurchase}
-              />
-              <Input
-                placeholder="Questions Limit Before Checking phase"
-                type={"number"}
-                onChange={HandleInputChange}
-                name="cpLimit"
-                value={cpLimit}
-              />
+                <Input
+                  placeholder="Payment before checking-phase limit"
+                  type={"number"}
+                  onChange={HandleInputChange}
+                  name="cpLimit"
+                  value={cpLimit}
+                />
+              </Box>
+
+              <Box>
+                <Checkbox
+                  mb={2}
+                  onChange={() =>
+                    setInput((pre) => ({ ...pre, learningPhasePaid: !learningPhasePaid }))
+                  }
+                  checked={learningPhasePaid}
+                >
+                  Payment after checking phase
+                </Checkbox>
+                <Input
+                  placeholder="Payment after checking phase limit"
+                  type={"number"}
+                  onChange={HandleInputChange}
+                  name="unknownQuestionLimitForPurchase"
+                  value={unknownQuestionLimitForPurchase}
+                />
+              </Box>
             </ModalBody>
             <ModalFooter>
               <Button mr={3} onClick={onClose} colorScheme="blue">
