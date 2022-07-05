@@ -57,7 +57,7 @@ export default function Continue() {
         {product.name}
       </Heading>
       <Text color={"GrayText"} mb={5}>
-        Now you have two options to choose from
+        {t("options_text")}
       </Text>
       <Flex gridGap={5}>
         <Button
@@ -66,7 +66,7 @@ export default function Continue() {
           colorScheme={"secondary"}
           color="black"
         >
-          Continue with checking-phase
+          {t("options_btn1_text")}
         </Button>
         <Button
           to={`/dashboard/alcs/${product._id}`}
@@ -74,7 +74,7 @@ export default function Continue() {
           colorScheme={"secondary"}
           color="black"
         >
-          Continue with learning-phase
+          {t("options_btn2_text")}
         </Button>
       </Flex>
     </Flex>
