@@ -265,7 +265,11 @@ const Quiz = ({ path }) => {
   }, [done]);
 
   useEffect(async () => {
-    const res = await fetch(`${config.serverURL}/get_quiz/getUserQuestionsOfCourse/${courseId}`, {
+    if (path !== "getUserQuestionsOfCourse") {
+      return;
+    }
+
+    const res = await fetch(`${config.serverURL}/get_quiz/check/${courseId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -275,7 +279,6 @@ const Quiz = ({ path }) => {
     // check if the user has reached that amount of questions in his unknown words database
     if (
       path === "getUserQuestionsOfCourse" &&
-      body.courseQuestions.length &&
       body.course.unknownQuestionLimitForPurchase &&
       questionsDontKnow + questionsWrong >= (body.course.unknownQuestionLimitForPurchase || 0)
     ) {
@@ -300,11 +303,20 @@ const Quiz = ({ path }) => {
       }, 10000);
     } else if (
       path === "getUserQuestionsOfCourse" &&
-      body.courseQuestions.length &&
       body.course.cpLimit &&
       questionsDontKnow + questionsWrong >= (body.course.cpLimit || 0)
     ) {
-      history.push(`/dashboard/continue/${courseId}`);
+      if (questions[currentIndex].type === "text") {
+        setTimeout(() => {
+          dispatch(END_QUIZ());
+        }, 2000);
+      } else {
+        dispatch(END_QUIZ());
+      }
+
+      setTimeout(() => {
+        history.push(`/dashboard/continue/${courseId}`);
+      }, 10 ** 4);
     }
   }, [questionsDontKnow, questionsWrong]);
 
@@ -315,7 +327,7 @@ const Quiz = ({ path }) => {
         credentials: "include",
       });
       const body = await res.json();
-      if (!res.ok) {
+      if (!res.ok && res.status !== 401) {
         toast({ status: "warning", description: body.msg });
       }
     };
@@ -411,7 +423,7 @@ const Quiz = ({ path }) => {
             </Text>
           </Text>
         </Flex>
-        <HStack spacing={5}>
+        <HStack display={"flex"} justify="center" align={"center"} spacing={5}>
           <Button
             as={Link}
             to={
@@ -426,7 +438,7 @@ const Quiz = ({ path }) => {
           </Button>
           {path === "getUserUnknownQuestions" && (
             <Button onClick={logout} colorScheme={"blue"}>
-              Logout
+              {t("logout")}
             </Button>
           )}
         </HStack>

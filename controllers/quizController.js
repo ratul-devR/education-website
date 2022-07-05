@@ -110,6 +110,47 @@ module.exports = {
     }
   },
 
+  checkHandler: async function (req, res, next) {
+    try {
+      const user = await User.findById(req.user._id).lean({ default: true });
+      const { courseId } = req.params;
+
+      if (!courseId) {
+        res.status(403).json({ msg: "courseId is required!" });
+        return;
+      }
+
+      const course = await Category.findOne({ _id: courseId })
+        .select("-questions -prerequisites -completedBy")
+        .lean({ defaults: true });
+
+      if (!course) {
+        res.status(404).json({ msg: "Course Not Found! Please stop navigating with Urls" });
+        return;
+      }
+
+      course.checkedBy = course.checkedBy.map((user) => user.toString());
+      let userHasToPay = course.checkingPhasePaid || course.checkedBy.includes(user._id.toString());
+
+      // if the user has to pay in checking-phase, then check if the user has paid or not
+      let userHasPaid = false;
+
+      if (userHasToPay) {
+        course.purchasedBy = course.purchasedBy.map((user) => user.toString());
+        for (let i = 0; i < course.purchasedBy.length; i++) {
+          const purchasedBy = course.purchasedBy[i];
+          if (purchasedBy === req.user._id.toString()) {
+            userHasPaid = true;
+          }
+        }
+      }
+
+      res.status(200).json({ course, userHasPaid, userHasToPay });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   // this is for activation phase where the questions, he didn't knew will be shown (unknownQuestions)
   getUserUnknownQuestions: async function (req, res, next) {
     try {

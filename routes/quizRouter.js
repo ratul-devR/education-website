@@ -11,6 +11,7 @@ const {
   getUserInfo,
   startSpaceRepetition,
   reminderHandler,
+  checkHandler,
 } = require("../controllers/quizController");
 
 const router = express.Router();
@@ -20,6 +21,9 @@ router.get("/get_user_info/:userId", getUserInfo);
 
 // for getting all the user questions under a course
 router.get("/getUserQuestionsOfCourse/:courseId", getUserQuestionsOfQuiz);
+
+// for checking if the user has reached the amount of questions in his unknown words database
+router.get("/check/:courseId", checkHandler);
 
 // for getting questions for activation phrase. Only the questions the user doesn't know
 router.get("/getUserUnknownQuestions/:courseId", getUserUnknownQuestions);
