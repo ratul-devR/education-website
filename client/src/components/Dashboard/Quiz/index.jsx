@@ -31,7 +31,7 @@ import { CHANGE_SUB_TITLE } from "../../../redux/actions/settingsActions";
 const Quiz = ({ path }) => {
   const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
 
-  const toast = useToast();
+  const toast = useToast(3000);
   const getSettings = useSettings();
   const { courseId } = useParams();
   const { t } = useTranslation();

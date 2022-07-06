@@ -1,11 +1,11 @@
 import { useToast as useChakraToast } from "@chakra-ui/react";
 
-const useToast = () => {
+const useToast = (duration) => {
   const toast = useChakraToast({
     variant: "solid",
     position: "top-right",
     isClosable: true,
-    duration: 3000,
+    duration: duration || 10000,
   });
   return toast;
 };
