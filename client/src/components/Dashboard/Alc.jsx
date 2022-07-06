@@ -117,7 +117,7 @@ export default function Alc() {
         credentials: "include",
       });
       const body = await res.json();
-      if (!res.ok) {
+      if (!res.ok && res.status !== 401) {
         toast({ status: "warning", description: body.msg });
       }
     };
