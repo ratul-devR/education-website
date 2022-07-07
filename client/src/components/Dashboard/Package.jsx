@@ -52,24 +52,21 @@ export default function Package() {
     <Flex w="full" h="full" direction={"column"}>
       <Flex mb={5} direction="column">
         <Heading color="primary" fontWeight="normal" fontSize="xl" mb={2}>
-          About {packageInfo.name}
+          {packageInfo.name}
         </Heading>
         <Heading fontSize={"md"} fontWeight="normal" whiteSpace="pre-wrap">
-          {packageInfo.description}
+          {packageInfo.description || ""}
         </Heading>
       </Flex>
 
       <Flex direction={"column"}>
-        <Heading color="primary" fontWeight="normal" fontSize="xl" mb={5}>
-          Products under {packageInfo.name}
-        </Heading>
         <SimpleGrid mb={5} columns={[1, 1, 2, 3]} spacing={5}>
           {packageProducts.map((product) => {
             return (
               <Button
                 as={Link}
                 key={product._id}
-                to={`/dashboard/quiz/${product._id}`}
+                to={`/dashboard/product/${product._id}`}
                 colorScheme="secondary"
                 color={"black"}
                 p={10}
