@@ -168,8 +168,8 @@ export default function ActiveLearning() {
         {questions[currentIndex].type === "text"
           ? questions[currentIndex].spanishWord && questions[currentIndex].englishWord
             ? questions[currentIndex].englishWord + " - " + questions[currentIndex].spanishWord
-            : questions[currentIndex].answers[0]
-          : questions[currentIndex].answers[0]}
+            : questions[currentIndex].answers.join(", ")
+          : questions[currentIndex].answers.join(", ")}
       </Heading>
 
       {showMic && (
