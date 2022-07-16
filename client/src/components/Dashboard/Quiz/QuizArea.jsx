@@ -112,7 +112,9 @@ const QuizArea = ({
     if (questions[currentIndex].type === "mcq") {
       isCorrectAnswer = questions[currentIndex].answers.includes(usersAnswer);
     } else {
-      isCorrectAnswer = questions[currentIndex].answers.includes(input);
+      isCorrectAnswer =
+        questions[currentIndex].answers.join(", ") === usersAnswer ||
+        questions[currentIndex].answers.includes(input);
     }
 
     // play the sound according to the answer
