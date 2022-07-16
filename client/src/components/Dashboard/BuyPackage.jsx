@@ -149,6 +149,7 @@ export default function BuyPackage({ location }) {
           </Text>
         )}
         <CardElement
+          onReady={(e) => e.focus()}
           onChange={(e) => (e.error ? setCheckoutError(e.error.message) : setCheckoutError())}
         />
         <Button
