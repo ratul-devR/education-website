@@ -27,12 +27,13 @@ import {
   END_QUIZ,
 } from "../../../redux/actions/quizActions";
 import { CHANGE_SUB_TITLE } from "../../../redux/actions/settingsActions";
+import { useRef } from "react";
 
 const Quiz = ({ path }) => {
   const [hasAllPrerequisites, setHasAllPrerequisites] = useState(true);
 
   const toast = useToast(3000);
-  const getSettings = useSettings();
+  const updateSettings = useSettings();
   const { courseId } = useParams();
   const { t } = useTranslation();
   const history = useHistory();
@@ -57,6 +58,7 @@ const Quiz = ({ path }) => {
   const [userCommitted, setUserCommitted] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
   const [timerInterval, setTimerInterval] = useState();
+  const currentTimeoutRef = useRef();
 
   // for fetching all the Quiz details
   async function fetchQuiz() {
@@ -182,6 +184,7 @@ const Quiz = ({ path }) => {
   }
 
   useEffect(() => {
+    dispatch(RESET_QUIZ());
     fetchQuiz();
     fetchAudioAssets();
 
@@ -190,7 +193,8 @@ const Quiz = ({ path }) => {
     return () => {
       // reset the quiz
       dispatch(RESET_QUIZ());
-      getSettings();
+      currentTimeoutRef.current && clearTimeout(currentTimeoutRef.current);
+      updateSettings();
     };
   }, [path]);
 
@@ -217,6 +221,7 @@ const Quiz = ({ path }) => {
   }, [currentIndex, path, loading, userCommitted, quizStarted]);
 
   useEffect(() => {
+    // timeout, if the user was unable to answer in the specified time
     if (
       timer &&
       questions[currentIndex] &&
@@ -253,11 +258,12 @@ const Quiz = ({ path }) => {
         body.unknownQuestionsPack.length &&
         body.unknownQuestionsPack.length >= (body.course.unknownQuestionLimitForPurchase || 0)
       ) {
-        setTimeout(() => {
+        const timeout = setTimeout(() => {
           history.push(`/dashboard/buyPackage/${courseId}`, {
             showOptions: !!body.course.unknownQuestionLimitForPurchase,
           });
         }, 10000);
+        currentTimeoutRef.current = timeout;
       } else if (path === "getUserUnknownQuestions") {
         endQuizAction();
       }
@@ -282,14 +288,11 @@ const Quiz = ({ path }) => {
       body.course.unknownQuestionLimitForPurchase &&
       questionsDontKnow + questionsWrong >= (body.course.unknownQuestionLimitForPurchase || 0)
     ) {
-      if (questions[currentIndex].type === "text") {
-        setTimeout(() => {
-          dispatch(END_QUIZ());
-        }, 2000);
-      } else {
+      let timeout = setTimeout(() => {
         dispatch(END_QUIZ());
-      }
-      setTimeout(() => {
+      }, 1500);
+
+      timeout = setTimeout(() => {
         if (!body.userHasPaid && body.userHasToPay) {
           history.push(`/dashboard/buyPackage/${courseId}`, {
             fromCheckingPhase: true,
@@ -301,22 +304,22 @@ const Quiz = ({ path }) => {
           window.location.reload();
         }
       }, 10000);
+
+      currentTimeoutRef.current = timeout;
     } else if (
       path === "getUserQuestionsOfCourse" &&
       body.course.cpLimit &&
       questionsDontKnow + questionsWrong >= (body.course.cpLimit || 0)
     ) {
-      if (questions[currentIndex].type === "text") {
-        setTimeout(() => {
-          dispatch(END_QUIZ());
-        }, 2000);
-      } else {
+      let timeout = setTimeout(() => {
         dispatch(END_QUIZ());
-      }
+      }, 1500);
 
-      setTimeout(() => {
+      timeout = setTimeout(() => {
         history.push(`/dashboard/continue/${courseId}`);
       }, 10 ** 4);
+
+      currentTimeoutRef.current = timeout;
     }
   }, [questionsDontKnow, questionsWrong]);
 
@@ -524,6 +527,22 @@ const Quiz = ({ path }) => {
             {t("start")}
           </Button>
         )}
+
+        {((questions[currentIndex].type === "text" && quizStarted) ||
+          questions[currentIndex].type === "mcq") &&
+          !done &&
+          path === "getUserQuestionsOfCourse" && (
+            <Button
+              onClick={() => {
+                dispatch(END_QUIZ());
+              }}
+              minW={200}
+              colorScheme="secondary"
+              color={"black"}
+            >
+              {t("stop_checking_message")}
+            </Button>
+          )}
       </Flex>
     </Flex>
   );
