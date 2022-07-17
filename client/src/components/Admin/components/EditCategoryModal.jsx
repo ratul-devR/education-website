@@ -85,10 +85,12 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
               categoryOF.cpPaymentMessage = body.category.cpPaymentMessage;
               categoryOF.courseTextSize = body.category.courseTextSize;
               categoryOF.cpPaymentMessageTextSize = body.category.cpPaymentMessageTextSize;
+              categoryOF.lpPaymentMessageTextSize = body.category.lpPaymentMessageTextSize;
               categoryOF.unknownQuestionLimitForPurchase =
                 body.category.unknownQuestionLimitForPurchase;
               categoryOF.cpLimit = body.category.cpLimit;
               categoryOF.displayPrice = body.category.displayPrice;
+              categoryOF.exceptionalConcertFormat = body.category.exceptionalConcertFormat;
             }
             return categoryOF;
           })
@@ -362,6 +364,34 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 value={category.lpPaymentMessage}
               />
             </Flex>
+            <Flex
+              p={5}
+              rounded={5}
+              mb={5}
+              border="1px solid"
+              borderColor="gray.100"
+              direction="column"
+            >
+              <Text color="GrayText" mb={3}>
+                Edit Payment after checking phase text size
+              </Text>
+              <Select
+                onChange={handleInputChange}
+                name="lpPaymentMessageTextSize"
+                value={category.lpPaymentMessageTextSize}
+                placeholder="Edit Payment after checking phase text size"
+                mb={3}
+              >
+                <option>sm</option>
+                <option>md</option>
+                <option>lg</option>
+                <option>xl</option>
+                <option>2xl</option>
+                <option>3xl</option>
+                <option>4xl</option>
+                <option>5xl</option>
+              </Select>
+            </Flex>
             <SelectList
               listItems={categories.filter((i) => i._id !== category._id)}
               listTitle="Prerequisites"
@@ -390,7 +420,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 value={category.cpLimit}
               />
             </Box>
-            <Box>
+            <Box mb={5}>
               <Checkbox
                 mb={2}
                 checked={!!category.learningPhasePaid}
@@ -407,6 +437,25 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                 type="number"
                 value={category.unknownQuestionLimitForPurchase}
               />
+            </Box>
+
+            <Box>
+              <Text mb={3}>
+                In Concerts the <b>answer</b> is shown in pink. And the <b>question</b> is shown in
+                gray. If this is an exception, the opposite will be applied in concerts
+              </Text>
+              <Checkbox
+                checked={!!category.exceptionalConcertFormat}
+                defaultChecked={!!category.exceptionalConcertFormat}
+                onChange={() =>
+                  setCategory((pre) => ({
+                    ...pre,
+                    exceptionalConcertFormat: !category.exceptionalConcertFormat,
+                  }))
+                }
+              >
+                Exceptional Concert Format
+              </Checkbox>
             </Box>
           </ModalBody>
           <ModalFooter>

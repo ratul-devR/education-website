@@ -12,6 +12,9 @@ const dataSchema = new mongoose.Schema({
   checkingPhasePaid: { type: Boolean, required: true },
   quizIns: String,
   concertIns: String,
+  // The answer is shown in pink and the question is shown in gray
+  // in exception, it's the opposite
+  exceptionalConcertFormat: Boolean,
 
   // payment before checking phase message
   cpPaymentMessage: String,
@@ -21,6 +24,8 @@ const dataSchema = new mongoose.Schema({
   courseTextSize: String,
   // checking phase payment message font-size
   cpPaymentMessageTextSize: String,
+  // learning phase payment message font-size
+  lpPaymentMessageTextSize: String,
   // once the user reaches that, then he will be asked for payment after checking phase
   unknownQuestionLimitForPurchase: Number,
   // before checking phase

@@ -10,7 +10,7 @@ import {
   ModalCloseButton,
   ModalBody,
 } from "@chakra-ui/modal";
-import { useDisclosure, Link as ChakraLink, Badge } from "@chakra-ui/react";
+import { useDisclosure, Link as ChakraLink, Text } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Input } from "@chakra-ui/input";
 import { Select } from "@chakra-ui/select";
@@ -44,9 +44,11 @@ const Categories = () => {
       cpPaymentMessage,
       courseTextSize,
       cpPaymentMessageTextSize,
+      lpPaymentMessageTextSize,
       lpPaymentMessage,
       unknownQuestionLimitForPurchase,
       cpLimit,
+      exceptionalConcertFormat,
     },
     setInput,
   ] = useState({
@@ -63,8 +65,10 @@ const Categories = () => {
     cpPaymentMessage: "",
     courseTextSize: "",
     cpPaymentMessageTextSize: "",
+    lpPaymentMessageTextSize: "",
     lpPaymentMessage: "",
     unknownQuestionLimitForPurchase: "",
+    exceptionalConcertFormat: false,
   });
   const [prerequisites, setPrerequisites] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -139,9 +143,11 @@ const Categories = () => {
         cpPaymentMessage,
         courseTextSize,
         cpPaymentMessageTextSize,
+        lpPaymentMessageTextSize,
         lpPaymentMessage,
         unknownQuestionLimitForPurchase: unknownQuestionLimitForPurchase || 0,
         cpLimit,
+        exceptionalConcertFormat,
       }),
       credentials: "include",
     });
@@ -344,6 +350,22 @@ const Categories = () => {
                 placeholder="Payment after checking phase message"
                 mb={3}
               />
+              <Select
+                onChange={HandleInputChange}
+                name="lpPaymentMessageTextSize"
+                value={lpPaymentMessageTextSize}
+                placeholder="Payment after checking phase text size"
+                mb={3}
+              >
+                <option>sm</option>
+                <option>md</option>
+                <option>lg</option>
+                <option>xl</option>
+                <option>2xl</option>
+                <option>3xl</option>
+                <option>4xl</option>
+                <option>5xl</option>
+              </Select>
               <Box mb={5}>
                 <Checkbox
                   mb={2}
@@ -363,7 +385,7 @@ const Categories = () => {
                 />
               </Box>
 
-              <Box>
+              <Box mb={3}>
                 <Checkbox
                   mb={2}
                   onChange={() =>
@@ -380,6 +402,23 @@ const Categories = () => {
                   name="unknownQuestionLimitForPurchase"
                   value={unknownQuestionLimitForPurchase}
                 />
+              </Box>
+
+              <Box>
+                <Text mb={3}>
+                  In Concerts the <b>answer</b> is shown in pink. And the <b>question</b> is shown
+                  in gray. If this is an exception, the opposite will be applied in concerts
+                </Text>
+                <Checkbox
+                  onChange={() =>
+                    setInput((pre) => ({
+                      ...pre,
+                      exceptionalConcertFormat: !exceptionalConcertFormat,
+                    }))
+                  }
+                >
+                  Exceptional Concert format
+                </Checkbox>
               </Box>
             </ModalBody>
             <ModalFooter>

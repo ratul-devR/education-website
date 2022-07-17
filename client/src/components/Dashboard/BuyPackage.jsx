@@ -141,7 +141,7 @@ export default function BuyPackage({ location }) {
           {course.name}
         </Heading>
         {course.lpPaymentMessage && (
-          <Text whiteSpace="pre-wrap" mb={10}>
+          <Text fontSize={course.lpPaymentMessageTextSize || "md"} whiteSpace="pre-wrap" mb={10}>
             {course.lpPaymentMessage &&
               course.lpPaymentMessage
                 .replace(/{{number}}/g, unknownQuestionsPack.length)
