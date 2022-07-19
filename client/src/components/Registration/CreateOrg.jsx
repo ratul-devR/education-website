@@ -111,6 +111,7 @@ const CreateOrg = () => {
             description: t("register_org_success_snackbar"),
           });
           setRegistered(body.org);
+          localStorage.setItem("token", JSON.stringify(body.token));
           setProcessing(false);
           setAffiliateLink(body.affiliateLink);
         } else {

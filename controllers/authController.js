@@ -331,7 +331,7 @@ module.exports = {
           html: emailText,
         });
 
-        res.status(200).json({ msg: "We sent you an email" });
+        res.status(200).json({ msg: "We just sent you an email" });
       }
     } catch (err) {
       next(err);
@@ -350,7 +350,7 @@ module.exports = {
       } else {
         user.password = password;
         await user.save();
-        res.status(201).json({ msg: "You password has been updated" });
+        res.status(200).json({ msg: "You password has been updated" });
       }
     } catch (err) {
       next(err);

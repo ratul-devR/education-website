@@ -23,12 +23,14 @@ module.exports = async function (req, res, next) {
       // and otherwise just send the user if exists
       if (org) {
         req.org = org;
+        req.org.type = "org";
         next();
       } else {
         if (!user) {
           res.status(401).json({ msg: "You are not logged in" });
         } else {
           req.user = user;
+          req.user.type = "user";
           next();
         }
       }

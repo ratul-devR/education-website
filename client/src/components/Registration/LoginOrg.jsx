@@ -36,6 +36,7 @@ export default function LoginOrg() {
       const body = await res.json();
       if (res.ok) {
         dispatch(ORG_LOGIN(body.org));
+        localStorage.setItem("token", JSON.stringify(body.token));
         history.push("/orgDashboard");
         toast({ status: "success", description: body.msg });
       } else {
