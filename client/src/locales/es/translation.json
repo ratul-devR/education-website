@@ -116,5 +116,7 @@
   "package_heading": "Si quieres ahorrar dinero y conseguir un conjunto de productos, elige aquí",
   "footer_text_primary": "¿Tienes alguna sugerencia? Envíanos un",
   "footer_text_secondary": "  correo electrónico.",
-  "stop_checking_message": "Quiero aprender lo que no sabía hasta hora."
+  "stop_checking_message": "Quiero aprender lo que no sabía hasta hora.",
+  "not_verified_message": "Hola,\nPor favor, mira tus correos electrónicos.\nTendrías que haber recibido un correo electrónico nuestro\npara confirmar tu registro.\nSi no lo encuentras, por favor,\nmira en tu archivo de spam.",
+  "registration_success_snackbar": "Te hemos enviado un correo electrónico de confirmación."
 }

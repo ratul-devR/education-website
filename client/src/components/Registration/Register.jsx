@@ -131,7 +131,7 @@ const Register = () => {
         dispatch(LOGIN(body.user));
         localStorage.setItem("token", JSON.stringify(body.token));
         history.push("/dashboard");
-        toast({ status: "success", description: body.msg });
+        toast({ status: "success", description: t("registration_success_snackbar") });
       } else if (res.status === 400) {
         setProcessing(false);
         toast({ status: "error", description: body.msg || "Something is wrong in our end" });

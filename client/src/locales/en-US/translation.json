@@ -116,5 +116,7 @@
   "package_heading": "If you like to save money and get a bunch of products choose here",
   "footer_text_primary": "Have any suggestion?",
   "footer_text_secondary": "Mail us",
-  "stop_checking_message": "Stop checking"
+  "stop_checking_message": "Stop checking",
+  "not_verified_message": "Please check your emails to confirm your registration. If you do not find an email from us please look into your spam.",
+  "registration_success_snackbar": "We just sent you the confirmation link"
 }

@@ -42,8 +42,7 @@ const Dashboard = () => {
           Sign Up
         </Heading>
         <Heading w="full" maxW="450px" fontSize="md" textAlign="center" fontWeight="normal" mb={3}>
-          Please check your emails to confirm your registration. If you do not find an email from us
-          please look into your spam.
+          {t("not_verified_message")}
         </Heading>
         <Heading mb={3} fontSize="md" color="GrayText" fontWeight="normal">
           {user.email}
