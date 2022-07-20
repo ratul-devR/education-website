@@ -454,7 +454,7 @@ export default function EditCategoryModal({ currentCategory, categoriesOF, setCa
                   }))
                 }
               >
-                Exceptional Concert Format
+                Exceptional concert format for MCQ questions
               </Checkbox>
             </Box>
           </ModalBody>

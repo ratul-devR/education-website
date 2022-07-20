@@ -14,6 +14,7 @@ const dataSchema = new mongoose.Schema({
   concertIns: String,
   // The answer is shown in pink and the question is shown in gray
   // in exception, it's the opposite
+  // this is only applied for MCQ type questions in the product
   exceptionalConcertFormat: Boolean,
 
   // payment before checking phase message

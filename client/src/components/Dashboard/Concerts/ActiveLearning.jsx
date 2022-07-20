@@ -13,7 +13,7 @@ import $ from "jquery";
 import { NEXT_WORD } from "../../../redux/actions/concertActions";
 
 export default function ActiveLearning() {
-  const { questions, currentIndex, assets } = useSelector((state) => state.concertReducer);
+  const { questions, currentIndex, assets, course } = useSelector((state) => state.concertReducer);
   const dispatch = useDispatch();
   const [showMic, setShowMic] = useState(false);
   const [showTranslation, setShowTranslation] = useState(true);
@@ -166,9 +166,11 @@ export default function ActiveLearning() {
           show up the text answer with spanish word
         */}
         {questions[currentIndex].type === "text"
-          ? questions[currentIndex].spanishWord && questions[currentIndex].englishWord
-            ? questions[currentIndex].englishWord + " - " + questions[currentIndex].spanishWord
+          ? questions[currentIndex].englishWord
+            ? questions[currentIndex].englishWord
             : questions[currentIndex].answers.join(", ")
+          : course.exceptionalConcertFormat
+          ? questions[currentIndex].question
           : questions[currentIndex].answers.join(", ")}
       </Heading>
 
@@ -181,9 +183,15 @@ export default function ActiveLearning() {
       )}
 
       {/* the translation appears here */}
-      {showTranslation && !questions[currentIndex].spanishWord && (
+      {showTranslation && (
         <Text mb={10} color="GrayText" fontSize="2xl">
-          {questions[currentIndex].question.replaceAll("_", "")}
+          {questions[currentIndex].type === "text"
+            ? questions[currentIndex].spanishWord
+              ? questions[currentIndex].spanishWord
+              : questions[currentIndex].question.replaceAll("_", "")
+            : course.exceptionalConcertFormat
+            ? questions[currentIndex].answers.join(", ")
+            : questions[currentIndex].question}
         </Text>
       )}
 

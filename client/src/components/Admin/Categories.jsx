@@ -417,7 +417,7 @@ const Categories = () => {
                     }))
                   }
                 >
-                  Exceptional Concert format
+                  Exceptional concert format for MCQ questions
                 </Checkbox>
               </Box>
             </ModalBody>
