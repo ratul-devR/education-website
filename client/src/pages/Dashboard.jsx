@@ -4,6 +4,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { useSelector } from "react-redux";
 import { Flex, Heading, Button, Text } from "@chakra-ui/react";
+import { t } from "i18next";
 
 import config from "../config";
 
