@@ -4,11 +4,9 @@ const checkLogin = require("../middlewares/auth/checkLogin");
 
 const {
   getCourses,
-  getAuthUserCourses,
   addCourse,
   getCourseAccordingToId,
   purchaseCourse,
-  getCourseAndQuestions,
   buyPackage,
   buyPackageWebhookHandle,
 } = require("../controllers/courseController");
@@ -16,7 +14,7 @@ const {
 const router = express.Router();
 
 // for sending all the courses
-router.get("/", checkLogin, getCourses);
+router.get("/", getCourses);
 
 // for getting single course information according to the id
 router.get("/course/:courseId", checkLogin, getCourseAccordingToId);

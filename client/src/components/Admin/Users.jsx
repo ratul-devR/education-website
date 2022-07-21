@@ -4,17 +4,19 @@ import useToast from "../../hooks/useToast";
 import { Heading, Flex, Tooltip, Text } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td, Tfoot } from "@chakra-ui/table";
 import { Spinner } from "@chakra-ui/spinner";
-import { IconButton } from "@chakra-ui/button";
+import { IconButton, Button } from "@chakra-ui/button";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 
 import NoMessage from "../global/NoMessage";
+import isUserExpired from "../../utils/isUserExpired";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(30);
-  const toast = useToast();
+  const toast = useToast(2000);
+  const [processingRenewUsers, setProcessingRenewUsers] = useState([]);
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
@@ -44,6 +46,37 @@ const Users = () => {
     }
   }
 
+  const renewUser = async (userId) => {
+    try {
+      const res = await fetch(`${config.serverURL}/get_admin/renew_user/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const body = await res.json();
+
+      if (res.ok) {
+        setUsers((pre) =>
+          pre.map((user) => {
+            if (user._id === body.user._id) {
+              user.expiresAt = body.user.expiresAt;
+            }
+            return user;
+          })
+        );
+        toast({ status: "success", description: body.msg });
+      } else {
+        toast({ status: "warning", description: body.msg });
+      }
+    } catch (err) {
+      toast({ status: "error", description: err.message });
+    } finally {
+      setProcessingRenewUsers(
+        processingRenewUsers.filter((processingRenewUserId) => processingRenewUserId !== userId)
+      );
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -70,10 +103,12 @@ const Users = () => {
             <Th>phone</Th>
             <Th>role</Th>
             <Th>Referred by</Th>
+            <Th>Renewal Status</Th>
           </Thead>
           <Tbody>
             {/* showing up all the categories */}
             {users.map((user) => {
+              const isProcessing = processingRenewUsers.includes(user._id);
               return (
                 <Tr key={user._id}>
                   <Td>
@@ -91,18 +126,34 @@ const Users = () => {
                       "None"
                     )}
                   </Td>
+                  <Td>
+                    {isUserExpired(user.expiresAt) ? (
+                      <Button
+                        disabled={isProcessing}
+                        onClick={async () => {
+                          setProcessingRenewUsers((pre) => [...pre, user._id]);
+                          await renewUser(user._id);
+                        }}
+                        colorScheme="blue"
+                      >
+                        {isProcessing ? "Processing..." : "Renew"}
+                      </Button>
+                    ) : (
+                      "Renewed"
+                    )}
+                  </Td>
                 </Tr>
               );
             })}
           </Tbody>
           <Tfoot>
             <Tr>
-              <Td colSpan={2}>
+              <Td colSpan={5}>
                 <Text color="GrayText">
                   ({currentPage} / {totalPages}) pages
                 </Text>
               </Td>
-              <Td colSpan={2}>
+              <Td>
                 <IconButton
                   onClick={() => paginate(currentPage - 1)}
                   colorScheme="blue"

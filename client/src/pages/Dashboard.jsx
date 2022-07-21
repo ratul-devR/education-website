@@ -24,6 +24,7 @@ import FrontPage from "../components/Dashboard/FrontPage";
 import Continue from "../components/Dashboard/Continue";
 
 import useLogout from "../hooks/useLogout";
+import isUserExpired from "../utils/isUserExpired";
 
 const stripePromise = loadStripe(import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -61,6 +62,20 @@ const Dashboard = () => {
         </Text>
         <Button colorScheme="secondary" color="black" onClick={logout}>
           Logout
+        </Button>
+      </Flex>
+    );
+  } else if (isUserExpired(user.expiresAt)) {
+    return (
+      <Flex direction={"column"} gridGap={3} justify={"center"} align="center" w="full" h="100vh">
+        <Heading color={"primary"}>You account has been expired</Heading>
+        <Text>If you want to get longer access please contact us</Text>
+        <Button
+          colorScheme={"secondary"}
+          color="black"
+          onClick={() => (window.location.href = "mailto:support@check2learn.com")}
+        >
+          Request Renewal
         </Button>
       </Flex>
     );

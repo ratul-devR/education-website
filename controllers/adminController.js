@@ -14,6 +14,8 @@ const File = require("../models/files");
 const ConvertedFile = require("../models/convertedFile");
 
 const transporter = require("../utils/emailTransporter");
+const { addYears } = require("date-fns");
+const isUserExpired = require("../utils/isUserExpired");
 
 module.exports = {
   getCategories: async function (_req, res, next) {
@@ -651,6 +653,36 @@ module.exports = {
         msg: `"${deletedQuestion.question}" has been removed`,
         question: deletedQuestion,
       });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  renewUserHandler: async function (req, res, next) {
+    try {
+      const { userId } = req.params;
+
+      if (!mongoose.isValidObjectId(userId)) {
+        res.status(403).json({ msg: "Invalid user id" });
+        return;
+      }
+
+      const user = await User.findOne({ _id: userId });
+
+      if (!isUserExpired(user.expiresAt)) {
+        res.status(403).json({ msg: "This account hasn't been expired yet" });
+        return;
+      }
+
+      user.expiresAt = addYears(new Date(), 1);
+      await user.save();
+
+      if (!user) {
+        res.status(404).json({ msg: "User not found" });
+        return;
+      }
+
+      res.status(200).json({ msg: "User renewed successfully", user });
     } catch (err) {
       next(err);
     }

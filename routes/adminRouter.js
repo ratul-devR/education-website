@@ -33,6 +33,7 @@ const {
   convertFile,
   deleteFileConvertedFile,
   getRawCategories,
+  renewUserHandler,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -96,5 +97,8 @@ router.post("/add_question/:categoryId", uploadQuestionAssets, addQuestion);
 router.post("/add_questions_from_csv", uploadCsvFile, addQuestionsFromCsv);
 // deleting a question
 router.delete("/question/:questionId/:categoryId", deleteQuestion);
+
+// for renewing a user
+router.put("/renew_user/:userId", renewUserHandler);
 
 module.exports = router;

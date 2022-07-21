@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { addYears } = require("date-fns");
 const mongooseLeanDefaults = require("mongoose-lean-defaults").default;
 
 const dataSchema = new mongoose.Schema(
@@ -15,6 +16,8 @@ const dataSchema = new mongoose.Schema(
     age: { type: String, required: true },
     loginRequired: Boolean,
     remindersSent: { type: Number, default: 0 },
+    // the default expiration of the user account is 1 year
+    expiresAt: { type: Date, required: true, default: addYears(new Date(), 1) },
 
     // if any org has referred him
     referer: { type: mongoose.Schema.Types.ObjectId, ref: "Org" },
