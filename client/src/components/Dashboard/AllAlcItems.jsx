@@ -5,7 +5,7 @@ import useToast from "../../hooks/useToast";
 import config from "../../config";
 import { Spinner } from "@chakra-ui/spinner";
 import { Button } from "@chakra-ui/button";
-import { Link, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 export default function AllAlcItems() {
@@ -14,6 +14,7 @@ export default function AllAlcItems() {
   const { courseId } = useParams();
   const { t } = useTranslation();
   const toast = useToast();
+  const history = useHistory();
 
   async function fetchAlcItems() {
     try {
@@ -34,8 +35,32 @@ export default function AllAlcItems() {
     }
   }
 
+  async function fetchQuestions() {
+    try {
+      const res = await fetch(`${config.serverURL}/get_quiz/getUserUnknownQuestions/${courseId}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const body = await res.json();
+
+      if (res.ok) {
+        // if the user has questions in his learning pack and if he doesn't have anything to learn
+        // if the user has the number of questions that is determined by the admin in his not known DB,
+        // then ask for payment
+        if (body.unknownQuestionsPack.length > 0 && !body.learningQuestions.length) {
+          history.push(`/dashboard/buyPackage/${courseId}`, { phase: "learning" });
+        }
+      } else {
+        toast({ status: "error", description: body.msg });
+      }
+    } catch (err) {
+      toast({ status: "error", description: err.message });
+    }
+  }
+
   useEffect(() => {
-    fetchAlcItems();
+    fetchQuestions().then(() => fetchAlcItems());
   }, []);
 
   if (loading) {
