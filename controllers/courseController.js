@@ -46,6 +46,28 @@ module.exports = {
     }
   },
 
+  getCourseAccordingToIdWithoutLogin: async function (req, res, next) {
+    try {
+      const { courseId } = req.params;
+
+      if (!courseId || !mongoose.isValidObjectId(courseId)) {
+        res.status(403).json({ msg: "Invalid courseId" });
+        return;
+      }
+
+      const course = await Category.findOne({ _id: courseId });
+
+      if (!course) {
+        res.status(404).json({ msg: "Course not found" });
+        return;
+      }
+
+      res.status(200).json({ course });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   purchaseCourse: async function (req, res, next) {
     try {
       const { amount, courseId, userId } = req.body;

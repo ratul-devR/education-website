@@ -9,6 +9,7 @@ const {
   purchaseCourse,
   buyPackage,
   buyPackageWebhookHandle,
+  getCourseAccordingToIdWithoutLogin,
 } = require("../controllers/courseController");
 
 const router = express.Router();
@@ -18,6 +19,9 @@ router.get("/", getCourses);
 
 // for getting single course information according to the id
 router.get("/course/:courseId", checkLogin, getCourseAccordingToId);
+
+// for getting single course information according to the id without login
+router.get("/course_without_login/:courseId", getCourseAccordingToIdWithoutLogin);
 
 // for purchasing a course
 router.post("/purchaseCourse", checkLogin, purchaseCourse);
