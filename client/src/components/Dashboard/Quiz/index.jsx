@@ -313,7 +313,7 @@ const Quiz = ({ path }) => {
     ) {
       let timeout = setTimeout(() => {
         dispatch(END_QUIZ());
-      }, 1500);
+      }, 3000);
 
       timeout = setTimeout(() => {
         history.push(`/dashboard/continue/${courseId}`);
