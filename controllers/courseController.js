@@ -70,10 +70,16 @@ module.exports = {
 
   purchaseCourse: async function (req, res, next) {
     try {
-      const { amount, courseId, userId } = req.body;
+      const { courseId, userId } = req.body;
+      const course = await Category.findOne({ _id: courseId });
+
+      if (!course) {
+        res.status(404).json({ msg: "Course not found!" });
+        return;
+      }
 
       const paymentIntent = await stripe.paymentIntents.create({
-        amount,
+        amount: Math.round(course.price) * 100,
         currency: "eur",
         metadata: {
           courseId,
@@ -90,9 +96,14 @@ module.exports = {
 
   buyPackage: async function (req, res, next) {
     try {
-      const { amount, courseId, userId } = req.body;
+      const { courseId, userId } = req.body;
+      const course = await Category.findOne({ _id: courseId });
+      if (!course) {
+        res.status(404).json({ msg: "Course not found!" });
+        return;
+      }
       const paymentIntent = await stripe.paymentIntents.create({
-        amount,
+        amount: Math.round(course.price) * 100,
         currency: "eur",
         metadata: { courseId, userId, type: "package" },
       });

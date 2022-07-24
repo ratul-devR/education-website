@@ -77,7 +77,6 @@ const Pay = ({ location }) => {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          amount: Math.round(course.price) * 100,
           courseId,
           userId: user._id,
         }),
