@@ -658,6 +658,31 @@ module.exports = {
     }
   },
 
+  deleteAllQuestionsHandler: async function (req, res, next) {
+    try {
+      const { productId } = req.params;
+
+      if (!productId || !mongoose.isValidObjectId(productId)) {
+        res.status(403).json({ msg: "param 'productId' is required" });
+        return;
+      }
+
+      const product = await Category.findOne({ _id: productId });
+
+      if (!product) {
+        res.status(404).json({ msg: "Product not found" });
+        return;
+      }
+
+      product.questions = [];
+      await product.save();
+
+      res.status(200).json({ msg: "Questions were deleted successfully", product });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   renewUserHandler: async function (req, res, next) {
     try {
       const { userId } = req.params;

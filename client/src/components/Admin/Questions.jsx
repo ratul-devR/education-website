@@ -1,4 +1,4 @@
-import { IconButton } from "@chakra-ui/button";
+import { IconButton, Button } from "@chakra-ui/button";
 import { Flex, Heading, Stack } from "@chakra-ui/layout";
 import { Badge } from "@chakra-ui/react";
 import { Spinner } from "@chakra-ui/spinner";
@@ -82,6 +82,32 @@ const Questions = () => {
     }
   }
 
+  async function deleteAllQuestions() {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete all the questions in this product?"
+    );
+
+    if (confirmed) {
+      try {
+        const res = await fetch(`${config.serverURL}/get_admin/deleteAllQuestions/${categoryId}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+        const body = await res.json();
+        if (res.ok) {
+          setCategory(body.product);
+          setQuestions(body.product.questions || []);
+          toast({ status: "success", description: body.msg });
+        } else {
+          toast({ status: "error", description: body.msg });
+        }
+      } catch (err) {
+        toast({ status: "error", description: err.message });
+      }
+    }
+  }
+
   useEffect(() => {
     fetchQuestions();
   }, []);
@@ -99,7 +125,12 @@ const Questions = () => {
           Questions in: "{category.name}"
         </Heading>
         <Flex justify="space-between" align="center">
-          <AddQuestionCsvModal category={category} setQuestions={setQuestions} />
+          <Flex gridColumnGap={5}>
+            <AddQuestionCsvModal category={category} setQuestions={setQuestions} />
+            <Button onClick={deleteAllQuestions} colorScheme={"red"}>
+              Delete All Questions
+            </Button>
+          </Flex>
           <AddQuestionModal modalValue={category} setQuestions={setQuestions} />
         </Flex>
         {/* the table containing all the questions */}
