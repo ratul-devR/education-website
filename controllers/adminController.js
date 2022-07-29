@@ -677,6 +677,8 @@ module.exports = {
       product.questions = [];
       await product.save();
 
+      await Question.deleteMany({ category: product._id });
+
       res.status(200).json({ msg: "Questions were deleted successfully", product });
     } catch (err) {
       next(err);
